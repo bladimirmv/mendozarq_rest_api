@@ -1,10 +1,16 @@
-create database node_mysql_ts;
-use node_mysql_ts;
+create database mendozarq;
+use mendozarq;
 
-create table posts(
-	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	title VARCHAR(200) NOT NULL,
-	description TEXT NOT  NULL,
-	image_url TEXT,
-	created_at TIMESTAMP DEFAULT CURRENT_TIME 
+create table usuario(
+    uuid varchar(100) primary key,
+    creadoEn timestamp  default current_timestamp not null,
+    nombre varchar(50) not null,
+    apellidoPaterno varchar(50) not null,
+    apellidoMaterno varchar(50) ,
+    celulario int,
+    direccion text,
+    correo varchar(100),
+    username varchar(50) not null,
+    contrasenha varchar(100) not null,
+    rol varchar(20) not null
 );

@@ -10,3 +10,4 @@ Use the package manager npm to install rest api.
 npm install
 ```
 
+<!-- "dev": "nodemon src/index.ts --exec ts-node" -->
