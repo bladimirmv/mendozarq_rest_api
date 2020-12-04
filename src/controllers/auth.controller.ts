@@ -27,7 +27,7 @@ export async function createUsuario(req: Request, res: Response) {
 		const usuario: Usuario = req.body;
 		if (!usuario.contrasenha || !usuario.username) {
 			return res.status(400).json({
-				message: 'Por favor ingrese su nombre de usuario y contrasenha'
+				message: 'Por favor ingrese su nombre de usuario y contrasenha.'
 			});
 		}
 
@@ -40,22 +40,17 @@ export async function createUsuario(req: Request, res: Response) {
 
 		const finUsername = await conn.query('select username from usuario where username = ?', [usuario.username]);
 
-		if (finUsername) {
+		if (finUsername[0].length) {
 			return res.json({
-				message: 'existe',
-				data: finUsername[0]
-
+				message: 'El nombre de usuario ya esta en uso.',
+			});
+		} else {
+			await conn.query('INSERT INTO usuario SET ?', [usuario]);
+			return res.json({
+				message: 'Usuario creado correctamente.',
+				data: usuario
 			});
 		}
-
-
-		await conn.query('INSERT INTO usuario SET ?', [usuario]);
-		return res.json({
-			message: 'creado',
-			data: usuario
-
-		});
-
 		// const compare = await bcrypt.compare(
 		// 	usuario.contrasenha,
 		// 	'$2b$10$g81WXZNIlPb6xSHBjcYmvukRKM7LEcuSGkjpfcMLnbdtu3UgJGpbK');

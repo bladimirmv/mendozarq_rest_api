@@ -1,4 +1,4 @@
-# REST API EXAMPLE
+# REST API MENDOZARQ
 
 Typescript & MySQL REST API (Nodejs & Express)
 
