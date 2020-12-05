@@ -4,10 +4,11 @@ import cors from "cors";
 import passport, { Passport } from "passport";
 
 
-import IndexRoutes from './routes/index.route';
-import PostRoutes from './routes/post.route';
-import AuthRoutes from './routes/auth.routes';
 import passportMiddleware from "./middlewares/passport";
+// Routes
+import IndexRoutes from './routes/index.route';
+import UsuarioRoutes from './routes/usuario.routes';
+import AuthRoutes from './routes/auth.routes';
 
 
 // import bodyParser 'body-parser';
@@ -32,7 +33,7 @@ export class App {
 		this.app.use(morgan('dev'));
 		this.app.use(cors());
 		this.app.use(express.json());
-		this.app.use(express.urlencoded({ extended: false }));
+		this.app.use(express.urlencoded({ extended: true }));
 		this.app.use(passport.initialize());
 		passport.use(passportMiddleware);
 
@@ -40,7 +41,7 @@ export class App {
 	// routes
 	routes(): void {
 		this.app.use(IndexRoutes);
-		this.app.use('/posts', PostRoutes);
+		this.app.use('/api/usuario', UsuarioRoutes);
 		this.app.use('/api/auth', AuthRoutes);
 
 	}

@@ -17,10 +17,11 @@ const express_1 = __importDefault(require("express"));
 const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
 const passport_1 = __importDefault(require("passport"));
-const index_route_1 = __importDefault(require("./routes/index.route"));
-const post_route_1 = __importDefault(require("./routes/post.route"));
-const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
 const passport_2 = __importDefault(require("./middlewares/passport"));
+// Routes
+const index_route_1 = __importDefault(require("./routes/index.route"));
+const usuario_routes_1 = __importDefault(require("./routes/usuario.routes"));
+const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
 // import bodyParser 'body-parser';
 class App {
     constructor(port) {
@@ -39,14 +40,14 @@ class App {
         this.app.use(morgan_1.default('dev'));
         this.app.use(cors_1.default());
         this.app.use(express_1.default.json());
-        this.app.use(express_1.default.urlencoded({ extended: false }));
+        this.app.use(express_1.default.urlencoded({ extended: true }));
         this.app.use(passport_1.default.initialize());
         passport_1.default.use(passport_2.default);
     }
     // routes
     routes() {
         this.app.use(index_route_1.default);
-        this.app.use('/posts', post_route_1.default);
+        this.app.use('/api/usuario', usuario_routes_1.default);
         this.app.use('/api/auth', auth_routes_1.default);
     }
     // listen on port
