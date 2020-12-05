@@ -14,47 +14,48 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteUsuario = exports.updateUsuario = exports.getAllUsuarios = exports.getUsuario = exports.addUsuario = void 0;
 const generate_password_1 = __importDefault(require("generate-password"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const uuid_1 = require("uuid");
 const database_1 = require("./../database");
 function addUsuario(req, res) {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            // const conn = await connect();
+            const conn = yield database_1.connect();
             const usuario = req.body;
-            console.log(req.body);
-            if (usuario.generarCredenciales === true) {
+            if (usuario.generarCredenciales === true && usuario.nombre) {
+                // generating credentials
+                usuario.username = `${generate_password_1.default.generate({ length: 2, numbers: true })}_${(_a = usuario.nombre) === null || _a === void 0 ? void 0 : _a.replace(/\s/g, '.')}${generate_password_1.default.generate({ length: 3, numbers: true })}`;
                 usuario.contrasenha = generate_password_1.default.generate({ length: 10, numbers: true });
-                console.log('se genero');
-                console.log('ss', usuario);
-                return res.send(usuario);
+            }
+            if (!usuario.contrasenha || !usuario.username || !usuario.rol || !usuario.nombre) {
+                return res.status(400).json({
+                    message: 'Por favor ingrese los campos requeridos.',
+                    data: usuario
+                });
+            }
+            // encrypting contrasenha
+            const salt = yield bcrypt_1.default.genSalt(10);
+            const hash = yield bcrypt_1.default.hash(usuario.contrasenha, salt);
+            usuario.contrasenha = hash;
+            // generate uuid
+            usuario.uuid = uuid_1.v4();
+            // checking username
+            const findUsername = yield conn.query('select username from usuario where username = ?', [usuario.username]);
+            if (findUsername[0].length) {
+                return res.status(400).json({
+                    message: 'El nombre de usuario ya esta en uso.',
+                });
             }
             else {
-                return res.send({ usuario, esta: 'no funciono' });
+                delete usuario.generarCredenciales;
+                // adding usuario
+                yield conn.query('INSERT INTO usuario SET ?', [usuario]);
+                return res.status(201).json({
+                    message: 'Usuario creado correctamente.',
+                    data: usuario
+                });
             }
-            // if (!usuario.contrasenha || !usuario.username || !usuario.rol) {
-            // 	return res.status(400).json({
-            // 		message: 'Por favor ingrese los campos requeridos.',
-            // 		data: usuario
-            // 	});
-            // }
-            // // encrypting contrasenha
-            // const salt = await bcrypt.genSalt(10);
-            // const hash = await bcrypt.hash(usuario.contrasenha, salt);
-            // usuario.contrasenha = hash;
-            // // generate uuid
-            // usuario.uuid = uuid();
-            // // checking username
-            // const findUsername = await conn.query('select username from usuario where username = ?', [usuario.username]);
-            // if (findUsername[0].length) {
-            // 	return res.status(400).json({
-            // 		message: 'El nombre de usuario ya esta en uso.',
-            // 	});
-            // } else {
-            // 	await conn.query('INSERT INTO usuario SET ?', [usuario]);
-            // 	return res.status(201).json({
-            // 		message: 'Usuario creado correctamente.',
-            // 		data: usuario
-            // 	});
-            // }
         }
         catch (error) {
             return res.status(400).json({
