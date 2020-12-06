@@ -21,15 +21,15 @@ export const checkRole = (roles: Array<Roles>) => {
 					return res.sendStatus(403).json({ error })
 				}
 				if (usuario[0].length) {
-					const { rol }: Usuario = usuario[0];
-					if (roles.includes(rol as Roles)) {
-						next();
-					} else {
-						res.status(401).json({
-							message: 'Not Authorized',
-							rol
+					const usr: Usuario[] = usuario[0];
+					const { rol }: Usuario = usr[0];
+					roles.includes(rol as Roles)
+						? next()
+						: res.status(401).json({
+							message: 'Acceso no autorizado',
+							error: '401'
 						});
-					}
+
 				}
 			});
 
