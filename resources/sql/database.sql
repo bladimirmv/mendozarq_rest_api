@@ -14,3 +14,10 @@ create table usuario(
     contrasenha varchar(100) not null,
     rol varchar(20) not null
 );
+
+-- algunas querys que serviran mas adelante
+-- Recuperar categorias asignadas a un proyecto especifico
+SELECT c.nombre
+FROM categoriaasignadaproyecto as catA
+INNER JOIN categoriaproyecto as c ON c.idCategoriaProyecto = catA.idCategoria
+WHERE catA.idCategoria = c.idCategoriaProyecto AND catA.idProyecto = ?;
