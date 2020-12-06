@@ -17,12 +17,14 @@ const generate_password_1 = __importDefault(require("generate-password"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const uuid_1 = require("uuid");
 const database_1 = require("./../database");
+// ===================================================================================================
 function addUsuario(req, res) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const conn = yield database_1.connect();
             const usuario = req.body;
+            const contrasenha = usuario.contrasenha;
             if (usuario.generarCredenciales === true && usuario.nombre) {
                 // generating credentials
                 usuario.username = `${generate_password_1.default.generate({ length: 2, numbers: true })}_${(_a = usuario.nombre) === null || _a === void 0 ? void 0 : _a.replace(/\s/g, '.')}${generate_password_1.default.generate({ length: 3, numbers: true })}`;
@@ -31,7 +33,8 @@ function addUsuario(req, res) {
             if (!usuario.contrasenha || !usuario.username || !usuario.rol || !usuario.nombre) {
                 return res.status(400).json({
                     message: 'Por favor ingrese los campos requeridos.',
-                    data: usuario
+                    error: '400',
+                    body: usuario
                 });
             }
             // encrypting contrasenha
@@ -45,6 +48,7 @@ function addUsuario(req, res) {
             if (findUsername[0].length) {
                 return res.status(400).json({
                     message: 'El nombre de usuario ya esta en uso.',
+                    error: '400'
                 });
             }
             else {
@@ -53,49 +57,92 @@ function addUsuario(req, res) {
                 yield conn.query('INSERT INTO usuario SET ?', [usuario]);
                 return res.status(201).json({
                     message: 'Usuario creado correctamente.',
-                    data: usuario
+                    body: usuario
                 });
             }
         }
         catch (error) {
             return res.status(400).json({
-                message: error
+                message: 'Ocurrio un error.',
+                error
             });
         }
     });
 }
 exports.addUsuario = addUsuario;
+// ===================================================================================================
 function getUsuario(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const id = req.params.id;
-        const conn = yield database_1.connect();
-        const post = yield conn.query('select  * from posts where id = ?', [id]);
-        return res.json(post[0]);
+        try {
+            const uuid = req.params.id;
+            const conn = yield database_1.connect();
+            const usuario = yield conn.query('select  * from usuario where uuid = ?', [uuid]);
+            if (usuario[0].length) {
+                res.send(usuario[0]);
+            }
+            else {
+                return res.status(404).json({
+                    message: 'No se encontro el usuario.',
+                    error: '404'
+                });
+            }
+        }
+        catch (error) {
+            return res.status(400).json({
+                message: 'Ocurrio un error',
+                error
+            });
+        }
     });
 }
 exports.getUsuario = getUsuario;
+// ===================================================================================================
 function getAllUsuarios(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const conn = yield database_1.connect();
-            const posts = yield conn.query('select  * from posts;');
-            return res.json(posts[0]);
+            const usuarios = yield conn.query('select * from usuario order by creadoEn;');
+            return res.json(usuarios[0]);
         }
         catch (error) {
-            return error;
+            return res.status(400).json({
+                message: 'Ocurrio un error.',
+                error
+            });
         }
     });
 }
 exports.getAllUsuarios = getAllUsuarios;
 function updateUsuario(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        // const id = req.params.id;
-        // const conn = await connect();
-        // const data: post = req.body;
-        // await conn.query('update posts set ? where id = ?', [data, id]);
-        // return res.json({
-        // 	message: 'post updated'
-        // });
+        try {
+            const uuid = req.params.id;
+            const conn = yield database_1.connect();
+            const usuario = req.body;
+            delete usuario.uuid, usuario.generarCredenciales;
+            // checking username
+            const findUsername = yield conn.query('select username from usuario where username = ?', [usuario.username]);
+            if (findUsername[0].length) {
+                return res.status(400).json({
+                    message: 'El nombre de usuario ya esta en uso.',
+                });
+            }
+            else {
+                delete usuario.generarCredenciales;
+                // adding usuario
+                yield conn.query('INSERT INTO usuario SET ?', [usuario]);
+                return res.status(201).json({
+                    message: 'Usuario creado correctamente.',
+                    body: usuario
+                });
+            }
+            yield conn.query('update usuario set ? where id = ?', [usuario, uuid]);
+            return res.json({
+                message: 'post updated'
+            });
+        }
+        catch (error) {
+        }
     });
 }
 exports.updateUsuario = updateUsuario;

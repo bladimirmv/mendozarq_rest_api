@@ -11,3 +11,5 @@ npm install
 ```
 
 <!-- "dev": "nodemon src/index.ts --exec ts-node" -->
+
+"dev": "tsc-watch --onSuccess \"node dist/index.js\" "

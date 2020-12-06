@@ -3,11 +3,13 @@ import { Router } from 'express';
 import passport from 'passport';
 // controllers
 import { addUsuario, getUsuario, getAllUsuarios, updateUsuario, deleteUsuario } from './../controllers/usuario.controller';
+import { checkRole } from './../middlewares/roles';
+
 const router = Router();
 
 router.route('/')
 	.get(
-		// passport.authenticate('jwt', { session: false }),
+		// [passport.authenticate('jwt', { session: false })],
 		getAllUsuarios
 	)
 	.post(

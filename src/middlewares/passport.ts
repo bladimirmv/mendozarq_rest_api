@@ -1,4 +1,3 @@
-import { Usuario } from './../models/usuario.interface';
 import { Strategy, ExtractJwt, StrategyOptions } from 'passport-jwt';
 
 import config from './../config/config';
@@ -23,4 +22,4 @@ export default new Strategy(options, async (payload, done) => {
 		console.log(error);
 
 	}
-})
+});

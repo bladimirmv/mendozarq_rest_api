@@ -65,6 +65,7 @@ function createUsuario(req, res) {
 exports.createUsuario = createUsuario;
 function login(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
+        // res.send('hola');
         try {
             const conn = yield database_1.connect();
             const credenciales = req.body;

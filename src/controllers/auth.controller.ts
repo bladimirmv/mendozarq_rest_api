@@ -54,6 +54,7 @@ export async function createUsuario(req: Request, res: Response) {
 }
 
 export async function login(req: Request, res: Response, next: any) {
+	// res.send('hola');
 
 	try {
 		const conn = await connect();

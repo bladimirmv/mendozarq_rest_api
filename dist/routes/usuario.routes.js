@@ -6,7 +6,7 @@ const usuario_controller_1 = require("./../controllers/usuario.controller");
 const router = express_1.Router();
 router.route('/')
     .get(
-// passport.authenticate('jwt', { session: false }),
+// [passport.authenticate('jwt', { session: false })],
 usuario_controller_1.getAllUsuarios)
     .post(
 // passport.authenticate('jwt', { session: false }),

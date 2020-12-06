@@ -1,7 +1,7 @@
 import express, { Application } from 'express';
 import morgan from 'morgan';
 import cors from "cors";
-import passport, { Passport } from "passport";
+import passport from "passport";
 
 
 import passportMiddleware from "./middlewares/passport";
