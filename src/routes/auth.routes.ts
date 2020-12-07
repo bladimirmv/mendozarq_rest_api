@@ -10,7 +10,7 @@ router.route('/usuario')
 	.get()
 	.post([passport.authenticate('jwt', { session: false }), checkRole(['administrador'])], createUsuario);
 
-router.route('/signUp')
+router.route('/login')
 	.post(login);
 
 router.route('/:id')

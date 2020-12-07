@@ -79,7 +79,7 @@ export async function getUsuario(req: Request, res: Response) {
 	}
 }
 // ===================================================================================================
-export async function getAllUsuarios(req: Request, res: Response) {
+export async function getAllUsuarios(res: Response) {
 	try {
 		const conn = await connect();
 		const usuarios = await conn.query('select * from usuario order by creadoEn;');
@@ -113,12 +113,15 @@ export async function updateUsuario(req: Request, res: Response) {
 				message: 'Usuario creado correctamente.',
 				body: usuario
 			});
+
+			await conn.query('update usuario set ? where id = ?', [usuario, uuid]);
+			return res.json({
+				message: 'post updated'
+			});
+
 		}
 
-		await conn.query('update usuario set ? where id = ?', [usuario, uuid]);
-		return res.json({
-			message: 'post updated'
-		});
+
 	} catch (error) {
 
 	}
@@ -130,7 +133,7 @@ export async function deleteUsuario(req: Request, res: Response) {
 	const id = req.params.id;
 	const conn = await connect();
 
-	await conn.query('DELETE from posts where id = ?', [id]);
+	await conn.query('DELETE from usuario where id = ?', [id]);
 	return res.json({
 		message: 'post deleted'
 	});

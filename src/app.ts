@@ -1,14 +1,16 @@
 import express, { Application } from 'express';
 import morgan from 'morgan';
-import cors from "cors";
-import passport from "passport";
+import cors from 'cors';
+import passport from 'passport';
 
-
-import passportMiddleware from "./middlewares/passport";
+import passportMiddleware from './middlewares/passport';
 // Routes
-import IndexRoutes from './routes/index.route';
+import IndexRoutes from './routes/index.routes';
 import UsuarioRoutes from './routes/usuario.routes';
 import AuthRoutes from './routes/auth.routes';
+import e = require('cors');
+
+
 
 
 // import bodyParser 'body-parser';
@@ -47,7 +49,28 @@ export class App {
 	}
 	// listen on port
 	async listen() {
-		await this.app.listen(this.app.get('port'));
-		console.log(`Server on port ${this.port}`);
+
+
+		try {
+			await this.app.listen(this.app.get('port'));
+
+		} catch (error) {
+			console.log(error);
+
+		}
+
+		// let server = require('http').Server(this.app);
+		// const io = require('socket.io')(server);
+		// io.on('connection', function (socket: any) {
+		// 	console.log("a user connected id: ", socket);
+
+		// });
+
+		// server.listen(this.port || process.env.PORT || 3000, () => {
+		// 	console.log("listening socket.io on *:3000");
+		// });
+
+
+
 	}
 }

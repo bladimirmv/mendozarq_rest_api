@@ -10,17 +10,17 @@ export async function addProyecto(req: Request, res: Response) {
 	try {
 		const conn = await connect();
 		const Proyecto: Proyecto = req.body;
-		
-		// generate uuid
-        Proyecto.idProyecto = uuid();
-        
-        await conn.query('INSERT INTO proyecto SET ?', [Proyecto]);
-			return res.status(201).json({
-				message: 'Usuario creado correctamente.',
-				body: Proyecto
-            });
 
-		
+		// generate uuid
+		Proyecto.idProyecto = uuid();
+
+		await conn.query('INSERT INTO proyecto SET ?', [Proyecto]);
+		return res.status(201).json({
+			message: 'Usuario creado correctamente.',
+			body: Proyecto
+		});
+
+
 	} catch (error) {
 		return res.status(400).json({
 			message: 'Ocurrio un error.',

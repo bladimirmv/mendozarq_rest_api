@@ -10,17 +10,17 @@ export async function addCategoriaProyecto(req: Request, res: Response) {
 	try {
 		const conn = await connect();
 		const categoriaProyecto: CategoriaProyecto = req.body;
-		
+
 		// generate uuid
 		categoriaProyecto.idCategoriaProyecto = uuid();
-        
-        await conn.query('INSERT INTO categoriaProyecto SET ?', [categoriaProyecto]);
-			return res.status(201).json({
-				message: 'Usuario creado correctamente.',
-				body: categoriaProyecto
-            });
-            
-            
+
+		await conn.query('INSERT INTO categoriaProyecto SET ?', [categoriaProyecto]);
+		return res.status(201).json({
+			message: 'Usuario creado correctamente.',
+			body: categoriaProyecto
+		});
+
+
 	} catch (error) {
 		return res.status(400).json({
 			message: 'Ocurrio un error.',
