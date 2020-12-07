@@ -2,22 +2,22 @@ import { Response, Request } from 'express';
 import { v4 as uuid } from 'uuid';
 
 import { connect } from './../database';
-import { Proyecto } from '../models/proyecto.interface';
+import { Recurso } from '../models/recurso.interface';
 import { Credenciales } from './../models/credenciales.interface';
 
 // ===================================================================================================
-export async function addProyecto(req: Request, res: Response) {
+export async function addRecurso(req: Request, res: Response) {
 	try {
 		const conn = await connect();
-		const Proyecto: Proyecto = req.body;
+		const recurso: Recurso = req.body;
 
 		// generate uuid
-		Proyecto.idProyecto = uuid();
+		recurso.idRecurso = uuid();
 
-		await conn.query('INSERT INTO proyecto SET ?', [Proyecto]);
+		await conn.query('INSERT INTO recurso SET ?', [recurso]);
 		return res.status(201).json({
-			message: 'Proyecto creado correctamente.',
-			body: Proyecto
+			message: 'Recurso creado correctamente.',
+			body: recurso
 		});
 
 
@@ -29,18 +29,18 @@ export async function addProyecto(req: Request, res: Response) {
 	}
 }
 // ===================================================================================================
-export async function getProyecto(req: Request, res: Response) {
+export async function getRecurso(req: Request, res: Response) {
 	try {
 		const uuid = req.params.id;
 		const conn = await connect();
 
-		const usuario = await conn.query('select  * from proyecto where idProyecto = ?', [uuid]);
+		const usuario = await conn.query('select  * from recurso where idRecurso = ?', [uuid]);
 
 		if (usuario[0].length) {
 			res.send(usuario[0]);
 		} else {
 			return res.status(404).json({
-				message: 'No se encontro el proyecto solicitado.',
+				message: 'No se encontraron recursos con el id ingresado.',
 				error: '404'
 			});
 		}
@@ -53,10 +53,10 @@ export async function getProyecto(req: Request, res: Response) {
 	}
 }
 // ===================================================================================================
-export async function getAllProyectos(req: Request, res: Response) {
+export async function getAllRecursos(req: Request, res: Response) {
 	try {
 		const conn = await connect();
-		const usuarios = await conn.query('select * from proyecto order by creadoEn;');
+		const usuarios = await conn.query('select * from recurso order by creadoEn;');
 		return res.json(usuarios[0]);
 	} catch (error) {
 		return res.status(400).json({
@@ -66,45 +66,41 @@ export async function getAllProyectos(req: Request, res: Response) {
 	}
 }
 
-export async function updateProyecto(req: Request, res: Response) {
+export async function updateRecurso(req: Request, res: Response) {
 	try {
 		const uuid = req.params.id;
 		const conn = await connect();
-		const usuario: Proyecto = req.body;
+		const recurso: Recurso = req.body;
 
-		delete usuario.idProyecto
-		// checking username
-		const findUsername = await conn.query('select nombre from proyecto where nombre = ?', [usuario.nombre]);
-		if (findUsername[0].length) {
-			return res.status(400).json({
-				message: 'El proyecto insertada ya existe.',
-			});
-		} else {
+		// delete recurso.idRecurso porque estamos borrando estos id's?
+	    
 			// adding usuario
-			await conn.query('UPDATE proyecto SET ? WHERE idProyecto = ?', [usuario, usuario.idProyecto]);
+			await conn.query('UPDATE recurso SET ? WHERE idRecurso = ?', [recurso, recurso.idRecurso]);
 			return res.status(201).json({
-				message: 'Proyecto modificado correctamente.',
-				body: usuario
+				message: 'Recurso modificado correctamente.',
+				body: recurso
 			});
-		}
+		
 
 		// await conn.query('update usuario set ? where id = ?', [usuario, uuid]);
 		// return res.json({
 		// 	message: 'post updated'
 		// });
 	} catch (error) {
-
+		return res.status(400).json({
+			message: 'Ocurrio un error',
+			error
+		});
 	}
-
 }
 
 
-export async function deleteProyecto(req: Request, res: Response) {
+export async function deleteRecurso(req: Request, res: Response) {
 	const id = req.params.id;
 	const conn = await connect();
 
-	await conn.query('DELETE from proyecto where id = ?', [id]);
+	await conn.query('DELETE from recurso where idRecurso = ?', [id]);
 	return res.json({
-		message: 'Proyecto eliminado existosamente!'
+		message: 'Recurso eliminado exitosamente'
 	});
 }

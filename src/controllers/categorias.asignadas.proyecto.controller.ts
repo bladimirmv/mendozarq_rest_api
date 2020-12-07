@@ -16,7 +16,7 @@ export async function addCategriasAsignadasProyecto(req: Request, res: Response)
         
         await conn.query('INSERT INTO categoriasAsignadasProyecto SET ?', [categoriasAsiganadasProyecto]);
 			return res.status(201).json({
-				message: 'Usuario creado correctamente.',
+				message: 'Categoria asignada al proyecto correctamente.',
 				body: categoriasAsiganadasProyecto
             });
             
@@ -79,7 +79,7 @@ export async function updateCategriasAsignadasProyecto(req: Request, res: Respon
 		
 		
 			// adding usuario
-			await conn.query('UPDATE categoriasAsignadasProyecto SET nombre = ? WHERE idCategoriaProyecto = ?', [usuario.nombre, usuario.idCategoriaProyecto]);
+			await conn.query('UPDATE categoriasAsignadasProyecto SET ? WHERE idCategoriaProyecto = ?', [usuario, usuario.idCategsAsig]);
 			return res.status(201).json({
 				message: 'Categoria de proyecto modificada correctamente.',
 				body: usuario
@@ -91,18 +91,30 @@ export async function updateCategriasAsignadasProyecto(req: Request, res: Respon
 		// 	message: 'post updated'
 		// });
 	} catch (error) {
-
+		return res.status(400).json({
+			message: 'Ocurrio un error',
+			error
+		});
 	}
 
 }
 
 
 export async function deleteCategriasAsignadasProyecto(req: Request, res: Response) {
-	const id = req.params.id;
-	const conn = await connect();
+	try {
+		const id = req.params.id;
+		const conn = await connect();
 
-	await conn.query('DELETE from categoriasAsignadasProyecto where id = ?', [id]);
-	return res.json({
-		message: 'Categoria asignada al proyecto eliminada!'
-	});
+		await conn.query('DELETE from categoriasAsignadasProyecto where id = ?', [id]);
+		return res.json({
+			message: 'Categoria asignada al proyecto eliminada!'
+		});
+	}
+	catch (error) {
+		return res.status(400).json({
+			message: 'Ocurrio un error',
+			error
+		});
+	}
+	
 }

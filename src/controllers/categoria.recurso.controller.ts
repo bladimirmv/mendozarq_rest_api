@@ -2,22 +2,22 @@ import { Response, Request } from 'express';
 import { v4 as uuid } from 'uuid';
 
 import { connect } from './../database';
-import { Proyecto } from '../models/proyecto.interface';
+import { CategoriaRecurso } from '../models/categoria.recurso.interface';
 import { Credenciales } from './../models/credenciales.interface';
 
 // ===================================================================================================
-export async function addProyecto(req: Request, res: Response) {
+export async function addCategoriaRecurso(req: Request, res: Response) {
 	try {
 		const conn = await connect();
-		const Proyecto: Proyecto = req.body;
+		const categoriaRecurso: CategoriaRecurso = req.body;
 
 		// generate uuid
-		Proyecto.idProyecto = uuid();
+		categoriaRecurso.idCategoriaRecurso = uuid();
 
-		await conn.query('INSERT INTO proyecto SET ?', [Proyecto]);
+		await conn.query('INSERT INTO categoriaRecurso SET ?', [categoriaRecurso]);
 		return res.status(201).json({
-			message: 'Proyecto creado correctamente.',
-			body: Proyecto
+			message: 'Categoria de recursos creado correctamente.',
+			body: categoriaRecurso
 		});
 
 
@@ -29,18 +29,18 @@ export async function addProyecto(req: Request, res: Response) {
 	}
 }
 // ===================================================================================================
-export async function getProyecto(req: Request, res: Response) {
+export async function getCategoriaRecurso(req: Request, res: Response) {
 	try {
 		const uuid = req.params.id;
 		const conn = await connect();
 
-		const usuario = await conn.query('select  * from proyecto where idProyecto = ?', [uuid]);
+		const usuario = await conn.query('select  * from categoriaRecurso where idCategoriaRecurso = ?', [uuid]);
 
 		if (usuario[0].length) {
 			res.send(usuario[0]);
 		} else {
 			return res.status(404).json({
-				message: 'No se encontro el proyecto solicitado.',
+				message: 'No se encontro la categoria de recurso.',
 				error: '404'
 			});
 		}
@@ -53,10 +53,10 @@ export async function getProyecto(req: Request, res: Response) {
 	}
 }
 // ===================================================================================================
-export async function getAllProyectos(req: Request, res: Response) {
+export async function getAllCategoriasRecurso(req: Request, res: Response) {
 	try {
 		const conn = await connect();
-		const usuarios = await conn.query('select * from proyecto order by creadoEn;');
+		const usuarios = await conn.query('select * from categoriaRecurso order by creadoEn;');
 		return res.json(usuarios[0]);
 	} catch (error) {
 		return res.status(400).json({
@@ -66,24 +66,24 @@ export async function getAllProyectos(req: Request, res: Response) {
 	}
 }
 
-export async function updateProyecto(req: Request, res: Response) {
+export async function updateCategoriaRecurso(req: Request, res: Response) {
 	try {
 		const uuid = req.params.id;
 		const conn = await connect();
-		const usuario: Proyecto = req.body;
+		const usuario: CategoriaRecurso = req.body;
 
-		delete usuario.idProyecto
+		delete usuario.idCategoriaRecurso
 		// checking username
-		const findUsername = await conn.query('select nombre from proyecto where nombre = ?', [usuario.nombre]);
+		const findUsername = await conn.query('select nombre from categoriaRecurso where nombre = ?', [usuario.nombre]);
 		if (findUsername[0].length) {
 			return res.status(400).json({
-				message: 'El proyecto insertada ya existe.',
+				message: 'La categoria de recurso insertada ya existe.',
 			});
 		} else {
 			// adding usuario
-			await conn.query('UPDATE proyecto SET ? WHERE idProyecto = ?', [usuario, usuario.idProyecto]);
+			await conn.query('UPDATE categoriaRecurso SET ? WHERE idCategoriaRecurso = ?', [usuario, usuario.idCategoriaRecurso]);
 			return res.status(201).json({
-				message: 'Proyecto modificado correctamente.',
+				message: 'Categoria de recurso modificada correctamente.',
 				body: usuario
 			});
 		}
@@ -93,18 +93,20 @@ export async function updateProyecto(req: Request, res: Response) {
 		// 	message: 'post updated'
 		// });
 	} catch (error) {
-
+		return res.status(400).json({
+			message: 'Ocurrio un error',
+			error
+		});
 	}
-
 }
 
 
-export async function deleteProyecto(req: Request, res: Response) {
+export async function deleteCategriaRecurso(req: Request, res: Response) {
 	const id = req.params.id;
 	const conn = await connect();
 
-	await conn.query('DELETE from proyecto where id = ?', [id]);
+	await conn.query('DELETE from categoriaRecurso where id = ?', [id]);
 	return res.json({
-		message: 'Proyecto eliminado existosamente!'
+		message: 'Categoria de recurso eliminada exitosamente!'
 	});
 }

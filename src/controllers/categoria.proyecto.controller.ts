@@ -16,7 +16,7 @@ export async function addCategoriaProyecto(req: Request, res: Response) {
 
 		await conn.query('INSERT INTO categoriaProyecto SET ?', [categoriaProyecto]);
 		return res.status(201).json({
-			message: 'Usuario creado correctamente.',
+			message: 'Categoria de proyectos creado correctamente.',
 			body: categoriaProyecto
 		});
 
@@ -81,7 +81,7 @@ export async function updateCategoriaProyecto(req: Request, res: Response) {
 			});
 		} else {
 			// adding usuario
-			await conn.query('UPDATE categoriaproyecto SET nombre = ? WHERE idCategoriaProyecto = ?', [usuario.nombre, usuario.idCategoriaProyecto]);
+			await conn.query('UPDATE categoriaproyecto SET ? WHERE idCategoriaProyecto = ?', [usuario, usuario.idCategoriaProyecto]);
 			return res.status(201).json({
 				message: 'Categoria de proyecto modificada correctamente.',
 				body: usuario
@@ -93,9 +93,11 @@ export async function updateCategoriaProyecto(req: Request, res: Response) {
 		// 	message: 'post updated'
 		// });
 	} catch (error) {
-
+		return res.status(400).json({
+			message: 'Ocurrio un error',
+			error
+		});
 	}
-
 }
 
 
