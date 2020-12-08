@@ -79,11 +79,11 @@ export async function getUsuario(req: Request, res: Response) {
 	}
 }
 // ===================================================================================================
-export async function getAllUsuarios(res: Response) {
+export async function getAllUsuarios(req: Request, res: Response) {
 	try {
 		const conn = await connect();
-		const usuarios = await conn.query('select * from usuario order by creadoEn;');
-		return res.json(usuarios[0]);
+		const usuarios = await conn.query('select * from usuario order by creadoEn');
+		return res.send(usuarios[0]);
 	} catch (error) {
 		return res.status(400).json({
 			message: 'Ocurrio un error.',

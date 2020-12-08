@@ -9,7 +9,7 @@ const router = Router();
 
 router.route('/')
 	.get(
-		// [passport.authenticate('jwt', { session: false })],
+		[passport.authenticate('jwt', { session: false }), checkRole(['administrador'])],
 		getAllUsuarios
 	)
 	.post(
@@ -19,7 +19,7 @@ router.route('/')
 
 router.route('/:id')
 	.get(
-		// passport.authenticate('jwt', { session: false }),
+		[passport.authenticate('jwt', { session: false }), checkRole(['administrador'])],
 		getUsuario
 	)
 	.put(
