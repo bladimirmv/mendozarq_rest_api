@@ -111,6 +111,51 @@ CREATE TABLE personal(
     urlCont varchar(200) not null
 );
 
+CREATE TABLE presupuestoDeObra(
+    idPresupuesto varchar(100) PRIMARY KEY,
+    creadoEn timestamp  default current_timestamp not null,
+    nombre VARCHAR(100) not null,
+    descripcion varchar(250) not null,
+    totalPresupuesto FLOAT not null,
+    idProyecto varchar(100) not null,
+    FOREIGN KEY(idProyecto) REFERENCES proyecto(idProyecto)
+);
+
+CREATE TABLE detallePresupuesto(
+    idDetallePresupuesto varchar(100) PRIMARY KEY,
+    creadoEn timestamp  default current_timestamp not null,
+    nombre varchar(50) not null,
+    totalDetalle float not null,
+    idPresupuesto varchar(100) not null,
+    FOREIGN KEY (idPresupuesto) REFERENCES presupuestoDeObra(idPresupuesto)
+);
+
+CREATE TABLE subDetallePresupuesto (
+    idSubDetallePresupuesto varchar(100) PRIMARY KEY,
+    creadoEn timestamp  default current_timestamp not null,
+    nombre varchar(20) not null,
+    medida varchar(10) not null,
+    cantidad int not null,
+    precioUnitario float not null,
+    totalSubDetalle float not null,
+    idDetallePresupuesto varchar(100) not null,
+    FOREIGN KEY (idDetallePresupuesto) REFERENCES detallePresupuesto(idDetallePresupuesto)
+);
+
+CREATE TABLE servicioProyecto(
+    idServicio varchar(100) PRIMARY KEY,
+    creadoEn timestamp  default current_timestamp not null,
+    nombre varchar(50) not null,
+    descripcion varchar(200) not null,
+    avance float not null,
+    fechaInicio DATE not null,
+    fechaFinal DATE not null,
+    idProyecto varchar(100) not null,
+    FOREIGN KEY(idProyecto) REFERENCES proyecto(idProyecto)
+);
+
+-- //////////////////////////////////////////////////////////////////////////////////
+--ESTA AUN NO USAR!
 CREATE TABLE documentoProyecto (
     idDocumentoProyecto varchar(100) PRIMARY KEY,
     creadoEn timestamp  default current_timestamp not null,
@@ -121,6 +166,16 @@ CREATE TABLE documentoProyecto (
     FOREIGN KEY (idProyecto) REFERENCES proyecto(idProyecto),
     FOREIGN KEY (idPersonal) REFERENCES personal(idPersonal)
 );
+
+CREATE TABLE visitaProyecto(
+    idVisita varchar(100) PRIMARY KEY,
+    creadoEn timestamp  default current_timestamp not null,
+    nombre varchar(50) not null,
+    descripcion varchar(200) not null
+    numeroVisita int not null,
+    fecha TIMESTAMP
+);
+
 
 
 
