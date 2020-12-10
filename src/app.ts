@@ -1,14 +1,13 @@
 import express, { Application } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
-import passport from 'passport';
+// import passport from 'passport';
+// import passportMiddleware from './middlewares/passport';
 
-import passportMiddleware from './middlewares/passport';
 // Routes
 import IndexRoutes from './routes/index.routes';
 import UsuarioRoutes from './routes/auth/usuario.routes';
 import AuthRoutes from './routes/auth/auth.routes';
-import e = require('cors');
 
 
 
@@ -36,8 +35,8 @@ export class App {
 		this.app.use(cors());
 		this.app.use(express.json());
 		this.app.use(express.urlencoded({ extended: false }));
-		this.app.use(passport.initialize());
-		passport.use(passportMiddleware);
+		// this.app.use(passport.initialize());
+		// passport.use(passportMiddleware);
 
 	}
 	// routes

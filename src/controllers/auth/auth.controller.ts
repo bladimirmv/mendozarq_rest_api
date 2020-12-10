@@ -81,11 +81,12 @@ export async function login(req: Request, res: Response, next: any) {
 		const isMatch = await bcrypt.compare(credenciales.contrasenha, usuario[0].contrasenha as string);
 
 		if (isMatch) {
-			delete usuario[0].contrasenha, usuario[0].autoContrasenha, usuario[0].autoUsuario;
+			const { nombre, apellidoPaterno, apellidoMaterno, rol }: Usuario = usuario[0];
+
 			return res.status(200).json({
 				message: 'Inicio de sesion correcto.',
 				token: createToken(usuario[0]),
-				body: usuario[0]
+				body: { nombre, apellidoPaterno, apellidoMaterno, rol }
 			});
 		}
 

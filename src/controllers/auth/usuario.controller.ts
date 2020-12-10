@@ -162,7 +162,7 @@ export async function deleteUsuario(req: Request, res: Response) {
 	const id = req.params.id;
 	const conn = await connect();
 
-	await conn.query('DELETE from usuario where id = ?', [id]);
+	await conn.query('DELETE from usuario where uuid = ?', [id]);
 	return res.json({
 		message: 'post deleted'
 	});

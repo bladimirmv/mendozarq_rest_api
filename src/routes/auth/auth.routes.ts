@@ -1,14 +1,14 @@
 import { Router } from 'express';
-import passport from 'passport';
+import { checkJwt } from './../../middlewares/jwt';
 import { checkRole } from '../../middlewares/roles';
 
 import { createUsuario, login } from './../../controllers/auth/auth.controller';
 
 const router = Router();
-
+// passport.authenticate('jwt', { session: false })
 router.route('/usuario')
 	.get()
-	.post([passport.authenticate('jwt', { session: false }), checkRole(['administrador'])], createUsuario);
+	.post([checkJwt, checkRole(['administrador'])], createUsuario);
 
 router.route('/login')
 	.post(login);
