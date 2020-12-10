@@ -5,7 +5,8 @@ export interface VisitaProyecto {
     descripcion?: string;
     numeroVisita: number;
     fecha?: Date;
+    idProyecto: string;
     // participantes?: string[];
-    // servicios?: string[];
+    // servicios?: string[];    
   }
   
