@@ -1,10 +1,10 @@
-import { createPool } from 'mysql2/promise';
+import { createPool, Pool } from 'mysql2/promise';
 
 import config from './config/config'
 
 export async function connect(): Promise<any> {
 	try {
-		const connection = await createPool(config.database);
+		const connection: Pool = await createPool(config.dbOptions);
 		return connection;
 
 	} catch (error) {

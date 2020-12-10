@@ -2,22 +2,42 @@ import { Response, Request } from 'express';
 import generator from 'generate-password';
 import bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
+import { Pool } from 'mysql2/promise';
 
-import { connect } from './../database';
-import { Usuario } from '../models/usuario.interface';
-import { Credenciales } from './../models/credenciales.interface';
+
+
+import { connect } from '../../database';
+import { Usuario } from '../../models/usuario.interface';
+import { Credenciales } from '../../models/credenciales.interface';
+
 
 // ===================================================================================================
+function generateUsuario(usuario: Usuario): Usuario {
+	usuario.username = `${generator.generate({ length: 2, numbers: true })}_${usuario.nombre?.replace(/\s/g, '.')}${generator.generate({ length: 3, numbers: true })}`
+	return usuario;
+}
+function generateContrasenha(usuario: Usuario): Usuario {
+	usuario.contrasenha = generator.generate({ length: 10, numbers: true });
+	return usuario;
+}
+
 export async function addUsuario(req: Request, res: Response) {
+
 	try {
-		const conn = await connect();
-		const usuario: Usuario = req.body;
-		const contrasenha = usuario.contrasenha;
-		if (usuario.generarCredenciales === true && usuario.nombre) {
-			// generating credentials
-			usuario.username = `${generator.generate({ length: 2, numbers: true })}_${usuario.nombre?.replace(/\s/g, '.')}${generator.generate({ length: 3, numbers: true })}`
-			usuario.contrasenha = generator.generate({ length: 10, numbers: true });
+		const conn: Pool = await connect();
+		let usuario: Usuario = req.body;
+		let { contrasenha, username } = usuario;
+
+
+		if (usuario.autoUsuario && usuario.nombre) {
+			usuario = generateUsuario(usuario);
+			username = usuario.username;
 		}
+		if (usuario.autoContrasenha) {
+			usuario = generateContrasenha(usuario);
+			contrasenha = usuario.contrasenha;
+		}
+
 		if (!usuario.contrasenha || !usuario.username || !usuario.rol || !usuario.nombre) {
 			return res.status(400).json({
 				message: 'Por favor ingrese los campos requeridos.',
@@ -32,21 +52,28 @@ export async function addUsuario(req: Request, res: Response) {
 		// generate uuid
 		usuario.uuid = uuid();
 		// checking username
-		const findUsername = await conn.query('select username from usuario where username = ?', [usuario.username]);
+		const findUsername: any = await conn.query('select username from usuario where username = ?', [usuario.username]);
+
 		if (findUsername[0].length) {
+			conn.end();
 			return res.status(400).json({
-				message: 'El nombre de usuario ya esta en uso.',
-				error: '400'
+				message: `El username \'${usuario.username}\' ya esta en uso, porfavor ingrese otro valido o active la opcion de generar automaticamente.`,
+				error: 'Bad request 400'
 			});
 		} else {
-			delete usuario.generarCredenciales;
+
+			delete usuario.autoUsuario
+			delete usuario.autoContrasenha;
 			// adding usuario
 			await conn.query('INSERT INTO usuario SET ?', [usuario]);
-			return res.status(201).json({
-				message: 'Usuario creado correctamente.',
-				body: usuario
-			});
+			conn.end();
+			// adding contrasenha and usuario
+			usuario.username = username;
+			usuario.contrasenha = contrasenha;
+			// response
+			return res.status(201).send(usuario);
 		}
+
 	} catch (error) {
 		return res.status(400).json({
 			message: 'Ocurrio un error.',
@@ -58,11 +85,12 @@ export async function addUsuario(req: Request, res: Response) {
 export async function getUsuario(req: Request, res: Response) {
 	try {
 		const uuid = req.params.id;
-		const conn = await connect();
+		const conn: Pool = await connect();
 
-		const usuario = await conn.query('select  * from usuario where uuid = ?', [uuid]);
-
+		const usuario: any = await conn.query('select  * from usuario where uuid = ?', [uuid]);
+		conn.end();
 		if (usuario[0].length) {
+
 			res.send(usuario[0]);
 		} else {
 			return res.status(404).json({
@@ -80,9 +108,11 @@ export async function getUsuario(req: Request, res: Response) {
 }
 // ===================================================================================================
 export async function getAllUsuarios(req: Request, res: Response) {
+
 	try {
-		const conn = await connect();
-		const usuarios = await conn.query('select * from usuario order by creadoEn');
+		const conn: Pool = await connect();
+		const usuarios: any = await conn.query('select * from usuario order by creadoEn desc');
+		conn.end();
 		return res.send(usuarios[0]);
 	} catch (error) {
 		return res.status(400).json({
@@ -98,15 +128,15 @@ export async function updateUsuario(req: Request, res: Response) {
 		const conn = await connect();
 		const usuario: Usuario = req.body;
 
-		delete usuario.uuid, usuario.generarCredenciales;
+		delete usuario.uuid;
 		// checking username
 		const findUsername = await conn.query('select username from usuario where username = ?', [usuario.username]);
 		if (findUsername[0].length) {
 			return res.status(400).json({
-				message: 'El nombre de usuario ya esta en uso.',
+				message: 'El username ya esta en uso, porfavor ingrese otro valido o active la opcion de generar automaticamente.',
 			});
 		} else {
-			delete usuario.generarCredenciales;
+			// delete usuario.generarCredenciales;
 			// adding usuario
 			await conn.query('INSERT INTO usuario SET ?', [usuario]);
 			return res.status(201).json({
@@ -127,7 +157,6 @@ export async function updateUsuario(req: Request, res: Response) {
 	}
 
 }
-
 
 export async function deleteUsuario(req: Request, res: Response) {
 	const id = req.params.id;

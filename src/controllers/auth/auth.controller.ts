@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
-import { connect } from './../database';
+import { connect } from '../../database';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken'
 import { v4 as uuid } from 'uuid';
 
 
-import config from './../config/config'
-import { Usuario } from "./../models/usuario.interface";
-import { Credenciales } from "./../models/credenciales.interface";
+import config from '../../config/config'
+import { Usuario } from "../../models/usuario.interface";
+import { Credenciales } from "../../models/credenciales.interface";
 
 
 function createToken(usuario: Usuario) {
@@ -55,7 +55,7 @@ export async function createUsuario(req: Request, res: Response) {
 }
 
 export async function login(req: Request, res: Response, next: any) {
-	// res.send('hola');
+
 
 	try {
 		const conn = await connect();
@@ -73,15 +73,15 @@ export async function login(req: Request, res: Response, next: any) {
 
 		if (!findUsername[0].length) {
 			return res.status(400).json({
-				message: 'El usuario no existe.',
+				message: `El usuario \'${credenciales.username}\' no existe.`,
 			});
 		}
 
 		// comparing contrasenha
 		const isMatch = await bcrypt.compare(credenciales.contrasenha, usuario[0].contrasenha as string);
+
 		if (isMatch) {
-			delete usuario[0].contrasenha;
-			delete usuario[0].generarCredenciales;
+			delete usuario[0].contrasenha, usuario[0].autoContrasenha, usuario[0].autoUsuario;
 			return res.status(200).json({
 				message: 'Inicio de sesion correcto.',
 				token: createToken(usuario[0]),

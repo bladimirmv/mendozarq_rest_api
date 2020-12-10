@@ -6,8 +6,8 @@ import passport from 'passport';
 import passportMiddleware from './middlewares/passport';
 // Routes
 import IndexRoutes from './routes/index.routes';
-import UsuarioRoutes from './routes/usuario.routes';
-import AuthRoutes from './routes/auth.routes';
+import UsuarioRoutes from './routes/auth/usuario.routes';
+import AuthRoutes from './routes/auth/auth.routes';
 import e = require('cors');
 
 

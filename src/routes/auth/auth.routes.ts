@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import passport from 'passport';
-import { checkRole } from '../middlewares/roles';
+import { checkRole } from '../../middlewares/roles';
 
-import { createUsuario, login } from './../controllers/auth.controller';
+import { createUsuario, login } from './../../controllers/auth/auth.controller';
 
 const router = Router();
 

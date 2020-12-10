@@ -2,8 +2,8 @@ import { Router } from 'express';
 // librarys
 import passport from 'passport';
 // controllers
-import { addUsuario, getUsuario, getAllUsuarios, updateUsuario, deleteUsuario } from './../controllers/usuario.controller';
-import { checkRole } from './../middlewares/roles';
+import { addUsuario, getUsuario, getAllUsuarios, updateUsuario, deleteUsuario } from '../../controllers/auth/usuario.controller';
+import { checkRole } from '../../middlewares/roles';
 
 const router = Router();
 
@@ -13,7 +13,7 @@ router.route('/')
 		getAllUsuarios
 	)
 	.post(
-		// passport.authenticate('jwt', { session: false }),
+		[passport.authenticate('jwt', { session: false }), checkRole(['administrador'])],
 		addUsuario
 	);
 

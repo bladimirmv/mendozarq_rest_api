@@ -1,4 +1,5 @@
 import { Strategy, ExtractJwt, StrategyOptions } from 'passport-jwt';
+import { Pool } from 'mysql2/promise';
 
 import config from './../config/config';
 import { connect } from './../database';
@@ -12,9 +13,11 @@ const options: StrategyOptions = {
 
 export default new Strategy(options, async (payload, done) => {
 	try {
-		const conn = await connect();
-		const usuario = await conn.query('select * from usuario where uuid = ?', [payload.uuid]);
+		const conn: Pool = await connect();
+		const usuario: any = await conn.query('select * from usuario where uuid = ?', [payload.uuid]);
+
 		if (usuario[0].length) {
+			conn.end();
 			return done(null, usuario[0]);
 		}
 		return done(null, false);

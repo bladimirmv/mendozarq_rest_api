@@ -12,5 +12,6 @@ export interface Usuario {
 	contrasenha?: string;
 	rol?: Roles;
 	activo?: boolean;
-	generarCredenciales?: boolean;
+	autoUsuario?: boolean;
+	autoContrasenha?: boolean;
 }
