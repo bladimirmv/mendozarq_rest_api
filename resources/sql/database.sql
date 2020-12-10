@@ -154,6 +154,56 @@ CREATE TABLE servicioProyecto(
     FOREIGN KEY(idProyecto) REFERENCES proyecto(idProyecto)
 );
 
+CREATE TABLE participanteProyecto (
+    idParticipante varchar(100) PRIMARY KEY,
+    creadoEn timestamp  default current_timestamp not null,
+    idProyecto varchar(100) not null,
+    idPersonal varchar(100) not null,
+    FOREIGN KEY(idProyecto) REFERENCES proyecto(idProyecto),
+    FOREIGN KEY(idPersonal) REFERENCES personal(idPersonal)
+);
+
+CREATE TABLE visitaProyecto(
+    idVisita varchar(100) PRIMARY KEY,
+    creadoEn timestamp  default current_timestamp not null,
+    nombre varchar(50) not null,
+    descripcion varchar(200) not null,
+    numeroVisita int not null,
+    fecha TIMESTAMP default CURRENT_TIMESTAMP not null,
+    idProyecto varchar(100) not null,
+    FOREIGN KEY(idProyecto) REFERENCES proyecto(idProyecto)
+);
+
+CREATE TABLE participanteVisitaProyecto (
+    idParticipanteVisitaProyecto varchar(100) PRIMARY KEY,
+    creadoEn timestamp  default current_timestamp not null,
+    idVisita varchar(100) not null,
+    idParticipante varchar(100) not null,
+    FOREIGN KEY (idVisita) REFERENCES visitaProyecto(idVisita),
+    FOREIGN KEY (idParticipante) REFERENCES participanteProyecto(idParticipante)
+);
+
+CREATE TABLE servicioVisitaProyecto(
+    idServicioVisitaProyecto varchar(100) PRIMARY KEY,
+    creadoEn timestamp  default current_timestamp not null,
+    idVisita varchar(100) not null,
+    idServicio varchar(100) not null,
+    FOREIGN KEY (idVisita) REFERENCES visitaProyecto(idVisita),
+    FOREIGN KEY (idServicio) REFERENCES servicioProyecto(idServicio)
+);
+
+CREATE TABLE observacionServicio (
+    idObsServicio varchar(100) PRIMARY KEY,
+    creadoEn timestamp  default current_timestamp not null,
+    estado varchar(50) not null,
+    descripcion varchar(150) not null,
+    idVisita varchar(100) not null,
+    idServicio varchar(100) not null,
+    FOREIGN KEY (idVisita) REFERENCES visitaProyecto(idVisita),
+    FOREIGN key (idServicio) REFERENCES servicioProyecto(idServicio)
+);
+
+
 -- //////////////////////////////////////////////////////////////////////////////////
 --ESTA AUN NO USAR!
 CREATE TABLE documentoProyecto (
@@ -167,16 +217,6 @@ CREATE TABLE documentoProyecto (
     FOREIGN KEY (idPersonal) REFERENCES personal(idPersonal)
 );
 
-CREATE TABLE visitaProyecto(
-    idVisita varchar(100) PRIMARY KEY,
-    creadoEn timestamp  default current_timestamp not null,
-    nombre varchar(50) not null,
-    descripcion varchar(200) not null
-    numeroVisita int not null,
-    fecha TIMESTAMP
-);
-
-
 
 
 -- algunas querys que serviran mas adelante
@@ -185,3 +225,10 @@ SELECT c.nombre
 FROM categoriaasignadaproyecto as catA
 INNER JOIN categoriaproyecto as c ON c.idCategoriaProyecto = catA.idCategoria
 WHERE catA.idCategoria = c.idCategoriaProyecto AND catA.idProyecto = ?;
+
+
+SELECT obss.creadoEn, obss.estado, obss.descripcion, vst.nombre AS "visita", svc.nombre AS "servicio" 
+FROM observacionservicio as obss
+INNER JOIN servicioproyecto AS svc ON obss.idServicio = svc.idServicio
+INNER JOIN visitaproyecto AS vst ON vst.idVisita = obss.idVisita
+WHERE obss.idVisita ="vviissiittaa1";
