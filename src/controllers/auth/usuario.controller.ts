@@ -124,6 +124,7 @@ export async function getAllUsuarios(req: Request, res: Response) {
 
 export async function updateUsuario(req: Request, res: Response) {
 	try {
+		const uuid = req.params.id;
 		const conn: Pool = await connect();
 		let usuario: Usuario = req.body;
 		let { contrasenha, username } = usuario;
@@ -153,10 +154,11 @@ export async function updateUsuario(req: Request, res: Response) {
 		}
 
 		// checking username
-		const findUsername: any = await conn.query('select username from usuario where username = ?', [usuario.username]);
+		const findUsername: any = await conn.query('select * from usuario where username = ?', [usuario.username]);
+		const usr: Usuario = findUsername[0][0];
 
 
-		if (findUsername[0].length) {
+		if (findUsername[0].length && usr.uuid !== uuid) {
 			conn.end();
 			return res.status(400).json({
 				message: `El username \'${usuario.username}\' ya esta en uso, porfavor ingrese otro valido o active la opcion de generar automaticamente.`,
@@ -166,8 +168,11 @@ export async function updateUsuario(req: Request, res: Response) {
 
 			delete usuario.autoUsuario
 			delete usuario.autoContrasenha;
+
 			// updating usuario
-			await conn.query('update usuario set ? where id = ?', [usuario, uuid]);
+			console.log('esty insertando esto: ', usuario);
+
+			await conn.query('update usuario set ? where uuid = ?', [usuario, uuid]);
 			conn.end();
 			// adding contrasenha and usuario
 			usuario.username = username;
