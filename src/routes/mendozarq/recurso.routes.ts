@@ -2,8 +2,8 @@ import { Router } from 'express';
 // librarys
 import passport from 'passport';
 // controllers
-import { addRecurso, getRecurso, getAllRecursos, updateRecurso, deleteRecurso } from './../controllers/recurso.controller';
-import { checkRole } from './../middlewares/roles';
+import { addRecurso, getRecurso, getAllRecursos, updateRecurso, deleteRecurso } from '../../controllers/recurso.controller';
+import { checkRole } from '../../middlewares/roles';
 
 const router = Router();
 

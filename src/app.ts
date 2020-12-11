@@ -8,7 +8,8 @@ import cors from 'cors';
 import IndexRoutes from './routes/index.routes';
 import UsuarioRoutes from './routes/auth/usuario.routes';
 import AuthRoutes from './routes/auth/auth.routes';
-
+import categoriaRecurseRoutes from './routes/mendozarq/categoria.recurso.routes'
+import recurso from './routes/mendozarq/recurso.routes'
 
 
 
@@ -44,7 +45,8 @@ export class App {
 		this.app.use(IndexRoutes);
 		this.app.use('/api/usuario', UsuarioRoutes);
 		this.app.use('/api/auth', AuthRoutes);
-
+		this.app.use('/api/categoriarecurso', categoriaRecurseRoutes);
+		this.app.use('/api/recurso', recurso);
 	}
 	// listen on port
 	async listen() {

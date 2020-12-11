@@ -72,7 +72,9 @@ CREATE TABLE actividad (
 CREATE TABLE categoriaRecurso (
     idCategoriaRecurso varchar(100) PRIMARY KEY,
     creadoEn timestamp  default current_timestamp not null,
-    nombre varchar(100) NOT NULL
+    nombre varchar(50) NOT NULL,
+    descripcion varchar(100) not null,
+    color varchar(50) not null
 );
 
 CREATE TABLE recurso (
@@ -82,6 +84,7 @@ CREATE TABLE recurso (
     filerefImg varchar (200) not null,
     urlImg varchar(200) not null,
     estado BOOLEAN not null,
+    descripcion varchar(100) not null,
     idCategoriaRecurso varchar (100) not null,
     FOREIGN KEY (idCategoriaRecurso) REFERENCES categoriaRecurso(idCategoriaRecurso)
 );
@@ -220,6 +223,13 @@ CREATE TABLE documentoProyecto (
 
 
 -- algunas querys que serviran mas adelante
+-- alterar la tabla categoriaRecurso
+ALTER TABLE categoriarecurso
+ADD COLUMN descripcion varchar(100) NOT NULL,
+ADD COLUMN color VARCHAR(50) NOT NULL
+--asd
+ALTER TABLE recurso
+ADD COLUMN descripcion varchar(100) not null;
 -- Recuperar categorias asignadas a un proyecto especifico
 SELECT c.nombre
 FROM categoriaasignadaproyecto as catA
