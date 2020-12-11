@@ -1,33 +1,32 @@
 import { Router } from 'express';
-// librarys
-import passport from 'passport';
+
 // controllers
 import { addRecurso, getRecurso, getAllRecursos, updateRecurso, deleteRecurso } from '../../controllers/recurso.controller';
 import { checkRole } from '../../middlewares/roles';
-
+import { checkJwt } from './../../middlewares/jwt';
 const router = Router();
 
 router.route('/')
 	.get(
-		// [passport.authenticate('jwt', { session: false })],
+		[checkJwt, checkRole(['administrador'])],
 		getAllRecursos
 	)
 	.post(
-		// passport.authenticate('jwt', { session: false }),
+		[checkJwt, checkRole(['administrador'])],
 		addRecurso
 	);
 
 router.route('/:id')
 	.get(
-		// passport.authenticate('jwt', { session: false }),
+		[checkJwt, checkRole(['administrador'])],
 		getRecurso
 	)
 	.put(
-		// passport.authenticate('jwt', { session: false }),
+		[checkJwt, checkRole(['administrador'])],
 		updateRecurso
 	)
 	.delete(
-		// passport.authenticate('jwt', { session: false }),
+		[checkJwt, checkRole(['administrador'])],
 		deleteRecurso
 	);
 
