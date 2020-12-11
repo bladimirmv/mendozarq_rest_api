@@ -148,7 +148,6 @@ export async function updateUsuario(req: Request, res: Response) {
 		// encrypting contrasenha
 		if (contrasenha) {
 			const salt = await bcrypt.genSalt(10);
-			bcrypt.
 			const hash = await bcrypt.hash(usuario.contrasenha, salt);
 			usuario.contrasenha = hash;
 		}
