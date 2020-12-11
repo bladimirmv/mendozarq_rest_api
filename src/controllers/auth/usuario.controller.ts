@@ -124,36 +124,75 @@ export async function getAllUsuarios(req: Request, res: Response) {
 
 export async function updateUsuario(req: Request, res: Response) {
 	try {
-		const uuid = req.params.id;
-		const conn = await connect();
-		const usuario: Usuario = req.body;
+		const conn: Pool = await connect();
+		let usuario: Usuario = req.body;
+		let { contrasenha, username } = usuario;
 
-		delete usuario.uuid;
-		// checking username
-		const findUsername = await conn.query('select username from usuario where username = ?', [usuario.username]);
-		if (findUsername[0].length) {
+
+		if (usuario.autoUsuario && usuario.nombre) {
+			usuario = generateUsuario(usuario);
+			username = usuario.username;
+		}
+		if (usuario.autoContrasenha) {
+			usuario = generateContrasenha(usuario);
+			contrasenha = usuario.contrasenha;
+		}
+
+		if (!usuario.username || !usuario.rol || !usuario.nombre) {
 			return res.status(400).json({
-				message: 'El username ya esta en uso, porfavor ingrese otro valido o active la opcion de generar automaticamente.',
-			});
-		} else {
-			// delete usuario.generarCredenciales;
-			// adding usuario
-			await conn.query('INSERT INTO usuario SET ?', [usuario]);
-			return res.status(201).json({
-				message: 'Usuario creado correctamente.',
+				message: 'Por favor ingrese los campos requeridos.',
+				error: '400',
 				body: usuario
 			});
+		}
+		// encrypting contrasenha
+		if (contrasenha) {
+			const salt = await bcrypt.genSalt(10);
+			bcrypt.
+			const hash = await bcrypt.hash(usuario.contrasenha, salt);
+			usuario.contrasenha = hash;
+		}
 
-			await conn.query('update usuario set ? where id = ?', [usuario, uuid]);
-			return res.json({
-				message: 'post updated'
+		// checking username
+		const findUsername: any = await conn.query('select username from usuario where username = ?', [usuario.username]);
+
+
+		if (findUsername[0].length) {
+			conn.end();
+			return res.status(400).json({
+				message: `El username \'${usuario.username}\' ya esta en uso, porfavor ingrese otro valido o active la opcion de generar automaticamente.`,
+				error: 'Bad request 400'
 			});
+		} else {
 
+			delete usuario.autoUsuario
+			delete usuario.autoContrasenha;
+			// updating usuario
+			await conn.query('update usuario set ? where id = ?', [usuario, uuid]);
+			conn.end();
+			// adding contrasenha and usuario
+			usuario.username = username;
+			usuario.contrasenha = contrasenha;
+			// response
+			return res.status(201).send(usuario);
 		}
 
 
-	} catch (error) {
 
+
+
+
+
+		// await conn.query('update usuario set ? where id = ?', [usuario, uuid]);
+		// return res.json({
+		// 	message: 'post updated'
+		// });
+
+	} catch (error) {
+		return res.status(400).json({
+			message: 'Ocurrio un error.',
+			error
+		});
 	}
 
 }

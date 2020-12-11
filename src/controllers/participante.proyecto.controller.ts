@@ -10,17 +10,17 @@ export async function addParticipanteProyecto(req: Request, res: Response) {
 	try {
 		const conn = await connect();
 		const participanteProyecto: ParticipanteProyecto = req.body;
-		
+
 		// generate uuid
 		participanteProyecto.idParticipante = uuid();
-        
-        await conn.query('INSERT INTO participanteProyecto SET ?', [participanteProyecto]);
-			return res.status(201).json({
-				message: 'Observacion a servicio registrada correctamente.',
-				body: participanteProyecto
-            });
-            
-            
+
+		await conn.query('INSERT INTO participanteProyecto SET ?', [participanteProyecto]);
+		return res.status(201).json({
+			message: 'Observacion a servicio registrada correctamente.',
+			body: participanteProyecto
+		});
+
+
 	} catch (error) {
 		return res.status(400).json({
 			message: 'Ocurrio un error.',
@@ -29,7 +29,7 @@ export async function addParticipanteProyecto(req: Request, res: Response) {
 	}
 }
 // ===================================================================================================
-    //ESTA PARTE ESTA PENDIENTE
+//ESTA PARTE ESTA PENDIENTE
 export async function getParticipanteProyecto(req: Request, res: Response) {
 	try {
 		const idEntrante = req.params.id;
@@ -63,15 +63,15 @@ export async function updateParticipanteProyecto(req: Request, res: Response) {
 
 		delete participanteProyecto.idParticipante
 		// checking username
-		
-		
-			// adding usuario
-			await conn.query('UPDATE participanteProyecto SET ? WHERE idParticipante = ?', [participanteProyecto, participanteProyecto.idParticipante]);
-			return res.status(201).json({
-				message: 'Observacion de servicio modificada correctamente.',
-				body: participanteProyecto
-			});
-		
+
+
+		// adding usuario
+		await conn.query('UPDATE participanteProyecto SET ? WHERE idParticipante = ?', [participanteProyecto, participanteProyecto.idParticipante]);
+		return res.status(201).json({
+			message: 'Observacion de servicio modificada correctamente.',
+			body: participanteProyecto
+		});
+
 
 		// await conn.query('update usuario set ? where id = ?', [usuario, uuid]);
 		// return res.json({
@@ -103,5 +103,5 @@ export async function deleteParticipanteProyecto(req: Request, res: Response) {
 			error
 		});
 	}
-	
+
 }

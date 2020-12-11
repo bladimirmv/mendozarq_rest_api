@@ -23,11 +23,11 @@ router.route('/:id')
 		getUsuario
 	)
 	.put(
-		// passport.authenticate('jwt', { session: false }),
+		[checkJwt, checkRole(['administrador'])],
 		updateUsuario
 	)
 	.delete(
-		// passport.authenticate('jwt', { session: false }),
+		[checkJwt, checkRole(['administrador'])],
 		deleteUsuario
 	);
 
