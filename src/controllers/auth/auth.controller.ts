@@ -1,3 +1,4 @@
+import { FieldPacket, Pool, RowDataPacket } from 'mysql2/promise';
 import { Request, Response } from "express";
 import { connect } from '../../database';
 import bcrypt from 'bcrypt';
@@ -56,40 +57,38 @@ export async function createUsuario(req: Request, res: Response) {
 
 export async function login(req: Request, res: Response, next: any) {
 
-
 	try {
-		const conn = await connect();
+		// creating pool
+		const conn: Pool = await connect();
 		const credenciales: Credenciales = req.body;
+		// checking credenciales
 		if (!credenciales.contrasenha || !credenciales.username) {
 			return res.status(400).json({
 				message: 'Por favor ingrese su nombre de usuario y contrasenha.',
 				data: credenciales
 			});
 		}
-
-
-		let findUsername = await conn.query('select * from usuario where username = ?', [credenciales.username]);
-		const usuario: Usuario[] = findUsername[0] as Usuario[];
-
-		if (!findUsername[0].length) {
+		// findinf usuario
+		const [[findUsername]]: [any, FieldPacket[]] = await conn.query('select * from usuario where username = ?', [credenciales.username]);
+		const usuario: Usuario = findUsername as Usuario;
+		// checking exist usuario
+		if (!usuario) {
 			return res.status(400).json({
 				message: `El usuario \'${credenciales.username}\' no existe.`,
 			});
 		}
-
 		// comparing contrasenha
-		const isMatch = await bcrypt.compare(credenciales.contrasenha, usuario[0].contrasenha as string);
-
+		const isMatch = await bcrypt.compare(credenciales.contrasenha, usuario.contrasenha as string);
+		// cheking match
 		if (isMatch) {
-			const { nombre, apellidoPaterno, apellidoMaterno, rol }: Usuario = usuario[0];
-
+			const { nombre, apellidoPaterno, apellidoMaterno, rol }: Usuario = usuario;
 			return res.status(200).json({
 				message: 'Inicio de sesion correcto.',
-				token: createToken(usuario[0]),
+				token: createToken(usuario),
 				body: { nombre, apellidoPaterno, apellidoMaterno, rol }
 			});
 		}
-
+		// return error
 		return res.status(400).json({
 			message: "El correo o la contraseña son incorrectas"
 		});

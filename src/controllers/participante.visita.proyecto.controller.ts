@@ -10,17 +10,17 @@ export async function addParticipanteVisitaProyecto(req: Request, res: Response)
 	try {
 		const conn = await connect();
 		const participanteVisitaProyecto: ParticipanteVisitaProyecto = req.body;
-		
+
 		// generate uuid
 		participanteVisitaProyecto.idParticipanteVisitaProyecto = uuid();
-        
-        await conn.query('INSERT INTO participanteVisitaProyecto SET ?', [participanteVisitaProyecto]);
-			return res.status(201).json({
-				message: 'Observacion a servicio registrada correctamente.',
-				body: participanteVisitaProyecto
-            });
-            
-            
+
+		await conn.query('INSERT INTO participanteVisitaProyecto SET ?', [participanteVisitaProyecto]);
+		return res.status(201).json({
+			message: 'Observacion a servicio registrada correctamente.',
+			body: participanteVisitaProyecto
+		});
+
+
 	} catch (error) {
 		return res.status(400).json({
 			message: 'Ocurrio un error.',
@@ -63,15 +63,15 @@ export async function updateParticipanteVisitaProyecto(req: Request, res: Respon
 
 		delete participanteVisitaProyecto.idParticipanteVisitaProyecto
 		// checking username
-		
-		
-			// adding usuario
-			await conn.query('UPDATE participanteVisitaProyecto SET ? WHERE idParticipanteVisitaProyecto = ?', [participanteVisitaProyecto, participanteVisitaProyecto.idParticipanteVisitaProyecto]);
-			return res.status(201).json({
-				message: 'Observacion de servicio modificada correctamente.',
-				body: participanteVisitaProyecto
-			});
-		
+
+
+		// adding usuario
+		await conn.query('UPDATE participanteVisitaProyecto SET ? WHERE idParticipanteVisitaProyecto = ?', [participanteVisitaProyecto, participanteVisitaProyecto.idParticipanteVisitaProyecto]);
+		return res.status(201).json({
+			message: 'Observacion de servicio modificada correctamente.',
+			body: participanteVisitaProyecto
+		});
+
 
 		// await conn.query('update usuario set ? where id = ?', [usuario, uuid]);
 		// return res.json({
@@ -103,5 +103,5 @@ export async function deleteParticipanteVisitaProyecto(req: Request, res: Respon
 			error
 		});
 	}
-	
+
 }

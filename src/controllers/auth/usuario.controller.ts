@@ -4,23 +4,20 @@ import bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
 import { Pool } from 'mysql2/promise';
 
-
-
 import { connect } from '../../database';
 import { Usuario } from '../../models/usuario.interface';
-import { Credenciales } from '../../models/credenciales.interface';
-
 
 // ===================================================================================================
 function generateUsuario(usuario: Usuario): Usuario {
 	usuario.username = `${generator.generate({ length: 2, numbers: true })}_${usuario.nombre?.replace(/\s/g, '.')}${generator.generate({ length: 3, numbers: true })}`
 	return usuario;
 }
+// ===================================================================================================
 function generateContrasenha(usuario: Usuario): Usuario {
 	usuario.contrasenha = generator.generate({ length: 10, numbers: true });
 	return usuario;
 }
-
+// ===================================================================================================
 export async function addUsuario(req: Request, res: Response) {
 
 	try {
@@ -121,7 +118,7 @@ export async function getAllUsuarios(req: Request, res: Response) {
 		});
 	}
 }
-
+// ===================================================================================================
 export async function updateUsuario(req: Request, res: Response) {
 	try {
 		const uuid = req.params.id;
@@ -200,7 +197,7 @@ export async function updateUsuario(req: Request, res: Response) {
 	}
 
 }
-
+// ===================================================================================================
 export async function deleteUsuario(req: Request, res: Response) {
 	const id = req.params.id;
 	const conn = await connect();
@@ -210,3 +207,4 @@ export async function deleteUsuario(req: Request, res: Response) {
 		message: 'post deleted'
 	});
 }
+// ===================================================================================================
