@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-// controllers
+// *controllers
 import { addUsuario, getUsuario, getAllUsuarios, updateUsuario, deleteUsuario } from '../../controllers/auth/usuario.controller';
 import { checkJwt } from './../../middlewares/jwt';
 import { checkRole } from '../../middlewares/roles';

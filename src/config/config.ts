@@ -10,8 +10,7 @@ const dbOptions: PoolOptions = {
 	user: 'root',
 	password: '',
 	database: 'mendozarq',
-	connectionLimit: 10,
-
+	connectionLimit: 10
 };
 
 export default {

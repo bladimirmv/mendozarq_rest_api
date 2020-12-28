@@ -3,64 +3,28 @@ import { Request, Response } from "express";
 import { connect } from '../../database';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken'
-import { v4 as uuid } from 'uuid';
-
 
 import config from '../../config/config'
 import { Usuario } from "../../models/usuario.interface";
 import { Credenciales } from "../../models/credenciales.interface";
 
-
+// ===============================================================================
 function createToken(usuario: Usuario) {
 	return jwt.sign({ uuid: usuario.uuid, username: usuario.username, rol: usuario.rol }, config.jwtSecret, {
-		// expiresIn: 86400
-		expiresIn: '12h'
+		expiresIn: '8h'
 	});
 }
-
+// ===============================================================================
 export async function createUsuario(req: Request, res: Response) {
-	try {
-		const conn = await connect();
-		const usuario: Usuario = req.body;
-		if (!usuario.contrasenha || !usuario.username || !usuario.rol) {
-			return res.status(400).json({
-				message: 'Por favor ingrese los campos requeridos.',
-				data: usuario
-			});
-		}
-		// encrypting contrasenha
-		const salt = await bcrypt.genSalt(10);
-		const hash = await bcrypt.hash(usuario.contrasenha, salt);
-		usuario.contrasenha = hash;
-		// generate uuid
-		usuario.uuid = uuid();
-		// checking username
-		const findUsername = await conn.query('select username from usuario where username = ?', [usuario.username]);
-
-		if (findUsername[0].length) {
-			return res.status(400).json({
-				message: 'El nombre de usuario ya esta en uso.',
-			});
-		} else {
-			await conn.query('INSERT INTO usuario SET ?', [usuario]);
-			return res.status(201).json({
-				message: 'Usuario creado correctamente.',
-				data: usuario
-			});
-		}
-	} catch (error) {
-		return res.status(400).json({
-			message: error
-		});
-	}
 }
-
+// ===============================================================================
 export async function login(req: Request, res: Response, next: any) {
 	try {
-		// creating pool
+		// *creating pool
 		const conn: Pool = await connect();
 		const credenciales: Credenciales = req.body;
-		// checking credenciales
+
+		// *checking credenciales
 		if (!credenciales.contrasenha || !credenciales.username) {
 			return res.status(400).json({
 				message: 'Por favor ingrese su nombre de usuario y contrasenha. ❌',
@@ -68,24 +32,28 @@ export async function login(req: Request, res: Response, next: any) {
 			});
 		}
 
-		// findinf usuario
-		const [[findUsername]]: [any, FieldPacket[]] = await conn.query('select * from usuario where username = ?', [credenciales.username]);
+		// *finding usuario
+		const [[findUsername]]: [any[], FieldPacket[]] = await conn.query('select * from usuario where username = ?', [credenciales.username]);
+		conn.end();
 		const usuario: Usuario = findUsername as Usuario;
-		// checking if exist usuario
+
+		// *checking if exist usuario
 		if (!usuario) {
 			return res.status(400).json({
 				message: `El usuario \'${credenciales.username}\' no existe. 🙁`,
 			});
 		}
-		// checking if usuario is active
+
+		// *checking if usuario is active
 		if (!usuario.activo) {
 			return res.status(400).json({
 				message: `La cuenta \'${credenciales.username}\' esta suspendida. 🙁`,
 			});
 		}
-		// comparing contrasenha
+
+		// *comparing contrasenha
 		const isMatch = await bcrypt.compare(credenciales.contrasenha, usuario.contrasenha as string);
-		// cheking match
+		// *cheking match
 		if (isMatch) {
 			const { nombre, apellidoPaterno, apellidoMaterno, rol }: Usuario = usuario;
 			return res.status(200).json({
@@ -94,13 +62,13 @@ export async function login(req: Request, res: Response, next: any) {
 				body: { nombre, apellidoPaterno, apellidoMaterno, rol }
 			});
 		}
-		// return error
+		// *return error
 		return res.status(400).json({
 			message: "El correo o la contraseña son incorrectas. ❌"
 		});
 
 	} catch (error) {
-		console.log('Ocurrio un error', error);
+		console.log('❌Ocurrio un error:', error);
 		return res.status(400).json({
 			message: error
 		});
