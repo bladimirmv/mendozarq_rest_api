@@ -5,6 +5,7 @@ import { connect } from './../database';
 import { Actividad } from '../models/actividad.interface';
 import { Credenciales } from './../models/credenciales.interface';
 
+
 // ===================================================================================================
 export async function addActividad(req: Request, res: Response) {
 	try {
@@ -73,14 +74,14 @@ export async function updateActividad(req: Request, res: Response) {
 		const actividad: Actividad = req.body;
 
 		delete actividad.idActividad
-	    
-			// adding usuario
-			await conn.query('UPDATE actividad SET ? WHERE idActividad = ?', [actividad, actividad.idActividad]);
-			return res.status(201).json({
-				message: 'Actividad de cronograma modificada correctamente.',
-				body: actividad
-			});
-		
+
+		// adding usuario
+		await conn.query('UPDATE actividad SET ? WHERE idActividad = ?', [actividad, actividad.idActividad]);
+		return res.status(201).json({
+			message: 'Actividad de cronograma modificada correctamente.',
+			body: actividad
+		});
+
 
 		// await conn.query('update usuario set ? where id = ?', [usuario, uuid]);
 		// return res.json({

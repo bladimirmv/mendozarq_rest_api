@@ -56,7 +56,6 @@ export async function createUsuario(req: Request, res: Response) {
 }
 
 export async function login(req: Request, res: Response, next: any) {
-
 	try {
 		// creating pool
 		const conn: Pool = await connect();
@@ -64,17 +63,24 @@ export async function login(req: Request, res: Response, next: any) {
 		// checking credenciales
 		if (!credenciales.contrasenha || !credenciales.username) {
 			return res.status(400).json({
-				message: 'Por favor ingrese su nombre de usuario y contrasenha.',
+				message: 'Por favor ingrese su nombre de usuario y contrasenha. ❌',
 				data: credenciales
 			});
 		}
+
 		// findinf usuario
 		const [[findUsername]]: [any, FieldPacket[]] = await conn.query('select * from usuario where username = ?', [credenciales.username]);
 		const usuario: Usuario = findUsername as Usuario;
-		// checking exist usuario
+		// checking if exist usuario
 		if (!usuario) {
 			return res.status(400).json({
-				message: `El usuario \'${credenciales.username}\' no existe.`,
+				message: `El usuario \'${credenciales.username}\' no existe. 🙁`,
+			});
+		}
+		// checking if usuario is active
+		if (!usuario.activo) {
+			return res.status(400).json({
+				message: `La cuenta \'${credenciales.username}\' esta suspendida. 🙁`,
 			});
 		}
 		// comparing contrasenha
@@ -83,17 +89,18 @@ export async function login(req: Request, res: Response, next: any) {
 		if (isMatch) {
 			const { nombre, apellidoPaterno, apellidoMaterno, rol }: Usuario = usuario;
 			return res.status(200).json({
-				message: 'Inicio de sesion correcto.',
+				message: `Bienvenido ${nombre}! 👋`,
 				token: createToken(usuario),
 				body: { nombre, apellidoPaterno, apellidoMaterno, rol }
 			});
 		}
 		// return error
 		return res.status(400).json({
-			message: "El correo o la contraseña son incorrectas"
+			message: "El correo o la contraseña son incorrectas. ❌"
 		});
 
 	} catch (error) {
+		console.log('Ocurrio un error', error);
 		return res.status(400).json({
 			message: error
 		});
