@@ -1,7 +1,8 @@
 import { Response, Request } from 'express';
 import { v4 as uuid } from 'uuid';
 
-import { connect } from './../database';
+import { connect } from './../classes/database';
+
 import { DetallePresupuesto } from './../models/detalle.presupuesto.interface';
 
 // ===================================================================================================
@@ -72,14 +73,14 @@ export async function updateDetallePresupuestoDeObra(req: Request, res: Response
 		const detallePresupuesto: DetallePresupuesto = req.body;
 
 		// delete recurso.idRecurso porque estamos borrando estos id's?
-	    
-			// adding usuario
-			await conn.query('UPDATE detallePresupuesto SET ? WHERE idDetallePresupuesto = ?', [detallePresupuesto, detallePresupuesto.idPresupuesto]);
-			return res.status(201).json({
-				message: 'Detalle de presupuesto de obra modificado correctamente.',
-				body: detallePresupuesto
-			});
-		
+
+		// adding usuario
+		await conn.query('UPDATE detallePresupuesto SET ? WHERE idDetallePresupuesto = ?', [detallePresupuesto, detallePresupuesto.idPresupuesto]);
+		return res.status(201).json({
+			message: 'Detalle de presupuesto de obra modificado correctamente.',
+			body: detallePresupuesto
+		});
+
 
 		// await conn.query('update usuario set ? where id = ?', [usuario, uuid]);
 		// return res.json({

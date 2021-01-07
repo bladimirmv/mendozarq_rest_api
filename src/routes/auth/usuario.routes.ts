@@ -9,7 +9,7 @@ const router = Router();
 
 router.route('/')
 	.get(
-		[checkJwt, checkRole(['administrador'])],
+		// [checkJwt, checkRole(['administrador'])],
 		getAllUsuarios
 	)
 	.post(

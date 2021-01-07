@@ -1,7 +1,7 @@
 import { Response, Request } from 'express';
 import { v4 as uuid } from 'uuid';
+import { connect } from './../classes/database';
 
-import { connect } from '../database';
 import { recursosActividad } from '../models/recursos.actividad.interface';
 import { Credenciales } from '../models/credenciales.interface';
 
@@ -10,17 +10,17 @@ export async function addRecursosActividad(req: Request, res: Response) {
 	try {
 		const conn = await connect();
 		const recursosActividad: recursosActividad = req.body;
-		
+
 		// generate uuid
 		recursosActividad.idRecursosActividad = uuid();
-        
-        await conn.query('INSERT INTO recursosActividad SET ?', [recursosActividad]);
-			return res.status(201).json({
-				message: 'Recurso asignado a la actividad correctamente.',
-				body: recursosActividad
-            });
-            
-            
+
+		await conn.query('INSERT INTO recursosActividad SET ?', [recursosActividad]);
+		return res.status(201).json({
+			message: 'Recurso asignado a la actividad correctamente.',
+			body: recursosActividad
+		});
+
+
 	} catch (error) {
 		return res.status(400).json({
 			message: 'Ocurrio un error.',
@@ -64,15 +64,15 @@ export async function updateRecursosActividad(req: Request, res: Response) {
 
 		delete usuario.idRecursosActividad
 		// checking username
-		
-		
-			// adding usuario
-			await conn.query('UPDATE recursosActividad SET ? WHERE idRecursosActividad = ?', [usuario, usuario.idRecursosActividad]);
-			return res.status(201).json({
-				message: 'Recurso de actividad modificado correctamente.',
-				body: usuario
-			});
-		
+
+
+		// adding usuario
+		await conn.query('UPDATE recursosActividad SET ? WHERE idRecursosActividad = ?', [usuario, usuario.idRecursosActividad]);
+		return res.status(201).json({
+			message: 'Recurso de actividad modificado correctamente.',
+			body: usuario
+		});
+
 
 		// await conn.query('update usuario set ? where id = ?', [usuario, uuid]);
 		// return res.json({
@@ -104,5 +104,5 @@ export async function deleteRecursosActividad(req: Request, res: Response) {
 			error
 		});
 	}
-	
+
 }

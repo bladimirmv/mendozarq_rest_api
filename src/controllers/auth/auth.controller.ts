@@ -1,6 +1,6 @@
 import { FieldPacket, Pool, RowDataPacket } from 'mysql2/promise';
 import { Request, Response } from "express";
-import { connect } from '../../database';
+import { connect } from '../../classes/database';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken'
 
@@ -13,9 +13,6 @@ function createToken(usuario: Usuario) {
 	return jwt.sign({ uuid: usuario.uuid, username: usuario.username, rol: usuario.rol }, config.jwtSecret, {
 		expiresIn: '8h'
 	});
-}
-// ===============================================================================
-export async function createUsuario(req: Request, res: Response) {
 }
 // ===============================================================================
 export async function login(req: Request, res: Response, next: any) {

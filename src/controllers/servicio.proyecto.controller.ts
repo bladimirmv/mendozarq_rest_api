@@ -1,7 +1,8 @@
 import { Response, Request } from 'express';
 import { v4 as uuid } from 'uuid';
 
-import { connect } from './../database';
+import { connect } from './../classes/database';
+
 import { ServicioProyecto } from '../models/servicio.proyecto.interface';
 import { Credenciales } from './../models/credenciales.interface';
 
@@ -73,14 +74,14 @@ export async function updateServicioProyecto(req: Request, res: Response) {
 		const servicio: ServicioProyecto = req.body;
 
 		// delete recurso.idRecurso porque estamos borrando estos id's?
-	    
-			// adding usuario
-			await conn.query('UPDATE servicioProyecto SET ? WHERE idServicio = ?', [servicio, servicio.idServicio]);
-			return res.status(201).json({
-				message: 'Servicio modificado correctamente.',
-				body: servicio
-			});
-		
+
+		// adding usuario
+		await conn.query('UPDATE servicioProyecto SET ? WHERE idServicio = ?', [servicio, servicio.idServicio]);
+		return res.status(201).json({
+			message: 'Servicio modificado correctamente.',
+			body: servicio
+		});
+
 
 		// await conn.query('update usuario set ? where id = ?', [usuario, uuid]);
 		// return res.json({

@@ -1,7 +1,8 @@
 import { Response, Request } from 'express';
 import { v4 as uuid } from 'uuid';
 
-import { connect } from '../database';
+import { connect } from './../classes/database';
+
 import { ParticipanteVisitaProyecto } from '../models/participantes.visita.proyecto.interface';
 import { Credenciales } from '../models/credenciales.interface';
 

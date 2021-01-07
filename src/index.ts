@@ -1,7 +1,7 @@
-import { App } from './app';
+import App from './classes/app';
 
 async function main() {
-	const app = new App(3000);
+	const app = App.instance;
 	await app.listen();
 }
 

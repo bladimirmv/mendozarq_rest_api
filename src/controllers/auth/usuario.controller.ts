@@ -4,8 +4,12 @@ import bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
 import { Pool, FieldPacket } from 'mysql2/promise';
 
-import { connect } from '../../database';
+import { connect } from '../../classes/database';
 import { Usuario } from '../../models/usuario.interface';
+
+import socketIO, { Socket } from 'socket.io';
+
+
 
 // ===================================================================================================
 function generateUsuario(usuario: Usuario): Usuario {
@@ -105,11 +109,24 @@ export async function getUsuario(req: Request, res: Response) {
 // ===================================================================================================
 export async function getAllUsuarios(req: Request, res: Response) {
 	try {
+
+		const io: socketIO.Server = req.app.get('WS:io');
+
+
+
 		// *creating pool
 		const conn: Pool = await connect();
+
 		// *geting all usuarios
 		const [usuarios]: [any[], FieldPacket[]] = await conn.query('select * from usuario order by creadoEn desc');
 		conn.end();
+
+		// *emiting data with socket.io
+		// client.broadcast.to('admin').emit('WS:proyectos', usuarios);
+		io.sockets.in('Adminn').emit('WS:proyectos', usuarios);
+
+
+		// *returning data
 		return res.status(200).send(usuarios);
 	} catch (error) {
 		console.log('❌Ocurrio un error:', error);

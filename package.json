@@ -41,6 +41,7 @@
     "@types/mysql2": "github:types/mysql2",
     "@types/passport": "^1.0.4",
     "@types/passport-jwt": "^3.0.3",
+    "@types/socket.io": "^2.1.12",
     "@types/uuid": "^8.3.0",
     "module-alias": "^2.2.2",
     "nodemon": "^2.0.4",

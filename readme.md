@@ -11,5 +11,7 @@ npm install
 ```
 
 <!-- "dev": "nodemon src/index.ts --exec ts-node" -->
+<!-- git tag -a v1.0.0 -m "comment"  then git push --tags-->
 
 "dev": "tsc-watch --onSuccess \"node dist/index.js\" "
+

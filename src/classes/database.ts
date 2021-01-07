@@ -1,6 +1,6 @@
 import { createPool, Pool } from 'mysql2/promise';
 
-import config from './config/config'
+import config from './../config/config'
 
 export async function connect(): Promise<any> {
 	try {

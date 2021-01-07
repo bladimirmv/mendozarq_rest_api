@@ -1,7 +1,8 @@
 import { Response, Request } from 'express';
 import { v4 as uuid } from 'uuid';
 
-import { connect } from './../database';
+import { connect } from './../classes/database';
+
 import { Cronograma } from '../models/cronograma.interface';
 import { Credenciales } from './../models/credenciales.interface';
 
@@ -73,14 +74,14 @@ export async function updateCronograma(req: Request, res: Response) {
 		const cronograma: Cronograma = req.body;
 
 		delete cronograma.idCronograma
-	    
-			// adding usuario
-			await conn.query('UPDATE cronograma SET ? WHERE idCronograma = ?', [cronograma, cronograma.idCronograma]);
-			return res.status(201).json({
-				message: 'Cronograma de proyecto modificado correctamente.',
-				body: cronograma
-			});
-		
+
+		// adding usuario
+		await conn.query('UPDATE cronograma SET ? WHERE idCronograma = ?', [cronograma, cronograma.idCronograma]);
+		return res.status(201).json({
+			message: 'Cronograma de proyecto modificado correctamente.',
+			body: cronograma
+		});
+
 
 		// await conn.query('update usuario set ? where id = ?', [usuario, uuid]);
 		// return res.json({

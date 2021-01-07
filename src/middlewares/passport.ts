@@ -2,7 +2,7 @@ import { Strategy, ExtractJwt, StrategyOptions } from 'passport-jwt';
 import { Pool } from 'mysql2/promise';
 
 import config from './../config/config';
-import { connect } from './../database';
+import { connect } from './../classes/database';
 
 
 

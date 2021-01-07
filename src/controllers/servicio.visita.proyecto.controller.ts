@@ -1,7 +1,8 @@
 import { Response, Request } from 'express';
 import { v4 as uuid } from 'uuid';
 
-import { connect } from '../database';
+import { connect } from './../classes/database';
+
 import { ServicioVisitaProyecto } from '../models/servicios.visita.proyecto.interface';
 import { Credenciales } from '../models/credenciales.interface';
 
@@ -10,17 +11,17 @@ export async function addServicioVisitaProyecto(req: Request, res: Response) {
 	try {
 		const conn = await connect();
 		const servicioVisitaProyecto: ServicioVisitaProyecto = req.body;
-		
+
 		// generate uuid
 		servicioVisitaProyecto.idServicioVisitaProyecto = uuid();
-        
-        await conn.query('INSERT INTO servicioVisitaProyecto SET ?', [servicioVisitaProyecto]);
-			return res.status(201).json({
-				message: 'Servicio en visita registrada correctamente.',
-				body: servicioVisitaProyecto
-            });
-            
-            
+
+		await conn.query('INSERT INTO servicioVisitaProyecto SET ?', [servicioVisitaProyecto]);
+		return res.status(201).json({
+			message: 'Servicio en visita registrada correctamente.',
+			body: servicioVisitaProyecto
+		});
+
+
 	} catch (error) {
 		return res.status(400).json({
 			message: 'Ocurrio un error.',
@@ -63,15 +64,15 @@ export async function updateServicioVisitaProyecto(req: Request, res: Response) 
 
 		delete servicioVisitaProyecto.idServicioVisitaProyecto
 		// checking username
-		
-		
-			// adding usuario
-			await conn.query('UPDATE servicioVisitaProyecto SET ? WHERE idServicioVisitaProyecto = ?', [servicioVisitaProyecto, servicioVisitaProyecto.idServicioVisitaProyecto]);
-			return res.status(201).json({
-				message: 'Servicio en visita modificado correctamente.',
-				body: servicioVisitaProyecto
-			});
-		
+
+
+		// adding usuario
+		await conn.query('UPDATE servicioVisitaProyecto SET ? WHERE idServicioVisitaProyecto = ?', [servicioVisitaProyecto, servicioVisitaProyecto.idServicioVisitaProyecto]);
+		return res.status(201).json({
+			message: 'Servicio en visita modificado correctamente.',
+			body: servicioVisitaProyecto
+		});
+
 
 		// await conn.query('update usuario set ? where id = ?', [usuario, uuid]);
 		// return res.json({
@@ -103,5 +104,5 @@ export async function deleteServicioVisitaProyecto(req: Request, res: Response) 
 			error
 		});
 	}
-	
+
 }

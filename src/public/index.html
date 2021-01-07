@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+socket io
+<section>
+	<div id="texts"></div>
+	<input type="text" name="" id="text">
+	<button id="send-text">
+		Send text
+	</button>
+</section>
+
+<body>
+
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		var socket = io.connect('http://localhost:3000', {
+			query: {
+				token: '0'
+			}
+		});
+
+		// var socket = io();
+
+		// socket.on('connection', function (res) {
+		// 	console.log(res);
+		// });
+		var send = document.querySelector('#send-text');
+		// var text = document.querySelector('#text');
+		// var texts = document.querySelector('#texts');
+
+		send.addEventListener('click', () => {
+			console.log('I sen the token');
+			socket.emit('WS:proyectos', {
+				token: '1'
+			});
+
+		});
+
+
+		socket.on('WS:proyectos', (data) => {
+
+			console.log('data: ', data);
+			texts.innerHTML = '';
+			data.forEach(element => {
+				texts.innerHTML += `
+			<p>
+				<strong>${element.nombre} ${element.rol}</strong>
+			</p>
+			`;
+			});
+
+		});
+
+
+
+		socket.on('WS:error', (data) => {
+			console.error(data);
+		})
+	</script>
+
+</body>
+
+</html>

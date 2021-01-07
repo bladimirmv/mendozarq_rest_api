@@ -8,6 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteActividad = exports.updateActividad = exports.getAllActividades = exports.getActividadesCronograma = exports.addActividad = void 0;
 const uuid_1 = require("uuid");

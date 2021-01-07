@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
+import { empty } from 'rxjs';
 import config from './../config/config';
 
 export const checkJwt = (req: Request, res: Response, next: NextFunction) => {
@@ -18,7 +19,18 @@ export const checkJwt = (req: Request, res: Response, next: NextFunction) => {
 
 	const newToken = jwt.sign({ uuid, username }, config.jwtSecret, { expiresIn: '1d' });
 	res.setHeader('token', newToken);
-	
+
 	// *Call next
 	next();
+};
+
+export const isValidJwt = (token: string): { status?: boolean; jwtPayload?: any; } => {
+	try {
+		let jwtPayload;
+		jwtPayload = <any>jwt.verify(token, config.jwtSecret);
+		return jwtPayload ? { status: true, jwtPayload } : { status: false };
+	} catch (error) {
+		console.log('❌ Ocurrio un error al validar el token: ', error);
+	}
+	return { status: false };
 };

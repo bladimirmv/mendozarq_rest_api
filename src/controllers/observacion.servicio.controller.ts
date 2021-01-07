@@ -1,7 +1,8 @@
 import { Response, Request } from 'express';
 import { v4 as uuid } from 'uuid';
 
-import { connect } from '../database';
+import { connect } from './../classes/database';
+
 import { categoriasAsignadasProyecto } from '../models/categorias.asignadas.proyecto.interface';
 import { Credenciales } from '../models/credenciales.interface';
 
@@ -10,17 +11,17 @@ export async function addObservacionServicio(req: Request, res: Response) {
 	try {
 		const conn = await connect();
 		const categoriasAsiganadasProyecto: categoriasAsignadasProyecto = req.body;
-		
+
 		// generate uuid
 		categoriasAsiganadasProyecto.idCategsAsig = uuid();
-        
-        await conn.query('INSERT INTO observacionServicio SET ?', [categoriasAsiganadasProyecto]);
-			return res.status(201).json({
-				message: 'Observacion a servicio registrada correctamente.',
-				body: categoriasAsiganadasProyecto
-            });
-            
-            
+
+		await conn.query('INSERT INTO observacionServicio SET ?', [categoriasAsiganadasProyecto]);
+		return res.status(201).json({
+			message: 'Observacion a servicio registrada correctamente.',
+			body: categoriasAsiganadasProyecto
+		});
+
+
 	} catch (error) {
 		return res.status(400).json({
 			message: 'Ocurrio un error.',
@@ -62,15 +63,15 @@ export async function updateObservacionServicio(req: Request, res: Response) {
 
 		delete categoriaAsignadaProyecto.idCategsAsig
 		// checking username
-		
-		
-			// adding usuario
-			await conn.query('UPDATE observacionServicio SET ? WHERE idObsServicio = ?', [categoriaAsignadaProyecto, categoriaAsignadaProyecto.idCategsAsig]);
-			return res.status(201).json({
-				message: 'Observacion de servicio modificada correctamente.',
-				body: categoriaAsignadaProyecto
-			});
-		
+
+
+		// adding usuario
+		await conn.query('UPDATE observacionServicio SET ? WHERE idObsServicio = ?', [categoriaAsignadaProyecto, categoriaAsignadaProyecto.idCategsAsig]);
+		return res.status(201).json({
+			message: 'Observacion de servicio modificada correctamente.',
+			body: categoriaAsignadaProyecto
+		});
+
 
 		// await conn.query('update usuario set ? where id = ?', [usuario, uuid]);
 		// return res.json({
@@ -102,5 +103,5 @@ export async function deleteObservacionServicio(req: Request, res: Response) {
 			error
 		});
 	}
-	
+
 }

@@ -1,7 +1,8 @@
 import { Response, Request } from 'express';
 import { v4 as uuid } from 'uuid';
 
-import { connect } from '../database';
+import { connect } from './../classes/database';
+
 import { categoriasAsignadasProyecto } from '../models/categorias.asignadas.proyecto.interface';
 import { Credenciales } from '../models/credenciales.interface';
 
@@ -10,17 +11,17 @@ export async function addCategriasAsignadasProyecto(req: Request, res: Response)
 	try {
 		const conn = await connect();
 		const categoriasAsiganadasProyecto: categoriasAsignadasProyecto = req.body;
-		
+
 		// generate uuid
 		categoriasAsiganadasProyecto.idCategsAsig = uuid();
-        
-        await conn.query('INSERT INTO categoriasAsignadasProyecto SET ?', [categoriasAsiganadasProyecto]);
-			return res.status(201).json({
-				message: 'Categoria asignada al proyecto correctamente.',
-				body: categoriasAsiganadasProyecto
-            });
-            
-            
+
+		await conn.query('INSERT INTO categoriasAsignadasProyecto SET ?', [categoriasAsiganadasProyecto]);
+		return res.status(201).json({
+			message: 'Categoria asignada al proyecto correctamente.',
+			body: categoriasAsiganadasProyecto
+		});
+
+
 	} catch (error) {
 		return res.status(400).json({
 			message: 'Ocurrio un error.',
@@ -76,15 +77,15 @@ export async function updateCategriasAsignadasProyecto(req: Request, res: Respon
 
 		delete usuario.idCategsAsig
 		// checking username
-		
-		
-			// adding usuario
-			await conn.query('UPDATE categoriasAsignadasProyecto SET ? WHERE idCategoriaProyecto = ?', [usuario, usuario.idCategsAsig]);
-			return res.status(201).json({
-				message: 'Categoria de proyecto modificada correctamente.',
-				body: usuario
-			});
-		
+
+
+		// adding usuario
+		await conn.query('UPDATE categoriasAsignadasProyecto SET ? WHERE idCategoriaProyecto = ?', [usuario, usuario.idCategsAsig]);
+		return res.status(201).json({
+			message: 'Categoria de proyecto modificada correctamente.',
+			body: usuario
+		});
+
 
 		// await conn.query('update usuario set ? where id = ?', [usuario, uuid]);
 		// return res.json({
@@ -116,5 +117,5 @@ export async function deleteCategriasAsignadasProyecto(req: Request, res: Respon
 			error
 		});
 	}
-	
+
 }
