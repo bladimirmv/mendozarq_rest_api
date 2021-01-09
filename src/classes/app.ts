@@ -1,49 +1,66 @@
-
+// ==========> libraries imports
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 import http from "http";
-import socketIO, { Socket } from "socket.io";
+import socketIO, { Socket, ServerOptions } from "socket.io";
 import path from 'path';
 
+// ==========> config imprts
 import { SERVER_PORT } from '../global/enviroment';
-
-
 import * as socket from "../webSockets/socket";
 
-// Routes
+// ==========> routs imports
 import IndexRoutes from '../routes/index.routes';
 import UsuarioRoutes from '../routes/auth/usuario.routes';
 import AuthRoutes from '../routes/auth/auth.routes';
-import categoriaRecurseRoutes from '../routes/mendozarq/categoria.recurso.routes'
-import recurso from '../routes/mendozarq/recurso.routes'
-// import bodyParser 'body-parser';
-import { checkRole } from '../middlewares/roles';
+import categoriaRecurseRoutes from '../routes/mendozarq/categoria.recurso.routes';
+import recurso from '../routes/mendozarq/recurso.routes';
 
-import { Listener } from '../webSockets/listener';
-
-// !Events imports
-import { proyectos } from '../webSockets/events/proyecto.event';
-
-
+// ==========> App class
 export default class App {
+
 	// ==========> Instance of App (singleton patron)
 	private static _instance: App;
 
+	// ==========> Variables
 	private app: express.Application;
 	public port: number;
 	public io: socketIO.Server;
 	private httpServer: http.Server;
 
+	// ==========> private constructor
 	private constructor() {
 		this.app = express();
 		this.port = SERVER_PORT;
 		this.middlewares();
 		this.routes();
 		this.httpServer = new http.Server(this.app);
-		this.io = new socketIO.Server(this.httpServer);
+
+
+		this.io = new socketIO.Server(this.httpServer
+			, {
+				cors: {
+					origin: "http://localhost:4200",
+					credentials: true,
+					methods: ["GET", "POST"]
+
+				}
+			}
+			// 	, {
+
+			// 	cors: {
+			// 		origin: true,
+			// 		credentials: true
+			// 		// methods: ["GET", "POST"]
+			// 	},
+
+			// }
+		);
 		this.listenSockets();
 	}
+
+	// ==========> instance
 	public static get instance() {
 		return this._instance || (this._instance = new this());
 	}
@@ -55,7 +72,10 @@ export default class App {
 		this.app.use(express.json());
 		this.app.use(express.urlencoded({ extended: true }));
 		this.app.use(express.static(path.join(__dirname, 'public')));
+		this.app.options('*', cors());
+
 	}
+
 	// ==========> routes
 	routes(): void {
 		// this.app.use(IndexRoutes);
@@ -64,27 +84,30 @@ export default class App {
 		this.app.use('/api/categoriarecurso', categoriaRecurseRoutes);
 		this.app.use('/api/recurso', recurso);
 	}
+
 	// ==========> listen app
 	async listen() {
 		try {
 			await this.httpServer.listen(this.port, () => {
-				console.log(`*** Listening server on: ${this.port} ***`);
+				console.log(`Listening server on port ==> ${this.port}`);
 			});
 		} catch (error) {
 			console.log(`❌Ocurrio un error al escuchar en el puerto "${this.port}":`, error);
 		}
 	}
+
 	// ==========> listen sockets
 	private listenSockets() {
-		console.log("** Escuchando conexiones - sockets **");
+		console.log("Listening conections ==> sockets");
+
 
 		this.io.on("connection", async (client: Socket) => {
 			// this.app.set('WS:client', client);
 			console.log(`ws: Client ${client.id} connected!`);
-
+			// client.emit('msg')
 			client.join('Admin');
 			this.io.sockets.in('Admin').emit('WS:proyectos', [{ nombre: 'admin' }]);
-			this.io.to('Admin').emit('WS:proyectos', [{ nombre: 'admin1' }]);
+			this.io.to('Admin').emit('msg', [{ nombre: 'admin1' }]);
 			client.to('Admin').emit('WS:proyectos', [{ nombre: 'client' }]);
 
 			// client.emit('WS:proyectos', [{ nombre: 'none' }]);

@@ -110,9 +110,6 @@ export async function getUsuario(req: Request, res: Response) {
 export async function getAllUsuarios(req: Request, res: Response) {
 	try {
 
-		const io: socketIO.Server = req.app.get('WS:io');
-
-
 
 		// *creating pool
 		const conn: Pool = await connect();
@@ -122,8 +119,6 @@ export async function getAllUsuarios(req: Request, res: Response) {
 		conn.end();
 
 		// *emiting data with socket.io
-		// client.broadcast.to('admin').emit('WS:proyectos', usuarios);
-		io.sockets.in('Adminn').emit('WS:proyectos', usuarios);
 
 
 		// *returning data
