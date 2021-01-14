@@ -1,4 +1,4 @@
-export type Roles = 'administrador' | 'arquitecto' | 'cliente' | 'vendedor';
+export type Roles = 'administrador' | 'arquitecto' | 'cliente' | 'vendedor' | 'ninguno';
 export interface Usuario {
 	uuid?: string;
 	creadoEn?: Date;
@@ -14,4 +14,11 @@ export interface Usuario {
 	activo?: boolean;
 	autoUsuario?: boolean;
 	autoContrasenha?: boolean;
+}
+
+
+export interface TokenUsuario {
+	uuid?: string;
+	username?: string;
+	rol?: Roles;
 }

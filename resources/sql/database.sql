@@ -7,13 +7,15 @@ create table usuario(
     nombre varchar(50) not null,
     apellidoPaterno varchar(50) not null,
     apellidoMaterno varchar(50) ,
-    celulario int,
+    celular int,
     direccion text,
     correo varchar(100),
     username varchar(50) not null,
     contrasenha varchar(100) not null,
-    rol varchar(20) not null
+    rol varchar(20) not null,
+    activo boolean not null
 );
+INSERT INTO mendozarq.usuario (uuid, creadoEn, nombre, apellidoPaterno, apellidoMaterno, celular, direccion, correo, username, contrasenha, rol, activo) VALUES ('fa27b5b3-837b-4486-b2cd-c6a306e8bd72', '2021-01-12 19:45:41', 'bladimir', 'medrano', 'vargas', 69509449, 'Av segunfa entre marina nunez del prado y calle greco.', 'example@gmail.com', 'blado959', '$2b$10$Ejt7X/epAQ2kfChOFJa9T.apOjSfTR2xkMWOoIfWWKT4JFh8CDu.C', 'administrador', 1);
 
 CREATE TABLE proyecto (
     idProyecto varchar(100) primary key,

@@ -2,7 +2,7 @@ import { Response, Request } from 'express';
 import generator from 'generate-password';
 import bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
-import { Pool, FieldPacket } from 'mysql2/promise';
+import { Pool, FieldPacket, RowDataPacket, QueryError } from 'mysql2/promise';
 
 import { connect } from '../../classes/database';
 import { Usuario } from '../../models/usuario.interface';

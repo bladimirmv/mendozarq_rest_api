@@ -16,6 +16,7 @@ import UsuarioRoutes from '../routes/auth/usuario.routes';
 import AuthRoutes from '../routes/auth/auth.routes';
 import categoriaRecurseRoutes from '../routes/mendozarq/categoria.recurso.routes';
 import recurso from '../routes/mendozarq/recurso.routes';
+import { Roles } from './../models/usuario.interface';
 
 // ==========> App class
 export default class App {
@@ -26,37 +27,29 @@ export default class App {
 	// ==========> Variables
 	private app: express.Application;
 	public port: number;
+
 	public io: socketIO.Server;
 	private httpServer: http.Server;
+	private serverOptions: Partial<ServerOptions>;
 
 	// ==========> private constructor
 	private constructor() {
 		this.app = express();
 		this.port = SERVER_PORT;
+
 		this.middlewares();
 		this.routes();
+
 		this.httpServer = new http.Server(this.app);
 
-
-		this.io = new socketIO.Server(this.httpServer
-			, {
-				cors: {
-					origin: "http://localhost:4200",
-					credentials: true,
-					methods: ["GET", "POST"]
-
-				}
+		this.serverOptions = {
+			cors: {
+				origin: true,
+				credentials: true
 			}
-			// 	, {
+		}
+		this.io = new socketIO.Server(this.httpServer, this.serverOptions);
 
-			// 	cors: {
-			// 		origin: true,
-			// 		credentials: true
-			// 		// methods: ["GET", "POST"]
-			// 	},
-
-			// }
-		);
 		this.listenSockets();
 	}
 
@@ -68,17 +61,17 @@ export default class App {
 	// ==========> middlewares
 	middlewares(): void {
 		this.app.use(morgan('dev'));
-		this.app.use(cors({ origin: true, credentials: true }));
-		this.app.use(express.json());
 		this.app.use(express.urlencoded({ extended: true }));
-		this.app.use(express.static(path.join(__dirname, 'public')));
-		this.app.options('*', cors());
+		this.app.use(express.json());
+		// cors
+		this.app.use(cors({ origin: true, credentials: true }));
+		// this.app.options('*', cors());
 
 	}
 
 	// ==========> routes
 	routes(): void {
-		// this.app.use(IndexRoutes);
+		this.app.use(IndexRoutes);
 		this.app.use('/api/usuario', UsuarioRoutes);
 		this.app.use('/api/auth', AuthRoutes);
 		this.app.use('/api/categoriarecurso', categoriaRecurseRoutes);
@@ -86,7 +79,7 @@ export default class App {
 	}
 
 	// ==========> listen app
-	async listen() {
+	async start() {
 		try {
 			await this.httpServer.listen(this.port, () => {
 				console.log(`Listening server on port ==> ${this.port}`);
@@ -102,40 +95,17 @@ export default class App {
 
 
 		this.io.on("connection", async (client: Socket) => {
-			// this.app.set('WS:client', client);
+			// *CLient on connected
 			console.log(`ws: Client ${client.id} connected!`);
-			// client.emit('msg')
-			client.join('Admin');
-			this.io.sockets.in('Admin').emit('WS:proyectos', [{ nombre: 'admin' }]);
-			this.io.to('Admin').emit('msg', [{ nombre: 'admin1' }]);
-			client.to('Admin').emit('WS:proyectos', [{ nombre: 'client' }]);
 
-			// client.emit('WS:proyectos', [{ nombre: 'none' }]);
-			// console.log();
+			// *logIn client
+			socket.logIn(client, this.io);
 
-			// client.to(client.id).emit('WS:proyectos', [{ nombre: 'admin' }]);
+			// *Mensajes
+			socket.mensaje(client, this.io);
 
-			client.on('WS:proyectos', () => {
-				console.log('llego');
-				this.io.sockets.in('Admin').emit('WS:proyectos', [{ nombre: 'admin' }]);
-
-			});
-
-
-
-			//   *Mensajes
-			// socket.mensaje(client, this.io);
-
-			//   *Disconnect
+			// *Disconnect
 			socket.disconnect(client);
-		});
-
-		this.io.on('WS:proyectos', (token) => {
-			console.log('llego el token: ', token.token);
-
-			console.log('Admin join');
-			this.io.sockets.in('Admin').emit('WS:proyectos', [{ nombre: 'admin' }]);
-
 		});
 	}
 
