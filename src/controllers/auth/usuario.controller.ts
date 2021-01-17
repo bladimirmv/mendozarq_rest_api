@@ -13,7 +13,9 @@ import socketIO, { Socket } from 'socket.io';
 
 // ===================================================================================================
 function generateUsuario(usuario: Usuario): Usuario {
-	usuario.username = `${generator.generate({ length: 2, numbers: true })}_${usuario.nombre?.replace(/\s/g, '.')}${generator.generate({ length: 3, numbers: true })}`
+	// usuario.username = `${generator.generate({ length: 2, numbers: true })}_${usuario.nombre?.replace(/\s/g, '.')}${generator.generate({ length: 3, numbers: true })}`
+	usuario.username = generator.generate({ length: 10, numbers: true, uppercase: false });
+
 	return usuario;
 }
 // ===================================================================================================
