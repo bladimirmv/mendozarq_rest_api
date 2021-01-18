@@ -13,9 +13,12 @@ import socketIO, { Socket } from 'socket.io';
 
 // ===================================================================================================
 function generateUsuario(usuario: Usuario): Usuario {
-	// usuario.username = `${generator.generate({ length: 2, numbers: true })}_${usuario.nombre?.replace(/\s/g, '.')}${generator.generate({ length: 3, numbers: true })}`
-	usuario.username = generator.generate({ length: 10, numbers: true, uppercase: false });
+	let lack = 0;
+	if (String(usuario.nombre).length < 5) {
+		lack = 5 - String(usuario.nombre).length;
+	}
 
+	usuario.username = usuario.nombre?.substr(0, 5) + generator.generate({ length: 5 + lack, numbers: true, uppercase: false });
 	return usuario;
 }
 // ===================================================================================================
@@ -155,7 +158,7 @@ export async function updateUsuario(req: Request, res: Response) {
 				message: 'Por favor ingrese los campos requeridos. ❌',
 			});
 		}
-		// *encrypting contrasenha
+		// *if exist contrasenha: encrypting new contrasenha
 		if (contrasenha) {
 			const salt = await bcrypt.genSalt(10);
 			const hash = await bcrypt.hash(usuario.contrasenha, salt);
