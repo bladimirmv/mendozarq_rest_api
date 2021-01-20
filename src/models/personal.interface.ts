@@ -1,15 +1,14 @@
 export interface Personal {
-    idPersonal?: string;
-    creadoEn?: Date;
-    nombre?: string;
-    apellidos?: string;
-    celular?: number;
-    direccion?: string;
-    correo?: string;
-    activo?: boolean;
-    cargo?: string;
-    sueldo?: number;
-    moneda?: 'bs' | 'usd';
-    filerefCont?: string;
-    urlCont?: string;
-  }
+  uuid: string;
+  creadoEn: Date;
+  nombre: string;
+  apellidoPaterno: string;
+  apellidoMaterno?: string;
+  celular?: number;
+  direccion?: string;
+  correo?: string;
+  cargo?: string;
+  sueldo?: number;
+  moneda?: 'bs' | 'usd';
+  activo?: boolean;
+}

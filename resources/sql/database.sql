@@ -15,7 +15,44 @@ create table usuario(
     rol varchar(20) not null,
     activo boolean not null
 );
-INSERT INTO mendozarq.usuario (uuid, creadoEn, nombre, apellidoPaterno, apellidoMaterno, celular, direccion, correo, username, contrasenha, rol, activo) VALUES ('fa27b5b3-837b-4486-b2cd-c6a306e8bd72', '2021-01-12 19:45:41', 'bladimir', 'medrano', 'vargas', 69509449, 'Av segunfa entre marina nunez del prado y calle greco.', 'example@gmail.com', 'blado959', '$2b$10$Ejt7X/epAQ2kfChOFJa9T.apOjSfTR2xkMWOoIfWWKT4JFh8CDu.C', 'administrador', 1);
+
+INSERT INTO mendozarq.usuario (uuid, creadoEn, nombre, apellidoPaterno, apellidoMaterno, celular, direccion, correo, username, contrasenha, rol, activo) VALUES ('fa27b5b3-837b-4486-b2cd-c6a306e8bd72', '2021-01-12 19:45:41', 'bladimir', 'medrano', 'vargas', 69509449, 'Av segunda entre marina nunez del prado y calle greco.', 'example@gmail.com', 'blado959', '$2b$10$Ejt7X/epAQ2kfChOFJa9T.apOjSfTR2xkMWOoIfWWKT4JFh8CDu.C', 'administrador', 1);
+
+create table personal(
+    uuid varchar(100) primary key,
+    creadoEn timestamp default current_timestamp not null,
+    nombre varchar(50) not null,
+    apellidoPaterno varchar(50) not null,
+    apellidoMaterno varchar(50) ,
+    celular int,
+    direccion text,
+    correo varchar(100),
+    cargo varchar(100),
+    sueldo decimal(15,2),
+    moneda varchar(10),
+    activo boolean not null
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 CREATE TABLE proyecto (
     idProyecto varchar(100) primary key,

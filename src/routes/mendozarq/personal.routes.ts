@@ -1,34 +1,35 @@
 import { Router } from 'express';
 
-// *controllers
-import { addUsuario, getUsuario, getAllUsuarios, updateUsuario, deleteUsuario } from '../../controllers/auth/usuario.controller';
+import * as personal from './../../controllers/mendozarq/personal.controller'
 import { checkJwt } from './../../middlewares/jwt';
-import { checkRole } from '../../middlewares/roles';
+import { checkRole } from './../../middlewares/roles';
 
-const router = Router();
 
+const router: Router = Router();
+// ====================> route Personal /
 router.route('/')
 	.get(
 		[checkJwt, checkRole(['administrador'])],
-		getAllUsuarios
+		personal.getAllPersonal
 	)
 	.post(
 		[checkJwt, checkRole(['administrador'])],
-		addUsuario
+		personal.addPersonal
 	);
 
+// ====================> route Personal /:id
 router.route('/:id')
 	.get(
 		[checkJwt, checkRole(['administrador'])],
-		getUsuario
+		personal.getOnePersonal
 	)
 	.put(
 		[checkJwt, checkRole(['administrador'])],
-		updateUsuario
+		personal.updatePersonal
 	)
 	.delete(
 		[checkJwt, checkRole(['administrador'])],
-		deleteUsuario
+		personal.deletePersonal
 	);
 
 export default router;

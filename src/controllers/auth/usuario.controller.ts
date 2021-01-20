@@ -203,10 +203,10 @@ export async function deleteUsuario(req: Request, res: Response) {
 	try {
 		// *creating pool
 		const conn = await connect();
-		const id = req.params.id;
+		const uuid = req.params.id;
 
 		// *deleting usuario by id
-		await conn.query('DELETE from usuario where uuid = ?', [id]);
+		await conn.query('DELETE from usuario where uuid = ?', [uuid]);
 		return res.status(200).json({
 			message: 'Usuario eliminado correctamente. 😀'
 		});
