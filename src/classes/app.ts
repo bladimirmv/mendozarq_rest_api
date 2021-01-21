@@ -12,9 +12,11 @@ import * as socket from "../webSockets/socket";
 
 // ==========> routs imports
 import IndexRoutes from '../routes/index.routes';
-import AuthRoutes from '../routes/auth/auth.routes';
-import UsuarioRoutes from '../routes/auth/usuario.routes';
-import PersonalRoutes from '../routes/mendozarq/personal.routes';
+import authRoutes from '../routes/auth/auth.routes';
+import usuarioRoutes from '../routes/auth/usuario.routes';
+import personalRoutes from '../routes/mendozarq/personal.routes';
+import herramientaRoutes from '../routes/mendozarq/herramienta.routes';
+
 
 import categoriaRecurseRoutes from '../routes/mendozarq/categoria.recurso.routes';
 import recurso from '../routes/mendozarq/recurso.routes';
@@ -73,9 +75,10 @@ export default class App {
 	// ==========> routes
 	routes(): void {
 		this.app.use(IndexRoutes);
-		this.app.use('/api/usuario', UsuarioRoutes);
-		this.app.use('/api/auth', AuthRoutes);
-		this.app.use('/api/personal', PersonalRoutes);
+		this.app.use('/api/usuario', usuarioRoutes);
+		this.app.use('/api/auth', authRoutes);
+		this.app.use('/api/personal', personalRoutes);
+		this.app.use('/api/herramienta', herramientaRoutes);
 
 		this.app.use('/api/categoriarecurso', categoriaRecurseRoutes);
 		this.app.use('/api/recurso', recurso);

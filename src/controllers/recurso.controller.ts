@@ -37,14 +37,14 @@ export async function getRecurso(req: Request, res: Response) {
 
 		const usuario = await conn.query('select  * from recurso where idRecurso = ?', [uuid]);
 
-		if (usuario[0].length) {
-			res.send(usuario[0]);
-		} else {
-			return res.status(404).json({
-				message: 'No se encontraron recursos con el id ingresado.',
-				error: '404'
-			});
-		}
+		// if (usuario[0].length) {
+		// 	res.send(usuario[0]);
+		// } else {
+		// 	return res.status(404).json({
+		// 		message: 'No se encontraron recursos con el id ingresado.',
+		// 		error: '404'
+		// 	});
+		// }
 
 	} catch (error) {
 		return res.status(400).json({

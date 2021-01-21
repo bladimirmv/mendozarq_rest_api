@@ -18,7 +18,7 @@ function createToken(usuario: Usuario) {
 export async function login(req: Request, res: Response, next: any) {
 	try {
 		// *creating pool
-		const conn: Pool = await connect();
+		let conn: Pool | undefined = await connect();
 		const credenciales: Credenciales = req.body;
 
 		// *checking credenciales
@@ -31,7 +31,7 @@ export async function login(req: Request, res: Response, next: any) {
 
 		// *finding usuario
 		const [[findUsername]]: [any[], FieldPacket[]] = await conn.query('select * from usuario where username = ?', [credenciales.username]);
-		conn.end();
+		// conn.end();
 		const usuario: Usuario = findUsername as Usuario;
 
 		// *checking if exist usuario

@@ -1,16 +1,13 @@
 import { createPool, Pool } from 'mysql2/promise';
-
 import config from './../config/config'
 
-export async function connect(): Promise<any> {
-	try {
-		const connection: Pool = await createPool(config.dbOptions);
-		return connection;
+let globalPool: Pool | undefined = undefined;
 
-	} catch (error) {
-		console.log('Ocurrio un error: ', error);
-
+export async function connect(): Promise<Pool> {
+	if (globalPool) {
+		return globalPool;
 	}
 
+	globalPool = await createPool(config.dbOptions);
+	return globalPool;
 }
-

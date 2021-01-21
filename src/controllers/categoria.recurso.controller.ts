@@ -37,14 +37,14 @@ export async function getCategoriaRecurso(req: Request, res: Response) {
 
 		const usuario = await conn.query('select  * from categoriaRecurso where idCategoriaRecurso = ?', [uuid]);
 
-		if (usuario[0].length) {
-			res.send(usuario[0]);
-		} else {
-			return res.status(404).json({
-				message: 'No se encontro la categoria de recurso.',
-				error: '404'
-			});
-		}
+		// if (usuario[0].length) {
+		// 	res.send(usuario[0]);
+		// } else {
+		// 	return res.status(404).json({
+		// 		message: 'No se encontro la categoria de recurso.',
+		// 		error: '404'
+		// 	});
+		// }
 
 	} catch (error) {
 		return res.status(400).json({
@@ -76,18 +76,18 @@ export async function updateCategoriaRecurso(req: Request, res: Response) {
 		delete usuario.idCategoriaRecurso
 		// checking username
 		const findUsername = await conn.query('select nombre from categoriaRecurso where nombre = ?', [usuario.nombre]);
-		if (findUsername[0].length) {
-			return res.status(400).json({
-				message: 'La categoria de recurso insertada ya existe.',
-			});
-		} else {
-			// adding usuario
-			await conn.query('UPDATE categoriaRecurso SET ? WHERE idCategoriaRecurso = ?', [usuario, usuario.idCategoriaRecurso]);
-			return res.status(201).json({
-				message: 'Categoria de recurso modificada correctamente.',
-				body: usuario
-			});
-		}
+		// if (findUsername[0].length) {
+		// 	return res.status(400).json({
+		// 		message: 'La categoria de recurso insertada ya existe.',
+		// 	});
+		// } else {
+		// 	// adding usuario
+		// 	await conn.query('UPDATE categoriaRecurso SET ? WHERE idCategoriaRecurso = ?', [usuario, usuario.idCategoriaRecurso]);
+		// 	return res.status(201).json({
+		// 		message: 'Categoria de recurso modificada correctamente.',
+		// 		body: usuario
+		// 	});
+		// }
 
 		// await conn.query('update usuario set ? where id = ?', [usuario, uuid]);
 		// return res.json({

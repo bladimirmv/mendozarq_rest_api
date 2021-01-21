@@ -1,5 +1,6 @@
 import { PoolOptions } from 'mysql2';
 import aws from 'aws-sdk';
+
 const s3ClientConfiguration: aws.S3.ClientConfiguration = {
 	accessKeyId: 'AKIA5D4TA3BXGXGH6TX3',
 	secretAccessKey: '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'

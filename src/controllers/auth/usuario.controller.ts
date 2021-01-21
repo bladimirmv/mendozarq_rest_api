@@ -7,10 +7,6 @@ import { Pool, FieldPacket, RowDataPacket, QueryError } from 'mysql2/promise';
 import { connect } from '../../classes/database';
 import { Usuario } from '../../models/usuario.interface';
 
-import socketIO, { Socket } from 'socket.io';
-
-
-
 // ===================================================================================================
 function generateUsuario(usuario: Usuario): Usuario {
 	let lack = 0;
@@ -63,7 +59,7 @@ export async function addUsuario(req: Request, res: Response) {
 		const [[findUsername]]: [any[], FieldPacket[]] = await conn.query('select username from usuario where username = ?', [usuario.username]);
 
 		if (findUsername) {
-			conn.end();
+			// conn.end();
 			return res.status(400).json({
 				message: `El username \'${usuario.username}\' ya esta en uso, porfavor ingrese otro valido o active la opcion de generar automaticamente. 🙁`,
 			});
@@ -72,7 +68,7 @@ export async function addUsuario(req: Request, res: Response) {
 			delete usuario.autoContrasenha;
 			// *adding usuario
 			await conn.query('INSERT INTO usuario SET ?', [usuario]);
-			conn.end();
+			// conn.end();
 			// *adding contrasenha and usuario
 			usuario.username = username;
 			usuario.contrasenha = contrasenha;
@@ -96,7 +92,7 @@ export async function getUsuario(req: Request, res: Response) {
 
 		// * finding usuario
 		const [[usuario]]: [any[], FieldPacket[]] = await conn.query('select  * from usuario where uuid = ?', [uuid]);
-		conn.end();
+		// conn.end();
 		if (usuario) {
 			res.status(200).send(usuario[0]);
 		} else {
@@ -117,14 +113,11 @@ export async function getAllUsuarios(req: Request, res: Response) {
 
 
 		// *creating pool
-		const conn: Pool = await connect();
+		let conn: Pool = await connect();
 
 		// *geting all usuarios
 		const [usuarios]: [any[], FieldPacket[]] = await conn.query('select * from usuario order by creadoEn desc');
-		conn.end();
-
-		// *emiting data with socket.io
-
+		// conn.end();
 
 		// *returning data
 		return res.status(200).send(usuarios);
@@ -171,7 +164,7 @@ export async function updateUsuario(req: Request, res: Response) {
 
 
 		if (findUsuario && usr.uuid !== uuid) {
-			conn.end();
+			//conn.end();
 			return res.status(400).json({
 				message: `El username \'${usuario.username}\' ya esta en uso, porfavor ingrese otro valido o active la opcion de generar automaticamente. ❌`,
 			});
@@ -182,7 +175,7 @@ export async function updateUsuario(req: Request, res: Response) {
 
 			// *updating usuario
 			await conn.query('update usuario set ? where uuid = ?', [usuario, uuid]);
-			conn.end();
+			//conn.end();
 			// *adding contrasenha and usuario
 			usuario.username = username;
 			usuario.contrasenha = contrasenha;

@@ -9,9 +9,9 @@ export const checkRole = (roles: Array<Roles>) => {
 	return async (req: Request, res: Response, next: NextFunction) => {
 		const { uuid } = res.locals.jwtPayload;
 		try {
-			const conn: Pool = await connect();
+			let conn: Pool = await connect();
 			const [[usuario]]: [any[], FieldPacket[]] = await conn.query('select * from usuario where uuid = ?', [uuid]);
-
+			// conn.end();
 			if (usuario) {
 				const { rol }: Usuario = usuario;
 				// *checking rol
