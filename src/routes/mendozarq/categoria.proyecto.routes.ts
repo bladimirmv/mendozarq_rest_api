@@ -1,37 +1,33 @@
 import { Router } from 'express';
-import multer from 'multer';
 
-import * as h from './../../controllers/mendozarq/herramienta.controller'
+import * as cp from '../../controllers/mendozarq/categoria.proyecto.controller';
 import { checkJwt } from './../../middlewares/jwt';
 import { checkRole } from './../../middlewares/roles';
 
-const upload = multer().any();
+const router = Router();
 
-const router: Router = Router();
-// ====================> route Herramienta /
 router.route('/')
 	.get(
 		[checkJwt, checkRole(['administrador'])],
-		h.getAllHerramienta
+		cp.getAllCategoriaProyecto
 	)
 	.post(
-		upload,
 		[checkJwt, checkRole(['administrador'])],
-		h.addHerramienta
+		cp.addCategoriaProyecto
 	);
 
-// ====================> route Herramienta /:id
 router.route('/:uuid')
 	.get(
 		[checkJwt, checkRole(['administrador'])],
-		h.getOneHerramienta)
+		cp.getOneCategoriaProyecto
+	)
 	.put(
 		[checkJwt, checkRole(['administrador'])],
-		h.updateHerramienta
+		cp.updateCategoriaProyecto
 	)
 	.delete(
 		[checkJwt, checkRole(['administrador'])],
-		h.deleteHerramienta
+		cp.deleteCategoriaProyecto
 	);
 
 export default router;

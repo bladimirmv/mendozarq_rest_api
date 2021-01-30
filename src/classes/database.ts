@@ -1,5 +1,5 @@
 import { createPool, Pool } from 'mysql2/promise';
-import config from './../config/config'
+import { dbOptions } from './../global/enviroment'
 
 let globalPool: Pool | undefined = undefined;
 
@@ -8,6 +8,6 @@ export async function connect(): Promise<Pool> {
 		return globalPool;
 	}
 
-	globalPool = await createPool(config.dbOptions);
+	globalPool = await createPool(dbOptions);
 	return globalPool;
 }

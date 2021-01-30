@@ -7,19 +7,18 @@ export const AWS_S3: {
 	secretAccessKey: string;
 	Bucket: string;
 } = {
-	accessKeyId: 'AKIA5D4TA3BXI5RGEODX',
-	secretAccessKey: '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',
-	Bucket: 'mendozarq-liraki'
+	accessKeyId: 'XXX',
+	secretAccessKey: 'XXX',
+	Bucket: 'XXX'
 };
-
 export const dbOptions: PoolOptions = process.env.dbOptions as PoolOptions || {
 	host: 'localhost',
 	port: 3306,
 	user: 'root',
 	password: '',
-	database: 'mendozarq',
+	database: 'XXX',
 	connectionLimit: 10
 };
 
 
-export const jwtSecret: string = String(process.env.JWT_SECRET) || 'mendozarqbmvliraki'
+export const jwtSecret: string = String(process.env.JWT_SECRET) || 'XXX'

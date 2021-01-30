@@ -3,8 +3,9 @@ export interface Herramienta {
 	creadoEn?: Date;
 	nombre: string;
 	categoria: 'maquina' | 'manual' | 'otro';
-	urlImg?: string;
-	filerefImg?: string;
 	descripcion?: string;
 	estado?: boolean;
+	keyImg?: string;
+	originalNameImg?: string;
+	urlImg?: string;
 }
