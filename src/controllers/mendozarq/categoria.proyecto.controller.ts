@@ -1,15 +1,14 @@
 import { Response, Request } from 'express';
 import { v4 as uuid } from 'uuid';
-import { FieldPacket } from 'mysql2/promise';
+import { FieldPacket, Pool } from 'mysql2/promise';
 
 import { connect } from '../../classes/database';
 import { CategoriaProyecto } from '../../models/mendozarq/categoria.proyecto.interface';
 
-
 // ====================> addCategoriaProyecto
 export async function addCategoriaProyecto(req: Request, res: Response) {
 	try {
-		const conn = await connect();
+		const conn: Pool = await connect();
 		const categoriaProyecto: CategoriaProyecto = req.body;
 
 		// generate uuid
@@ -29,11 +28,13 @@ export async function addCategoriaProyecto(req: Request, res: Response) {
 		});
 	}
 }
+
 // ====================> getOneCategoriaProyecto
 export async function getOneCategoriaProyecto(req: Request, res: Response) {
 	try {
 		const uuid = req.params.uuid;
-		const conn = await connect();
+		const conn: Pool = await connect();
+
 
 		const [[categoria]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM categoriaProyecto WHERE uuid = ?', [uuid]);
 
@@ -50,10 +51,11 @@ export async function getOneCategoriaProyecto(req: Request, res: Response) {
 		});
 	}
 }
+
 // ====================> getAllCategoriaProyecto
 export async function getAllCategoriaProyecto(req: Request, res: Response) {
 	try {
-		const conn = await connect();
+		const conn: Pool = await connect();
 
 		const [categorias]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM categoriaProyecto ORDER BY creadoEn DESC');
 
@@ -70,8 +72,8 @@ export async function getAllCategoriaProyecto(req: Request, res: Response) {
 // ====================> updateCategoriaProyecto
 export async function updateCategoriaProyecto(req: Request, res: Response) {
 	try {
+		const conn: Pool = await connect();
 		const uuid = req.params.uuid;
-		const conn = await connect();
 		const categoria: CategoriaProyecto = req.body;
 
 		const [[categoriaFound]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM categoriaProyecto WHERE uuid = ?', [uuid]);

@@ -15,8 +15,11 @@ import IndexRoutes from '../routes/index.routes';
 import authRoutes from '../routes/auth/auth.routes';
 import usuarioRoutes from '../routes/auth/usuario.routes';
 import personalRoutes from '../routes/mendozarq/personal.routes';
-import herramientaRoutes from '../routes/mendozarq/herramienta.routes';
 import categoriaProyectoRoutes from '../routes/mendozarq/categoria.proyecto.routes';
+import proyectoRoutes from '../routes/mendozarq/proyecto.routes';
+
+
+import herramientaRoutes from '../routes/mendozarq/herramienta.routes';
 
 import categoriaRecurseRoutes from '../routes/mendozarq/categoria.recurso.routes';
 import recurso from '../routes/mendozarq/recurso.routes';
@@ -79,6 +82,7 @@ export default class App {
 		this.app.use('/api/personal', personalRoutes);
 		this.app.use('/api/herramienta', herramientaRoutes);
 		this.app.use('/api/categoriaProyecto', categoriaProyectoRoutes);
+		this.app.use('/api/proyecto', proyectoRoutes);
 
 		this.app.use('/api/categoriarecurso', categoriaRecurseRoutes);
 		this.app.use('/api/recurso', recurso);
@@ -98,7 +102,6 @@ export default class App {
 	// ==========> listen sockets
 	private listenSockets() {
 		console.log("Listening conections ==> sockets");
-
 
 		this.io.on("connection", async (client: Socket) => {
 			// *CLient on connected

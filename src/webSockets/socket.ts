@@ -18,7 +18,7 @@ export const logIn = (client: Socket, io: socketIO.Server) => {
 
 			const { uuid }: TokenUsuario = <any>jwt.verify(token, config.jwtSecret);
 			const conn: Pool = await connect();
-			const [[row]]: [any[], FieldPacket[]] = await conn.query('select * from usuario where uuid = ?', [uuid]);
+			const [[row]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM usuario WHERE uuid = ?', [uuid]);
 
 			const usuario: Usuario = row;
 			if (usuario && usuario.activo) {

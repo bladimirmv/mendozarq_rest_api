@@ -1,36 +1,61 @@
 create database mendozarq;
 use mendozarq;
 
-create table usuario(
-    uuid varchar(100) primary key,
-    creadoEn timestamp  default current_timestamp not null,
-    nombre varchar(50) not null,
-    apellidoPaterno varchar(50) not null,
-    apellidoMaterno varchar(50) ,
-    celular int,
-    direccion text,
-    correo varchar(100),
-    username varchar(50) not null,
-    contrasenha varchar(100) not null,
-    rol varchar(20) not null,
-    activo boolean not null
+create table usuario
+(
+  uuid            varchar(100) primary key,
+  creadoEn        timestamp default current_timestamp not null,
+  nombre          varchar(50)                         not null,
+  apellidoPaterno varchar(50)                         not null,
+  apellidoMaterno varchar(50),
+  celular         int,
+  direccion       text,
+  correo          varchar(100),
+  username        varchar(50)                         not null,
+  contrasenha     varchar(100)                        not null,
+  rol             varchar(20)                         not null,
+  activo          boolean                             not null
 );
 
-INSERT INTO mendozarq.usuario (uuid, creadoEn, nombre, apellidoPaterno, apellidoMaterno, celular, direccion, correo, username, contrasenha, rol, activo) VALUES ('fa27b5b3-837b-4486-b2cd-c6a306e8bd72', '2021-01-12 19:45:41', 'bladimir', 'medrano', 'vargas', 69509449, 'Av segunda entre marina nunez del prado y calle greco.', 'example@gmail.com', 'blado959', '$2b$10$Ejt7X/epAQ2kfChOFJa9T.apOjSfTR2xkMWOoIfWWKT4JFh8CDu.C', 'administrador', 1);
+create table personal
+(
+  uuid            varchar(100) primary key,
+  creadoEn        timestamp default current_timestamp not null,
+  nombre          varchar(50)                         not null,
+  apellidoPaterno varchar(50)                         not null,
+  apellidoMaterno varchar(50),
+  celular         int,
+  direccion       text,
+  correo          varchar(100),
+  descripcion     varchar(200),
+  sueldo          decimal(15, 2),
+  moneda          varchar(10),
+  activo          boolean                             not null
+);
 
-create table personal(
-    uuid varchar(100) primary key,
-    creadoEn timestamp default current_timestamp not null,
-    nombre varchar(50) not null,
-    apellidoPaterno varchar(50) not null,
-    apellidoMaterno varchar(50) ,
-    celular int,
-    direccion text,
-    correo varchar(100),
-    cargo varchar(100),
-    sueldo decimal(15,2),
-    moneda varchar(10),
-    activo boolean not null
+create table categoriaProyecto
+(
+  uuid     varchar(100) primary key,
+  creadoEn timestamp default current_timestamp not null,
+  nombre   varchar(50)                         not null,
+  color    varchar(20)
+);
+
+create table proyecto
+(
+    uuid                  varchar(100) primary key,
+    creadoEn              timestamp default current_timestamp not null,
+    nombre                varchar(50)                         not null,
+    descripcion           varchar(200),
+    estado                boolean                             not null,
+    fechaInicio           date,
+    fechaFinal            date,
+    lugarProyecto         varchar(200),
+    porcentaje            int,
+    uuidCategoriaProyecto varchar(100),
+    uuidCliente           varchar(100),
+    foreign key (uuidCategoriaProyecto) references categoriaProyecto (uuid),
+    foreign key (uuidCliente) references usuario (uuid)
 );
 
 
@@ -38,10 +63,24 @@ create table personal(
 
 
 
+create table herramienta
+(
+  uuid            varchar(100) primary key,
+  creadoEn        timestamp default current_timestamp not null,
+  nombre          varchar(50)                         not null,
+  categoria       varchar(30)                         not null,
+  descripcion     varchar(200),
+  estado          boolean                             not null,
+  keyImg          text,
+  originalNameImg varchar(50),
+  urlImg          text                                not null
+);
 
-
-
-
+INSERT INTO mendozarq.usuario (uuid, creadoEn, nombre, apellidoPaterno, apellidoMaterno, celular, direccion, correo,
+                               username, contrasenha, rol, activo)
+VALUES ('fa27b5b3-837b-4486-b2cd-c6a306e8bd72', '2021-01-12 19:45:41', 'bladimir', 'medrano', 'vargas', 69509449,
+        'Av segunda entre marina nunez del prado y calle greco.', 'example@gmail.com', 'blado959',
+        '$2b$10$Ejt7X/epAQ2kfChOFJa9T.apOjSfTR2xkMWOoIfWWKT4JFh8CDu.C', 'administrador', 1);
 
 
 

@@ -23,7 +23,7 @@ export const addHerramienta = async (req: Request, res: Response) => {
 
 		if (!herramienta.nombre) {
 			return res.status(400).json({
-				message: 'No se ha podido registrar, por favor los datos de la herramienta'
+				message: 'No se ha podido registrar, por favor ingrese los datos de la herramienta'
 			});
 		}
 
