@@ -10,7 +10,7 @@ export const checkRole = (roles: Array<Roles>) => {
 		const { uuid } = res.locals.jwtPayload;
 		try {
 			let conn: Pool = await connect();
-			const [[usuario]]: [any[], FieldPacket[]] = await conn.query('select * from usuario where uuid = ?', [uuid]);
+			const [[usuario]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM usuario WHERE uuid = ?', [uuid]);
 			// conn.end();
 			if (usuario) {
 				const { rol }: Usuario = usuario;
@@ -18,11 +18,11 @@ export const checkRole = (roles: Array<Roles>) => {
 				roles.includes(rol as Roles)
 					? next()
 					: res.status(401).json({
-						message: 'Acceso no autorizado'
+						message: 'Acceso no autorizado, no tienes permisos para continuar. 🙁'
 					});
 			}
-		} catch (e) {
-			return res.status(401).json({ message: 'Acceso no autorizado' });
+		} catch (error) {
+			return res.status(400).json({ message: error });
 		}
 
 	};

@@ -207,8 +207,7 @@ export async function deleteUsuario(req: Request, res: Response) {
 
 		console.log('❌Ocurrio un error:', error);
 		return res.status(400).json({
-			message: 'No se ha podido eliminar el usuario. 🙁',
-			error
+			message: error
 
 		});
 	}

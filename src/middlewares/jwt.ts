@@ -12,7 +12,7 @@ export const checkJwt = (req: Request, res: Response, next: NextFunction) => {
 		jwtPayload = <any>jwt.verify(token, config.jwtSecret);
 		res.locals.jwtPayload = jwtPayload;
 	} catch (e) {
-		return res.status(401).json({ message: 'Acceso no autorizado' });
+		return res.status(401).json({ message: 'Acceso no autorizado, no tienes permisos para continuar. 🙁' });
 	}
 
 	const { uuid, username } = jwtPayload;
