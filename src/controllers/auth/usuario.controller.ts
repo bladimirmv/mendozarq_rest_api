@@ -204,9 +204,12 @@ export async function deleteUsuario(req: Request, res: Response) {
 			message: 'Usuario eliminado correctamente. 😀'
 		});
 	} catch (error) {
+
 		console.log('❌Ocurrio un error:', error);
 		return res.status(400).json({
-			message: error
+			message: 'No se ha podido eliminar el usuario. 🙁',
+			error
+
 		});
 	}
 

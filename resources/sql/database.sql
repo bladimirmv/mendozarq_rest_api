@@ -32,15 +32,6 @@ create table personal
   moneda          varchar(10),
   activo          boolean                             not null
 );
-
-create table categoriaProyecto
-(
-  uuid     varchar(100) primary key,
-  creadoEn timestamp default current_timestamp not null,
-  nombre   varchar(50)                         not null,
-  color    varchar(20)
-);
-
 create table proyecto
 (
     uuid                  varchar(100) primary key,
@@ -58,9 +49,14 @@ create table proyecto
     foreign key (uuidCliente) references usuario (uuid)
 );
 
-
-
-
+CREATE VIEW proyectoWiew AS
+SELECT p.*,
+       u.nombre as nombreCliente,
+       u.apellidoPaterno,
+       u.apellidoMaterno
+FROM
+   proyecto AS p
+   INNER JOIN usuario AS u ON p.uuidCliente = u.uuid;
 
 
 create table herramienta

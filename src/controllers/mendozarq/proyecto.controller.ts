@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid';
 import { connect } from './../../classes/database';
 
 import { Proyecto } from './../../models/mendozarq/proyecto.interface';
-import { FieldPacket } from 'mysql2';
+import { FieldPacket, QueryError } from 'mysql2';
 
 // ====================> addProyecto
 export async function addProyecto(req: Request, res: Response) {
@@ -13,9 +13,9 @@ export async function addProyecto(req: Request, res: Response) {
 		const conn: Pool = await connect();
 		const proyecto: Proyecto = req.body;
 
-		if (!proyecto.nombre && proyecto.uuidCliente && !proyecto.uuidCategoriaProyecto) {
+		if (!proyecto.nombre && proyecto.uuidCliente) {
 			return res.status(400).json({
-				message: 'No se ha podido registrar, por favor los datos de la herramienta'
+				message: 'No se ha podido registrar, por favor los datos del proyecto'
 			});
 		}
 
@@ -42,7 +42,7 @@ export async function getOneProyecto(req: Request, res: Response) {
 		const conn: Pool = await connect();
 		const uuid = req.params.uuid;
 
-		const [[proyecto]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM proyecto WHERE uuid = ?', [uuid]);
+		const [[proyecto]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM proyectoWiew WHERE uuid = ?', [uuid]);
 
 		return proyecto
 			? res.status(200).json(proyecto)
@@ -64,7 +64,7 @@ export async function getAllProyecto(req: Request, res: Response) {
 	try {
 		const conn: Pool = await connect();
 
-		const [proyectos]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM proyecto ORDER BY creadoEn DESC');
+		const [proyectos]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM proyectoWiew ORDER BY creadoEn DESC');
 
 		return res.status(200).json(proyectos);
 
