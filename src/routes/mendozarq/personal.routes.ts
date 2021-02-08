@@ -18,7 +18,7 @@ router.route('/')
 	);
 
 // ====================> route Personal /:id
-router.route('/:id')
+router.route('/:uuid')
 	.get(
 		[checkJwt, checkRole(['administrador'])],
 		personal.getOnePersonal

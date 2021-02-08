@@ -15,6 +15,7 @@ export const uploadOneFile = (file: Express.Multer.File, fileRef?: string): Prom
 
 	return new Promise<FileResponse>((resolve, reject) => {
 
+		const originalName = file.originalname;
 		const myFile = file.originalname.split('.');
 		const fileType = myFile[myFile.length - 1];
 		const newName = `${uuid()}.${fileType}`;
@@ -28,7 +29,7 @@ export const uploadOneFile = (file: Express.Multer.File, fileRef?: string): Prom
 		s3.upload(params, (error: Error, data: ManagedUpload.SendData) => {
 			return error
 				? reject(error)
-				: resolve({ originalName: file.originalname, newName, data });
+				: resolve({ originalName, newName, data });
 		});
 	});
 

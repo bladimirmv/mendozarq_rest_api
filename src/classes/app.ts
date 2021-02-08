@@ -17,6 +17,8 @@ import usuarioRoutes from '../routes/auth/usuario.routes';
 import personalRoutes from '../routes/mendozarq/personal.routes';
 import categoriaProyectoRoutes from '../routes/mendozarq/categoria.proyecto.routes';
 import proyectoRoutes from '../routes/mendozarq/proyecto.routes';
+import documentosRoutes from '../routes/mendozarq/documentos.routes';
+
 
 
 import herramientaRoutes from '../routes/mendozarq/herramienta.routes';
@@ -83,6 +85,7 @@ export default class App {
 		this.app.use('/api/herramienta', herramientaRoutes);
 		this.app.use('/api/categoriaProyecto', categoriaProyectoRoutes);
 		this.app.use('/api/proyecto', proyectoRoutes);
+		this.app.use('/api/documentos', documentosRoutes);
 
 		this.app.use('/api/categoriarecurso', categoriaRecurseRoutes);
 		this.app.use('/api/recurso', recurso);

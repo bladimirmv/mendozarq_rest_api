@@ -1,0 +1,56 @@
+import { Router } from 'express';
+import multer from 'multer';
+
+import * as d from './../../controllers/mendozarq/documentos.controller'
+import { checkJwt } from './../../middlewares/jwt';
+import { checkRole } from './../../middlewares/roles';
+
+const upload = multer().any();
+
+
+const router: Router = Router();
+// ====================> route carpeta /
+router.route('/carpeta')
+	.get(
+		[checkJwt, checkRole(['administrador', 'arquitecto'])],
+		d.getAllCarpetaProyecto
+	)
+	.post(
+		[checkJwt, checkRole(['administrador', 'arquitecto'])],
+		d.addCarpetaProyecto
+	);
+
+// ====================> route carpeta /:uuid
+router.route('/carpeta/:uuid')
+	.get(
+		[checkJwt, checkRole(['administrador', 'arquitecto'])],
+		d.getOneCarpetaProyecto
+	)
+	.put(
+		[checkJwt, checkRole(['administrador', 'arquitecto'])],
+		d.updateCarpetaProyecto
+	)
+	.delete(
+		[checkJwt, checkRole(['administrador', 'arquitecto'])],
+		d.deleteCarpetaProyecto
+	);
+
+// ====================> route carpetas /:uuid
+router.route('/carpetas/:uuid')
+	.get(
+		[checkJwt, checkRole(['administrador', 'arquitecto'])],
+		d.getAllCarpetaProyectoByUuid
+	)
+
+
+// ==================== route documentos ==>
+router.route('/')
+	.post(
+		// [checkJwt, checkRole(['administrador', 'arquitecto'])],
+		upload,
+		d.addDocumentoProyecto
+	);
+
+
+
+export default router;
