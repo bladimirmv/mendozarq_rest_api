@@ -10,7 +10,7 @@ export interface DocumentoProyecto {
 	uuid: string;
 	creadoEn: Date;
 	nombre: string;
-	key: string;
+	keyName: string;
 	location: string;
 	fechaCreacion: Date;
 	uuidProyecto: string;

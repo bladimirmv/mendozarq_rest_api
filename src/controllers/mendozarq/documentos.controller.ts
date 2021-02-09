@@ -171,10 +171,13 @@ export const deleteCarpetaProyecto = async (req: Request, res: Response) => {
 export const addDocumentoProyecto = async (req: Request, res: Response) => {
 	try {
 		const conn: Pool = await connect();
-		const documento: DocumentoProyecto = req.body.documento;
+		const documento: DocumentoProyecto = JSON.parse(req.body.documento);
 		const files: Array<Express.Multer.File> | any = req.files;
 		const file: Express.Multer.File = files[0];
 		let fileUploaded: FileResponse;
+
+		console.log(documento);
+
 
 		if (!documento.nombre) {
 			return res.status(400).json({
@@ -196,7 +199,7 @@ export const addDocumentoProyecto = async (req: Request, res: Response) => {
 		}
 
 		fileUploaded = await uploadOneFile(file, '/mendozarq/documents');
-		documento.key = fileUploaded.data.Key;
+		documento.keyName = fileUploaded.data.Key;
 		documento.location = fileUploaded.data.Location;
 
 		documento.uuid = uuid();
