@@ -51,6 +51,11 @@ router.route('/')
 		d.addDocumentoProyecto
 	);
 
-
+// ====================> route docs /:uuid
+router.route('/uuidProy/:uuid')
+	.get(
+		[checkJwt, checkRole(['administrador', 'arquitecto'])],
+		d.getAllDocumentoProyectoByUuid
+	)
 
 export default router;

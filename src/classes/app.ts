@@ -18,6 +18,7 @@ import personalRoutes from '../routes/mendozarq/personal.routes';
 import categoriaProyectoRoutes from '../routes/mendozarq/categoria.proyecto.routes';
 import proyectoRoutes from '../routes/mendozarq/proyecto.routes';
 import documentosRoutes from '../routes/mendozarq/documentos.routes';
+import s3Routes from '../routes/s3.routes';
 
 
 
@@ -79,6 +80,7 @@ export default class App {
 	// ==========> routes
 	routes(): void {
 		this.app.use(IndexRoutes);
+		this.app.use('/api/file', s3Routes);
 		this.app.use('/api/usuario', usuarioRoutes);
 		this.app.use('/api/auth', authRoutes);
 		this.app.use('/api/personal', personalRoutes);

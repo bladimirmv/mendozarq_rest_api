@@ -176,31 +176,17 @@ export const addDocumentoProyecto = async (req: Request, res: Response) => {
 		const file: Express.Multer.File = files[0];
 		let fileUploaded: FileResponse;
 
-		console.log(documento);
-
-
-		if (!documento.nombre) {
-			return res.status(400).json({
-				message: 'No se ha podido registrar, por favor ingrese el nombre del documento. 🙁'
-			});
-		}
-
 		if (!file) {
 			return res.status(400).json({
 				message: 'No se ha podido registrar, por favor ingrese el documento. 🙁'
 			});
 		}
-		const [[existDocumento]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM documentoProyecto WHERE nombre = ? and uuidProyecto', [documento.nombre, documento.uuidProyecto]);
 
-		if (existDocumento) {
-			return res.status(400).json({
-				message: 'Ya existe un documento con ese nombre, por favor ingrese otro en su lugar. 🙁'
-			});
-		}
 
 		fileUploaded = await uploadOneFile(file, '/mendozarq/documents');
 		documento.keyName = fileUploaded.data.Key;
 		documento.location = fileUploaded.data.Location;
+		documento.nombre = fileUploaded.originalName;
 
 		documento.uuid = uuid();
 
@@ -210,6 +196,26 @@ export const addDocumentoProyecto = async (req: Request, res: Response) => {
 			message: 'Carpeta creado exitosamente! 😀'
 		});
 
+	} catch (error) {
+		console.log('❌Ocurrio un error:', error);
+		return res.status(400).json({
+			message: error
+		});
+	}
+}
+
+
+
+// ====================> getAllDocumentoProyectoByUuid
+export const getAllDocumentoProyectoByUuid = async (req: Request, res: Response) => {
+	try {
+		const conn: Pool = await connect();
+		const uuid: string = req.params.uuid;
+
+		const [documentos]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM documentoProyecto WHERE uuidProyecto = ? ORDER BY creadoEn DESC', [uuid]);
+
+
+		return res.status(200).json(documentos);
 	} catch (error) {
 		console.log('❌Ocurrio un error:', error);
 		return res.status(400).json({
