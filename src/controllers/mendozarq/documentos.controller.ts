@@ -1,10 +1,11 @@
 import { connect } from './../../classes/database';
-import { Request, Response } from 'express';
+import { json, Request, Response } from 'express';
 import { CarpetaProyecto, DocumentoProyecto } from '../../models/mendozarq/documentos.proyecto.interface';
 import { FieldPacket, Pool } from 'mysql2/promise';
 import { v4 as uuid } from 'uuid';
-import { uploadOneFile } from './../../classes/aws.s3';
+import { uploadOneFile, deleteFile } from './../../classes/aws.s3';
 import { FileResponse } from '../../models/fileResponse.interface';
+import { AWS_S3 } from '../../global/enviroment';
 
 // ====================> addCarpetaProyecto
 export const addCarpetaProyecto = async (req: Request, res: Response) => {
@@ -18,7 +19,7 @@ export const addCarpetaProyecto = async (req: Request, res: Response) => {
 			});
 		}
 
-		const [[existCarpeta]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM carpetaProyecto WHERE  nombre = ? and uuidProyecto != ?', [carpeta.nombre, carpeta.uuidProyecto]);
+		const [[existCarpeta]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM carpetaProyecto WHERE  nombre = ? and uuid != ?', [carpeta.nombre, carpeta.uuidProyecto]);
 
 		if (existCarpeta) {
 			return res.status(400).json({
@@ -87,11 +88,8 @@ export const getAllCarpetaProyectoByUuid = async (req: Request, res: Response) =
 	try {
 		const conn: Pool = await connect();
 		const uuid: string = req.params.uuid;
-		console.log('this uuid', uuid);
-
 
 		const [carpetas]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM carpetaProyecto WHERE uuidProyecto = ? ORDER BY creadoEn DESC', [uuid]);
-
 
 		return res.status(200).json(carpetas);
 	} catch (error) {
@@ -165,7 +163,7 @@ export const deleteCarpetaProyecto = async (req: Request, res: Response) => {
 	}
 }
 
-
+// ************************************ Documentos ****************************************************
 
 // ====================> addDocumentoProyecto
 export const addDocumentoProyecto = async (req: Request, res: Response) => {
@@ -178,7 +176,7 @@ export const addDocumentoProyecto = async (req: Request, res: Response) => {
 
 		if (!file) {
 			return res.status(400).json({
-				message: 'No se ha podido registrar, por favor ingrese el documento. 🙁'
+				message: 'No se ha podido registrar, por favor ingrese un documento documento. 🙁'
 			});
 		}
 
@@ -193,7 +191,7 @@ export const addDocumentoProyecto = async (req: Request, res: Response) => {
 		await conn.query('INSERT INTO documentoProyecto SET ? ', documento);
 
 		return res.status(201).json({
-			message: 'Carpeta creado exitosamente! 😀'
+			message: 'Documento creado exitosamente! 😀'
 		});
 
 	} catch (error) {
@@ -203,8 +201,6 @@ export const addDocumentoProyecto = async (req: Request, res: Response) => {
 		});
 	}
 }
-
-
 
 // ====================> getAllDocumentoProyectoByUuid
 export const getAllDocumentoProyectoByUuid = async (req: Request, res: Response) => {
@@ -216,6 +212,39 @@ export const getAllDocumentoProyectoByUuid = async (req: Request, res: Response)
 
 
 		return res.status(200).json(documentos);
+	} catch (error) {
+		console.log('❌Ocurrio un error:', error);
+		return res.status(400).json({
+			message: error
+		});
+	}
+}
+
+// ====================> deleteDocumento
+export const deleteDocumento = async (req: Request, res: Response) => {
+	try {
+		const conn: Pool = await connect();
+		const uuid: string = req.params.uuid;
+
+		const [[row]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM documentoProyecto WHERE uuid = ? ', [uuid]);
+		const documento: DocumentoProyecto = row as DocumentoProyecto;
+
+		if (!documento) {
+			return res.status(404).json({
+				message: 'No se puede eliminar por que el documento no existe. 🙁'
+			})
+		}
+
+		const deletedData = await deleteFile(documento.keyName);
+
+		await conn.query('DELETE FROM documentoProyecto WHERE uuid = ?', [uuid]);
+
+		return res.status(200).json({
+			message: 'Documento eliminado correctamento. 😀',
+			deletedData
+		})
+
+
 	} catch (error) {
 		console.log('❌Ocurrio un error:', error);
 		return res.status(400).json({

@@ -46,10 +46,16 @@ router.route('/carpetas/:uuid')
 // ==================== route documentos ==>
 router.route('/')
 	.post(
-		// [checkJwt, checkRole(['administrador', 'arquitecto'])],
+		[checkJwt, checkRole(['administrador', 'arquitecto'])],
 		upload,
 		d.addDocumentoProyecto
 	);
+
+router.route('/:uuid')
+	.delete(
+		[checkJwt, checkRole(['administrador', 'arquitecto'])],
+		d.deleteDocumento
+	)
 
 // ====================> route docs /:uuid
 router.route('/uuidProy/:uuid')

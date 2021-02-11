@@ -6,6 +6,7 @@ import { ManagedUpload } from 'aws-sdk/clients/s3';
 import { s3ClientConfiguration } from './../classes/aws.s3.config'
 import { AWS_S3 } from './../global/enviroment';
 import { FileResponse } from './../models/fileResponse.interface'
+import { reject, resolve } from 'bluebird';
 
 const s3 = new aws.S3(s3ClientConfiguration);
 
@@ -92,7 +93,19 @@ export const downloadFile = async (req: Request, res: Response) => {
 }
 
 
-
-
+// ====================> deleteFile
+export const deleteFile = (keyName: string) => {
+	return new Promise<aws.S3.DeleteObjectOutput>((resolve, reject) => {
+		const params: aws.S3.PutObjectRequest = {
+			Bucket: AWS_S3.Bucket,
+			Key: keyName
+		};
+		s3.deleteObject(params, (error: aws.AWSError, data: aws.S3.DeleteObjectOutput) => {
+			return error
+				? reject(error)
+				: resolve(data);
+		});
+	});
+}
 
 
