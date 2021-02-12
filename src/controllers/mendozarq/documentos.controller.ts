@@ -130,8 +130,7 @@ export const updateCarpetaProyecto = async (req: Request, res: Response) => {
 	} catch (error) {
 		console.log('❌Ocurrio un error:', error);
 		return res.status(400).json({
-			message: 'Lo sentimos ocurrio un problema al guardar el personal. 🙁',
-			error
+			message: error
 		});
 	}
 }
@@ -252,3 +251,39 @@ export const deleteDocumento = async (req: Request, res: Response) => {
 		});
 	}
 }
+
+// ====================> updateDocumentoProyecto
+export const updateDocumentoProyecto = async (req: Request, res: Response) => {
+	try {
+		const conn: Pool = await connect();
+		const documento: DocumentoProyecto = req.body;
+		const uuid: string = req.params.uuid;
+
+
+		const [[existCarpeta]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM documentoProyecto WHERE uuid = ?', [uuid]);
+		if (!existCarpeta) {
+			return res.status(404).json({
+				message: 'No se pudo actualizar el documento, por que no existe. 🙁'
+			});
+		}
+
+		const [[existNombre]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM documentoProyecto WHERE  nombre = ? and uuid != ?', [documento.nombre, uuid]);
+		if (existNombre) {
+			return res.status(404).json({
+				message: 'Ya existe un documento con el mismo nombre, por favor ingrese otro en su lugar. 🙁'
+			});
+		}
+
+		await conn.query('UPDATE documentoProyecto SET ? WHERE uuid = ?', [documento, uuid]);
+		return res.status(200).json({
+			message: 'Documento actualizado correctamente! 😀'
+		});
+
+	} catch (error) {
+		console.log('❌Ocurrio un error:', error);
+		return res.status(400).json({
+			message: error
+		});
+	}
+}
+

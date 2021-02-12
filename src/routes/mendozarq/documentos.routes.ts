@@ -52,6 +52,10 @@ router.route('/')
 	);
 
 router.route('/:uuid')
+	.put(
+		[checkJwt, checkRole(['administrador', 'arquitecto'])],
+		d.updateDocumentoProyecto
+	)
 	.delete(
 		[checkJwt, checkRole(['administrador', 'arquitecto'])],
 		d.deleteDocumento
