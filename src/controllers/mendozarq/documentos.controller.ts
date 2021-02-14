@@ -1,11 +1,11 @@
-import { connect } from './../../classes/database';
-import { json, Request, Response } from 'express';
-import { CarpetaProyecto, DocumentoCarpeta, DocumentoProyCarpeta, DocumentoProyecto, Path } from '../../models/mendozarq/documentos.proyecto.interface';
-import { FieldPacket, Pool } from 'mysql2/promise';
+import { Request, Response } from 'express';
 import { v4 as uuid } from 'uuid';
-import { uploadOneFile, deleteFile } from './../../classes/aws.s3';
+import { FieldPacket, Pool } from 'mysql2/promise';
+
+import { CarpetaProyecto, DocumentoCarpeta, DocumentoProyCarpeta, DocumentoProyecto, Path } from '../../models/mendozarq/documentos.proyecto.interface';
+import { connect } from './../../classes/database';
 import { FileResponse } from '../../models/fileResponse.interface';
-import { AWS_S3 } from '../../global/enviroment';
+import { uploadOneFile, deleteFile } from './../../classes/aws.s3';
 
 // ====================> addCarpetaProyecto
 export const addCarpetaProyecto = async (req: Request, res: Response) => {
@@ -365,7 +365,6 @@ export const getAllDocumentoCarpetaByUuid = async (req: Request, res: Response) 
 									INNER JOIN carpetaProyecto cp on dc.uuidCarpeta = cp.uuid
 					WHERE cp.uuid = ? AND dp.path = ?
 					ORDER BY creadoEn DESC;`, [uuid, path]);
-
 
 		return res.status(200).json(documentos);
 	} catch (error) {
