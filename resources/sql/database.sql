@@ -49,14 +49,52 @@ create table proyecto
     foreign key (uuidCliente) references usuario (uuid)
 );
 
+
 CREATE VIEW proyectoWiew AS
 SELECT p.*,
        u.nombre as nombreCliente,
        u.apellidoPaterno,
        u.apellidoMaterno
-FROM
-   proyecto AS p
-   INNER JOIN usuario AS u ON p.uuidCliente = u.uuid;
+FROM proyecto AS p
+         INNER JOIN usuario AS u ON p.uuidCliente = u.uuid;
+
+create table carpetaProyecto
+(
+    uuid          varchar(100) primary key,
+    creadoEn      timestamp default current_timestamp not null,
+    nombre        varchar(50),
+    fechaCreacion date,
+    uuidProyecto  varchar(100)                        not null,
+    foreign key (uuidProyecto) references proyecto (uuid)
+);
+
+create table documentoProyecto
+(
+    uuid          varchar(100) primary key,
+    creadoEn      timestamp default current_timestamp not null,
+    nombre        text                                not null,
+    keyName       text                                not null,
+    location      text                                not null,
+    fechaCreacion date                                not null,
+    uuidProyecto  varchar(100)                        not null,
+    size          int                                 not null,
+    path          varchar(10)                         not null,
+    foreign key (uuidProyecto) references proyecto (uuid)
+);
+
+create table documentoCarpeta
+(
+    uuid          varchar(100) primary key,
+    creadoEn      timestamp default current_timestamp not null,
+    uuidCarpeta   varchar(100)                        not null,
+    uuidDocumento varchar(100)                        not null,
+    foreign key (uuidCarpeta) references carpetaProyecto (uuid),
+    foreign key (uuidDocumento) references documentoProyecto (uuid)
+);
+
+
+
+
 
 
 create table herramienta

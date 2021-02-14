@@ -62,10 +62,25 @@ router.route('/:uuid')
 	)
 
 // ====================> route docs /:uuid
-router.route('/uuidProy/:uuid')
+router.route('/uuidProy/:uuid/path/:path')
 	.get(
 		[checkJwt, checkRole(['administrador', 'arquitecto'])],
 		d.getAllDocumentoProyectoByUuid
+	)
+
+// ==================== route documentos Carpeta ==>
+
+router.route('/docCarpeta')
+	.post(
+		[checkJwt, checkRole(['administrador', 'arquitecto'])],
+		upload,
+		d.addDocumentoCarpeta
+	);
+
+router.route('/uuidCarpeta/:uuid/path/:path')
+	.get(
+		[checkJwt, checkRole(['administrador', 'arquitecto'])],
+		d.getAllDocumentoCarpetaByUuid
 	)
 
 export default router;

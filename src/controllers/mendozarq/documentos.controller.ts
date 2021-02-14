@@ -1,6 +1,6 @@
 import { connect } from './../../classes/database';
 import { json, Request, Response } from 'express';
-import { CarpetaProyecto, DocumentoProyecto } from '../../models/mendozarq/documentos.proyecto.interface';
+import { CarpetaProyecto, DocumentoCarpeta, DocumentoProyCarpeta, DocumentoProyecto, Path } from '../../models/mendozarq/documentos.proyecto.interface';
 import { FieldPacket, Pool } from 'mysql2/promise';
 import { v4 as uuid } from 'uuid';
 import { uploadOneFile, deleteFile } from './../../classes/aws.s3';
@@ -187,7 +187,9 @@ export const addDocumentoProyecto = async (req: Request, res: Response) => {
 
 		documento.uuid = uuid();
 
+
 		await conn.query('INSERT INTO documentoProyecto SET ? ', documento);
+
 
 		return res.status(201).json({
 			message: 'Documento creado exitosamente! 😀'
@@ -206,8 +208,11 @@ export const getAllDocumentoProyectoByUuid = async (req: Request, res: Response)
 	try {
 		const conn: Pool = await connect();
 		const uuid: string = req.params.uuid;
+		const path: Path = req.params.path as Path;
+		console.log(path);
 
-		const [documentos]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM documentoProyecto WHERE uuidProyecto = ? ORDER BY creadoEn DESC', [uuid]);
+
+		const [documentos]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM documentoProyecto WHERE uuidProyecto = ? AND path = ? ORDER BY creadoEn DESC', [uuid, path]);
 
 
 		return res.status(200).json(documentos);
@@ -236,7 +241,12 @@ export const deleteDocumento = async (req: Request, res: Response) => {
 
 		const deletedData = await deleteFile(documento.keyName);
 
+		if (documento.path === 'folder') {
+			await conn.query('DELETE FROM documentoCarpeta WHERE uuidDocumento = ?', [documento.uuid]);
+		}
+
 		await conn.query('DELETE FROM documentoProyecto WHERE uuid = ?', [uuid]);
+
 
 		return res.status(200).json({
 			message: 'Documento eliminado correctamento. 😀',
@@ -287,3 +297,81 @@ export const updateDocumentoProyecto = async (req: Request, res: Response) => {
 	}
 }
 
+
+// ************************************ DocumentoCarpeta ****************************************************
+
+// ====================> addDocumentoCarpeta
+export const addDocumentoCarpeta = async (req: Request, res: Response) => {
+	try {
+		const conn: Pool = await connect();
+		const documento: DocumentoProyCarpeta = JSON.parse(req.body.documento);
+		const uuidCarpeta = documento.uuidCarpeta;
+		const files: Array<Express.Multer.File> | any = req.files;
+		const file: Express.Multer.File = files[0];
+		let fileUploaded: FileResponse;
+
+		if (!file) {
+			return res.status(400).json({
+				message: 'No se ha podido registrar, por favor ingrese un documento documento. 🙁'
+			});
+		}
+
+
+		fileUploaded = await uploadOneFile(file, '/mendozarq/documents');
+		documento.uuid = uuid();
+		documento.keyName = fileUploaded.data.Key;
+		documento.location = fileUploaded.data.Location;
+		documento.nombre = fileUploaded.originalName;
+
+
+		delete documento.uuidCarpeta;
+		console.log(documento);
+
+		await conn.query('INSERT INTO documentoProyecto SET ? ', documento);
+
+		const documentoCarpeta: DocumentoCarpeta = {
+			uuid: uuid(),
+			uuidCarpeta: String(uuidCarpeta),
+			uuidDocumento: documento.uuid
+		};
+		console.log(documentoCarpeta);
+
+		await conn.query('INSERT INTO documentoCarpeta SET ? ', documentoCarpeta);
+
+		return res.status(201).json({
+			message: 'Documento creado exitosamente! 😀'
+		});
+	} catch (error) {
+		console.log('❌Ocurrio un error:', error);
+		return res.status(400).json({
+			message: error
+		});
+	}
+}
+
+// ====================> getAllDocumentoCarpetaByUuid
+export const getAllDocumentoCarpetaByUuid = async (req: Request, res: Response) => {
+	try {
+		const conn: Pool = await connect();
+		const uuid: string = req.params.uuid;
+		const path: Path = req.params.path as Path;
+		console.log(path);
+
+
+		const [documentos]: [any[], FieldPacket[]] = await conn.query(`
+					SELECT dp.*
+					FROM documentoCarpeta AS dc
+									INNER JOIN documentoProyecto AS dp ON dc.uuidDocumento = dp.uuid
+									INNER JOIN carpetaProyecto cp on dc.uuidCarpeta = cp.uuid
+					WHERE cp.uuid = ? AND dp.path = ?
+					ORDER BY creadoEn DESC;`, [uuid, path]);
+
+
+		return res.status(200).json(documentos);
+	} catch (error) {
+		console.log('❌Ocurrio un error:', error);
+		return res.status(400).json({
+			message: error
+		});
+	}
+}

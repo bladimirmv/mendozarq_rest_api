@@ -21,6 +21,12 @@ export interface DocumentoProyecto {
 }
 
 export interface DocumentoCarpeta {
+	uuid: string;
 	uuidDocumento: string;
 	uuidCarpeta: string;
+}
+
+
+export interface DocumentoProyCarpeta extends DocumentoProyecto {
+	uuidCarpeta?: string;
 }
