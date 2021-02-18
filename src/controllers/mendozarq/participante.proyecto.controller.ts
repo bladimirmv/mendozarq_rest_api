@@ -49,7 +49,7 @@ export const getAllPersonalProyecto = async (req: Request, res: Response) => {
 		const uuid: string = req.params.uuid;
 
 		const [rows]: [any[], FieldPacket[]] = await
-			conn.query(`SELECT  per.* FROM personalProyecto AS pp
+			conn.query(`SELECT pp.uuid AS uuidPersonalProyecto, per.* FROM personalProyecto AS pp
 			INNER JOIN proyecto AS p ON pp.uuidProyecto = p.uuid
 			INNER JOIN personal per ON pp.uuidPersonal = per.uuid
 			WHERE p.uuid = ? ORDER BY creadoEn DESC`, [uuid]);
@@ -98,11 +98,12 @@ export const deletePersonalProyecto = async (req: Request, res: Response) => {
 		const conn: Pool = await connect();
 		const uuid: string = req.params.uuid;
 
-		const [[personalProyecto]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM personalProyecto WHERE uuidPersonal = ?', [uuid]);
+
+		const [[personalProyecto]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM personalProyecto WHERE uuid = ?', [uuid]);
 
 
 		if (personalProyecto) {
-			await conn.query('DELETE FROM personalProyecto WHERE uuidPersonal = ?', [uuid]);
+			await conn.query('DELETE FROM personalProyecto WHERE uuid = ?', [uuid]);
 
 			return res.status(200).json({
 				message: 'Personal eliminado del proyecto correctamente. 😀'
