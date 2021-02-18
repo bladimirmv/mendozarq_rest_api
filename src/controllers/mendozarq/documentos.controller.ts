@@ -12,6 +12,7 @@ export const addCarpetaProyecto = async (req: Request, res: Response) => {
 	try {
 		const conn: Pool = await connect();
 		const carpeta: CarpetaProyecto = req.body;
+		console.log(carpeta);
 
 		if (!carpeta.nombre) {
 			return res.status(400).json({
@@ -19,7 +20,7 @@ export const addCarpetaProyecto = async (req: Request, res: Response) => {
 			});
 		}
 
-		const [[existCarpeta]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM carpetaProyecto WHERE  nombre = ? and uuid != ?', [carpeta.nombre, carpeta.uuidProyecto]);
+		const [[existCarpeta]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM carpetaProyecto WHERE  nombre = ? and uuidProyecto = ?', [carpeta.nombre, carpeta.uuidProyecto]);
 
 		if (existCarpeta) {
 			return res.status(400).json({

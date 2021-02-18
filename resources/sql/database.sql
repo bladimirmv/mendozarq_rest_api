@@ -92,6 +92,28 @@ create table documentoCarpeta
     foreign key (uuidDocumento) references documentoProyecto (uuid)
 );
 
+create table personalProyecto
+(
+    uuid         varchar(100) primary key,
+    creadoEn     timestamp default current_timestamp not null,
+    uuidProyecto varchar(100)                        not null,
+    uuidPersonal varchar(100)                        not null,
+    foreign key (uuidProyecto) references proyecto (uuid),
+    foreign key (uuidPersonal) references personal (uuid)
+);
+
+create table usuarioProyecto
+(
+    uuid         varchar(100) primary key,
+    creadoEn     timestamp default current_timestamp not null,
+    uuidProyecto varchar(100)                        not null,
+    uuidUsuario varchar(100)                        not null,
+    foreign key (uuidProyecto) references proyecto (uuid),
+    foreign key (uuidUsuario) references usuario (uuid)
+);
+
+
+
 
 
 

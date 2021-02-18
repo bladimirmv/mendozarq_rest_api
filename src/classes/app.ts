@@ -12,13 +12,14 @@ import * as socket from "../webSockets/socket";
 
 // ==========> routes imports
 import IndexRoutes from '../routes/index.routes';
+import s3Routes from '../routes/s3.routes';
 import authRoutes from '../routes/auth/auth.routes';
 import usuarioRoutes from '../routes/auth/usuario.routes';
 import personalRoutes from '../routes/mendozarq/personal.routes';
 import categoriaProyectoRoutes from '../routes/mendozarq/categoria.proyecto.routes';
 import proyectoRoutes from '../routes/mendozarq/proyecto.routes';
 import documentosRoutes from '../routes/mendozarq/documentos.routes';
-import s3Routes from '../routes/s3.routes';
+import participantesRoutes from '../routes/mendozarq/participante.proyecto.routes';
 
 
 
@@ -88,6 +89,8 @@ export default class App {
 		this.app.use('/api/categoriaProyecto', categoriaProyectoRoutes);
 		this.app.use('/api/proyecto', proyectoRoutes);
 		this.app.use('/api/documentos', documentosRoutes);
+		this.app.use('/api/participantes', participantesRoutes);
+
 
 		this.app.use('/api/categoriarecurso', categoriaRecurseRoutes);
 		this.app.use('/api/recurso', recurso);
