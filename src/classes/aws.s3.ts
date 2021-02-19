@@ -10,9 +10,10 @@ import { reject, resolve } from 'bluebird';
 
 const s3 = new aws.S3(s3ClientConfiguration);
 
+export type aclS3 = 'private' | 'public-read' | 'public-read-write';
 
 // ====================> uploadOneFile
-export const uploadOneFile = (file: Express.Multer.File, fileRef?: string): Promise<FileResponse> => {
+export const uploadOneFile = (file: Express.Multer.File, fileRef?: string, ACL?: aclS3): Promise<FileResponse> => {
 
 	return new Promise<FileResponse>((resolve, reject) => {
 
@@ -24,7 +25,8 @@ export const uploadOneFile = (file: Express.Multer.File, fileRef?: string): Prom
 		const params: aws.S3.PutObjectRequest = {
 			Bucket: AWS_S3.Bucket + String(fileRef),
 			Key: newName,
-			Body: file.buffer
+			Body: file.buffer,
+			ACL: ACL ? ACL : 'private'
 		};
 
 		s3.upload(params, (error: Error, data: ManagedUpload.SendData) => {
@@ -38,9 +40,9 @@ export const uploadOneFile = (file: Express.Multer.File, fileRef?: string): Prom
 }
 
 // ====================> uploadMoreThanOneFile
-export const uploadFiles = (files: Express.Multer.File[], fileRef?: string): Promise<FileResponse[]> => {
+export const uploadFiles = (files: Express.Multer.File[], fileRef?: string, ACL?: aclS3): Promise<FileResponse[]> => {
 	return Promise.all(files.map((file: Express.Multer.File) => {
-		return uploadOneFile(file, fileRef);
+		return uploadOneFile(file, fileRef, ACL);
 	}));
 }
 

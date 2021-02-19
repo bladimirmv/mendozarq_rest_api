@@ -5,12 +5,33 @@ import * as pp from '../../controllers/mendozarq/participante.proyecto.controlle
 import { checkJwt } from './../../middlewares/jwt';
 import { checkRole } from './../../middlewares/roles';
 
-const upload = multer().any();
-
 const router = Router();
 
-router.route('/personal')
+router.route('/usuario')
+	.post(
+		[checkJwt, checkRole(['administrador'])],
+		pp.addUsuarioProyecto
+	);
 
+router.route('/usuario/:uuid')
+	.get(
+		[checkJwt, checkRole(['administrador'])],
+		pp.getAllUsuarioProyecto
+	)
+	.delete(
+		[checkJwt, checkRole(['administrador'])],
+		pp.deleteUsuarioProyecto
+	);
+
+router.route('/usuario/proyecto/:uuid')
+	.get(
+		[checkJwt, checkRole(['administrador'])],
+		pp.getAllUsuarioByUuid
+	)
+
+// ====================> Personal Participante
+
+router.route('/personal')
 	.post(
 		[checkJwt, checkRole(['administrador'])],
 		pp.addPersonalProyecto
