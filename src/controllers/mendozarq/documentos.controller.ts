@@ -6,6 +6,7 @@ import { CarpetaProyecto, DocumentoCarpeta, DocumentoProyCarpeta, DocumentoProye
 import { connect } from './../../classes/database';
 import { FileResponse } from '../../models/fileResponse.interface';
 import { uploadOneFile, deleteFile } from './../../classes/aws.s3';
+import e from 'cors';
 
 // ====================> addCarpetaProyecto
 export const addCarpetaProyecto = async (req: Request, res: Response) => {
@@ -271,14 +272,17 @@ export const updateDocumentoProyecto = async (req: Request, res: Response) => {
 		const uuid: string = req.params.uuid;
 
 
-		const [[existCarpeta]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM documentoProyecto WHERE uuid = ?', [uuid]);
-		if (!existCarpeta) {
+		const [[existDoc]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM documentoProyecto WHERE uuid = ?', [uuid]);
+		if (!existDoc) {
 			return res.status(404).json({
 				message: 'No se pudo actualizar el documento, por que no existe. 🙁'
 			});
 		}
 
-		const [[existNombre]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM documentoProyecto WHERE  nombre = ? and uuid != ?', [documento.nombre, uuid]);
+		console.table([documento.nombre, uuid, existDoc.path, existDoc.uuidProyecto]);
+
+
+		const [[existNombre]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM documentoProyecto WHERE  nombre = ? AND uuid != ? AND path = ? AND uuidProyecto = ?', [documento.nombre, uuid, existDoc.path, existDoc.uuidProyecto]);
 		if (existNombre) {
 			return res.status(404).json({
 				message: 'Ya existe un documento con el mismo nombre, por favor ingrese otro en su lugar. 🙁'
