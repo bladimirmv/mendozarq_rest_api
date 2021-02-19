@@ -117,7 +117,7 @@ export const updateCarpetaProyecto = async (req: Request, res: Response) => {
 			});
 		}
 
-		const [[existNombre]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM carpetaProyecto WHERE  nombre = ? and uuid != ?', [carpeta.nombre, uuid]);
+		const [[existNombre]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM carpetaProyecto WHERE  nombre = ? AND uuid != ? AND uuidProyecto = ?', [carpeta.nombre, uuid, existCarpeta.uuidProyecto]);
 		if (existNombre) {
 			return res.status(404).json({
 				message: 'Ya existe una carpeta con el mismo nombre, por favor ingrese otro en su lugar. 🙁'
