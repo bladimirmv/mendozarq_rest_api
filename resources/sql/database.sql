@@ -112,6 +112,27 @@ create table usuarioProyecto
     foreign key (uuidUsuario) references usuario (uuid)
 );
 
+create table servicioProyecto
+(
+    uuid         varchar(100) primary key,
+    creadoEn     timestamp default current_timestamp not null,
+    nombre       varchar(50)                         not null,
+    descripcion  varchar(200),
+    avance       int                                 not null,
+    fechaInicio  date                                not null,
+    fechaFinal   date                                not null,
+    uuidProyecto varchar(100)                        not null,
+    foreign key (uuidProyecto) references proyecto (uuid)
+);
+
+
+
+
+
+
+
+
+
 
 
 
