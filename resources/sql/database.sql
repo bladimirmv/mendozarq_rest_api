@@ -125,7 +125,17 @@ create table servicioProyecto
     foreign key (uuidProyecto) references proyecto (uuid)
 );
 
-
+create table visitaProyecto
+(
+    uuid            varchar(100) primary key,
+    creadoEn        timestamp default current_timestamp not null,
+    nombre          varchar(50)                         not null,
+    faseDelProyecto varchar(100)                        not null,
+    descripcion     varchar(200),
+    fecha           date                                not null,
+    uuidProyecto    varchar(100)                        not null,
+    foreign key (uuidProyecto) references proyecto (uuid)
+);
 
 
 

@@ -21,6 +21,8 @@ import proyectoRoutes from '../routes/mendozarq/proyecto.routes';
 import documentosRoutes from '../routes/mendozarq/documentos.routes';
 import participantesRoutes from '../routes/mendozarq/participante.proyecto.routes';
 import servicioProyectoRoutes from '../routes/mendozarq/servicio.proyecto.routes';
+import visitaProyectoRoutes from '../routes/mendozarq/visita.proyecto.routes';
+
 
 
 
@@ -92,6 +94,7 @@ export default class App {
 		this.app.use('/api/documentos', documentosRoutes);
 		this.app.use('/api/participantes', participantesRoutes);
 		this.app.use('/api/servicioProyecto', servicioProyectoRoutes);
+		this.app.use('/api/visitaProyecto', visitaProyectoRoutes);
 
 
 
