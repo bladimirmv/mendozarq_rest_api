@@ -1,9 +1,9 @@
 import { Socket } from "socket.io";
 import socketIO from "socket.io";
-import { Roles, Usuario } from './../models/usuario.interface';
+import { Roles, Usuario } from './../models/auth/usuario.interface';
 import * as jwt from 'jsonwebtoken';
 import config from "./../config/config";
-import { TokenUsuario } from './../models/usuario.interface';
+import { TokenUsuario } from '../models/auth/usuario.interface';
 import { Pool, FieldPacket } from 'mysql2/promise';
 import { connect } from './../classes/database';
 

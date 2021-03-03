@@ -137,6 +137,27 @@ create table visitaProyecto
     foreign key (uuidProyecto) references proyecto (uuid)
 );
 
+create table observacionServicio
+(
+    uuid         varchar(100) primary key,
+    creadoEn     timestamp default current_timestamp not null,
+    descripcion  varchar(200)                        not null,
+    uuidServicio varchar(100)                        not null,
+    uuidVisita   varchar(100)                        not null,
+    foreign key (uuidServicio) references servicioProyecto (uuid),
+    foreign key (uuidVisita) references visitaProyecto (uuid)
+);
+
+create table observacionPersonal
+(
+    uuid         varchar(100) primary key,
+    creadoEn     timestamp default current_timestamp not null,
+    descripcion  varchar(200)                        not null,
+    uuidPersonal varchar(100)                        not null,
+    uuidVisita   varchar(100)                        not null,
+    foreign key (uuidPersonal) references personal (uuid),
+    foreign key (uuidVisita) references visitaProyecto (uuid)
+);
 
 
 

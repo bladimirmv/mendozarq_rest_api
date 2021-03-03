@@ -4,8 +4,8 @@ import bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
 import { Pool, FieldPacket, RowDataPacket, QueryError } from 'mysql2/promise';
 
-import { connect } from '../../classes/database';
-import { Usuario } from '../../models/usuario.interface';
+import { connect } from './../../classes/database';
+import { Usuario } from './../../models/auth/usuario.interface';
 
 // ===================================================================================================
 function generateUsuario(usuario: Usuario): Usuario {

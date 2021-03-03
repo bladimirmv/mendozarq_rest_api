@@ -1,9 +1,9 @@
-import { Roles } from './../../models/usuario.interface';
+import { Roles } from '../../models/auth/usuario.interface';
 import { isValidJwt } from './../../middlewares/jwt';
 import { isValidRole } from './../../middlewares/roles';
 
 import { Socket } from "socket.io";
-import { connect } from '../../classes/database';
+import { connect } from './../../classes/database';
 import { FieldPacket, Pool } from 'mysql2/promise';
 
 export async function proyectos(socket: Socket, token: string) {

@@ -75,8 +75,6 @@ export const listFiles = (fileRef?: string): Promise<any[]> => {
 // ====================> dowloadFile
 export const downloadFile = async (req: Request, res: Response) => {
 
-	console.log('parms', req.params);
-
 	const params = {
 		Bucket: AWS_S3.Bucket,
 		Key: req.params.key

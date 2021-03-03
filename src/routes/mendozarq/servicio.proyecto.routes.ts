@@ -8,6 +8,7 @@ import { checkRole } from './../../middlewares/roles';
 const router: Router = Router();
 
 router.route('/')
+
 	.post(
 		[checkJwt, checkRole(['administrador'])],
 		sp.addServicioProyecto

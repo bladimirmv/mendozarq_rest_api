@@ -16,20 +16,17 @@ import s3Routes from '../routes/s3.routes';
 import authRoutes from '../routes/auth/auth.routes';
 import usuarioRoutes from '../routes/auth/usuario.routes';
 import personalRoutes from '../routes/mendozarq/personal.routes';
-import categoriaProyectoRoutes from '../routes/mendozarq/categoria.proyecto.routes';
 import proyectoRoutes from '../routes/mendozarq/proyecto.routes';
 import documentosRoutes from '../routes/mendozarq/documentos.routes';
 import participantesRoutes from '../routes/mendozarq/participante.proyecto.routes';
 import servicioProyectoRoutes from '../routes/mendozarq/servicio.proyecto.routes';
 import visitaProyectoRoutes from '../routes/mendozarq/visita.proyecto.routes';
-
+import observacionServicioRoutes from '../routes/mendozarq/observacion.servicio.routes';
 
 
 
 import herramientaRoutes from '../routes/mendozarq/herramienta.routes';
 
-import categoriaRecurseRoutes from '../routes/mendozarq/categoria.recurso.routes';
-import recurso from '../routes/mendozarq/recurso.routes';
 
 // ==========> App class
 export default class App {
@@ -89,17 +86,12 @@ export default class App {
 		this.app.use('/api/auth', authRoutes);
 		this.app.use('/api/personal', personalRoutes);
 		this.app.use('/api/herramienta', herramientaRoutes);
-		this.app.use('/api/categoriaProyecto', categoriaProyectoRoutes);
 		this.app.use('/api/proyecto', proyectoRoutes);
 		this.app.use('/api/documentos', documentosRoutes);
 		this.app.use('/api/participantes', participantesRoutes);
 		this.app.use('/api/servicioProyecto', servicioProyectoRoutes);
 		this.app.use('/api/visitaProyecto', visitaProyectoRoutes);
-
-
-
-		this.app.use('/api/categoriarecurso', categoriaRecurseRoutes);
-		this.app.use('/api/recurso', recurso);
+		this.app.use('/api/observacionServicio', observacionServicioRoutes);
 	}
 
 	// ==========> listen app

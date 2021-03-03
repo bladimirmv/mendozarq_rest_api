@@ -3,10 +3,10 @@ import { FieldPacket, Pool } from 'mysql2/promise';
 import { async } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 
-import { connect } from '../../classes/database';
-import { PersonalProyecto, UsuarioProyecto } from '../../models/mendozarq/participante.proyecto.interface';
-import { Personal } from '../../models/mendozarq/personal.interface';
-import { Usuario } from '../../models/usuario.interface';
+import { connect } from './../../classes/database';
+import { PersonalProyecto, UsuarioProyecto } from './../../models/mendozarq/participante.proyecto.interface';
+import { Personal } from './../../models/mendozarq/personal.interface';
+import { Usuario } from './../../models/auth/usuario.interface';
 
 
 

@@ -5,8 +5,8 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken'
 
 import config from '../../config/config'
-import { Usuario } from "../../models/usuario.interface";
-import { Credenciales } from "../../models/credenciales.interface";
+import { Usuario } from "../../models/auth/usuario.interface";
+import { Credenciales } from "./../../models/auth/credenciales.interface";
 
 // ===============================================================================
 function createToken(usuario: Usuario) {

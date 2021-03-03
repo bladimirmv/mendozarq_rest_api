@@ -1,6 +1,6 @@
 import { async } from 'rxjs';
 import { Pool, FieldPacket } from 'mysql2/promise';
-import { Usuario, Roles } from './../models/usuario.interface';
+import { Usuario, Roles } from './../models/auth/usuario.interface';
 import { Request, Response, NextFunction } from 'express';
 
 import { connect } from './../classes/database';
