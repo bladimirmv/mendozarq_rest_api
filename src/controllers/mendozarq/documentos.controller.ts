@@ -13,7 +13,6 @@ export const addCarpetaProyecto = async (req: Request, res: Response) => {
 	try {
 		const conn: Pool = await connect();
 		const carpeta: CarpetaProyecto = req.body;
-		console.log(carpeta);
 
 		if (!carpeta.nombre) {
 			return res.status(400).json({
@@ -211,11 +210,8 @@ export const getAllDocumentoProyectoByUuid = async (req: Request, res: Response)
 		const conn: Pool = await connect();
 		const uuid: string = req.params.uuid;
 		const path: Path = req.params.path as Path;
-		console.log(path);
-
 
 		const [documentos]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM documentoProyecto WHERE uuidProyecto = ? AND path = ? ORDER BY creadoEn DESC', [uuid, path]);
-
 
 		return res.status(200).json(documentos);
 	} catch (error) {
@@ -279,9 +275,6 @@ export const updateDocumentoProyecto = async (req: Request, res: Response) => {
 			});
 		}
 
-		console.table([documento.nombre, uuid, existDoc.path, existDoc.uuidProyecto]);
-
-
 		const [[existNombre]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM documentoProyecto WHERE  nombre = ? AND uuid != ? AND path = ? AND uuidProyecto = ?', [documento.nombre, uuid, existDoc.path, existDoc.uuidProyecto]);
 		if (existNombre) {
 			return res.status(404).json({
@@ -328,9 +321,7 @@ export const addDocumentoCarpeta = async (req: Request, res: Response) => {
 		documento.location = fileUploaded.data.Location;
 		documento.nombre = fileUploaded.originalName;
 
-
 		delete documento.uuidCarpeta;
-		console.log(documento);
 
 		await conn.query('INSERT INTO documentoProyecto SET ? ', documento);
 
@@ -339,7 +330,6 @@ export const addDocumentoCarpeta = async (req: Request, res: Response) => {
 			uuidCarpeta: String(uuidCarpeta),
 			uuidDocumento: documento.uuid
 		};
-		console.log(documentoCarpeta);
 
 		await conn.query('INSERT INTO documentoCarpeta SET ? ', documentoCarpeta);
 

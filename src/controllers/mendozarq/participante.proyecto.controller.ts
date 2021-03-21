@@ -1,6 +1,5 @@
 import { Response, Request } from 'express';
 import { FieldPacket, Pool } from 'mysql2/promise';
-import { async } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 
 import { connect } from './../../classes/database';
@@ -56,7 +55,7 @@ export const getAllUsuarioProyecto = async (req: Request, res: Response) => {
 									INNER JOIN proyecto AS p ON up.uuidProyecto = p.uuid
 									INNER JOIN usuario AS u ON up.uuidUsuario = u.uuid
 					WHERE p.uuid = ?
-					ORDER BY creadoEn DESC`, [uuid]);
+					ORDER BY up.creadoEn DESC`, [uuid]);
 
 		const usuarios: Usuario[] = rows as Usuario[];
 

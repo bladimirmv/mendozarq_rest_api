@@ -22,6 +22,7 @@ export const addObservacionServicio = async (req: Request, res: Response) => {
 
 		observacionServicio.uuid = uuid();
 
+
 		await conn.query('INSERT INTO observacionServicio SET ?', [observacionServicio]);
 
 		return res.status(201).json({
@@ -75,9 +76,10 @@ export const getAllObservacionServicio = async (req: Request, res: Response) => 
 			ORDER BY creadoEn DESC;`, [uuid]);
 
 		const [obsr_rows]: [any[], FieldPacket[]] = await conn.query(`
-		SELECT os.* FROM observacionServicio AS os
-		INNER JOIN visitaProyecto vp on os.uuidVisita = vp.uuid
-		WHERE vp.uuid = ?`, [uuid]);
+			SELECT os.* FROM observacionServicio AS os
+			INNER JOIN visitaProyecto vp on os.uuidVisita = vp.uuid
+			WHERE vp.uuid = ?
+			ORDER BY creadoEn DESC;`, [uuid]);
 
 
 		servs_rows.forEach((servicio: ServicioProyecto) => {
