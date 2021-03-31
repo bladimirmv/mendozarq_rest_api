@@ -4,7 +4,7 @@ import { v4 as uuid } from 'uuid';
 import { Usuario } from '../../models/auth/usuario.interface';
 
 import { connect } from './../../classes/database';
-import { ParticipanteVisita, UsuarioVisita } from './../../models/mendozarq/participante.visita.interface';
+import { ParticipanteVisita, UsuarioVisita, VisitasPendientes } from './../../models/mendozarq/participante.visita.interface';
 
 
 // ====================> addParticipanteVisita
@@ -89,6 +89,30 @@ export const getAllUsuarioByUuidVisita = async (req: Request, res: Response) => 
 	}
 }
 
+// ====================>  getAllVisitasPendientesByUsuario
+export const getAllVisitasPendientesByUsuario = async (req: Request, res: Response) => {
+	try {
+		const conn: Pool = await connect();
+		const uuid: string = req.params.uuid;
+
+		const [rows]: [any[], FieldPacket[]] = await
+			conn.query(`SELECT p.nombre as proyecto, vp.* FROM visitaProyecto AS vp
+					INNER  JOIN participanteVisita pv on vp.uuid = pv.uuidVisitaProyecto
+					INNER JOIN proyecto p on vp.uuidProyecto = p.uuid
+					INNER JOIN usuario u on pv.uuidUsuario = u.uuid
+					WHERE u.uuid = ? AND vp.fecha >= CURDATE();`, [uuid]);
+
+		const visitas: VisitasPendientes[] = rows as VisitasPendientes[];
+
+		return res.status(200).json(visitas);
+
+	} catch (error) {
+		console.log('❌Ocurrio un error:', error);
+		return res.status(400).json({
+			message: error
+		});
+	}
+}
 
 // ====================> deleteParticipanteVisita
 export const deleteParticipanteVisita = async (req: Request, res: Response) => {
@@ -120,3 +144,4 @@ export const deleteParticipanteVisita = async (req: Request, res: Response) => {
 		});
 	}
 }
+

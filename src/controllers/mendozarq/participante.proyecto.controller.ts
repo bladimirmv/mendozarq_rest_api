@@ -173,7 +173,7 @@ export const getAllPersonalProyecto = async (req: Request, res: Response) => {
 			conn.query(`SELECT pp.uuid AS uuidPersonalProyecto, per.* FROM personalProyecto AS pp
 			INNER JOIN proyecto AS p ON pp.uuidProyecto = p.uuid
 			INNER JOIN personal AS per ON pp.uuidPersonal = per.uuid
-			WHERE p.uuid = ? ORDER BY creadoEn DESC`, [uuid]);
+			WHERE p.uuid = ? ORDER BY pp.creadoEn DESC`, [uuid]);
 
 		const personal: Personal[] = rows as Personal[];
 

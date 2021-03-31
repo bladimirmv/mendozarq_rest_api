@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import * as os from './../../controllers/mendozarq/observacion.servicio.controller';
+import * as op from './../../controllers/mendozarq/observacion.personal.controller';
 import { checkJwt } from './../../middlewares/jwt';
 import { checkRole } from './../../middlewares/roles';
 
@@ -11,33 +11,33 @@ router.route('/')
 
 	.post(
 		[checkJwt, checkRole(['administrador', 'arquitecto'])],
-		os.addObservacionServicio
+		op.addObservacionPersonal
 	);
 
 router.route('/:uuid')
 	.get(
 		[checkJwt, checkRole(['administrador', 'arquitecto'])],
-		os.getOneObservacionServicio
+		op.getOneObservacionPersonal
 	)
 	.put(
 		[checkJwt, checkRole(['administrador', 'arquitecto'])],
-		os.updateObservacionServicio
+		op.updateObservacionPersonal
 	)
 	.delete(
 		[checkJwt, checkRole(['administrador', 'arquitecto'])],
-		os.deleteObservacionServicio
+		op.deleteObservacionPersonal
 	);
 
 router.route('/visita/:uuid')
 	.get(
 		[checkJwt, checkRole(['administrador', 'arquitecto'])],
-		os.getAllObservacionServicio
+		op.getAllObservacionPersonal
 	)
 
-router.route('/servicio/:uuid')
+router.route('/personal/:uuid')
 	.get(
 		[checkJwt, checkRole(['administrador', 'arquitecto'])],
-		os.getAllServicioProyecto
+		op.getAllPersonalProyecto
 	)
 
 export default router;

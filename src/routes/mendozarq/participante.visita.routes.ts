@@ -30,4 +30,10 @@ router.route('/uuid/:uuid')
 		pv.getAllUsuarioByUuidVisita
 	);
 
+
+router.route('/usuario/:uuid')
+	.get(
+		[checkJwt, checkRole(['administrador'])],
+		pv.getAllVisitasPendientesByUsuario
+	);
 export default router;

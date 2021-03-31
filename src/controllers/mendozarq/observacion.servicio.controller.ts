@@ -1,12 +1,9 @@
 import { Response, Request } from 'express';
 import { FieldPacket, Pool } from 'mysql2/promise';
 import { v4 as uuid } from 'uuid';
-import { ServicioProyecto } from '../../models/mendozarq/servicio.proyecto.interface';
 
 import { connect } from './../../classes/database';
-import { ObservacionServicio } from './../../models/mendozarq/observacion.servicio.interface';
-
-
+import { ObservacionesByServicio, ObservacionServicio } from './../../models/mendozarq/observacion.servicio.interface';
 
 // ====================> addObservacionServicio
 export const addObservacionServicio = async (req: Request, res: Response) => {
@@ -62,33 +59,26 @@ export const getAllObservacionServicio = async (req: Request, res: Response) => 
 	try {
 		const conn: Pool = await connect();
 		const uuid: string = req.params.uuid;
-		let observacionServicio: {
-			servicio?: ServicioProyecto,
-			observaciones?: ObservacionServicio[]
-		}[] = [];
+		let observacionServicio: ObservacionesByServicio[] = [];
 
 
 		const [servs_rows]: [any[], FieldPacket[]] = await conn.query(`
 			SELECT sp.* FROM servicioProyecto as sp
 			INNER JOIN proyecto p on sp.uuidProyecto = p.uuid
 			INNER JOIN visitaProyecto vp on p.uuid = vp.uuidProyecto
-			WHERE vp.uuid = ?
-			ORDER BY creadoEn DESC;`, [uuid]);
+			WHERE vp.uuid = ?	ORDER BY sp.creadoEn DESC;`, [uuid]);
 
 		const [obsr_rows]: [any[], FieldPacket[]] = await conn.query(`
 			SELECT os.* FROM observacionServicio AS os
 			INNER JOIN visitaProyecto vp on os.uuidVisita = vp.uuid
 			WHERE vp.uuid = ?
-			ORDER BY creadoEn DESC;`, [uuid]);
+			ORDER BY os.creadoEn DESC;`, [uuid]);
 
 
-		servs_rows.forEach((servicio: ServicioProyecto) => {
-			observacionServicio.push({
-				servicio: servicio,
-				observaciones: obsr_rows.filter((observacion: ObservacionServicio) => servicio.uuid === observacion.uuidServicio)
-			});
+		servs_rows.forEach((servicio: ObservacionesByServicio) => {
+			servicio.observaciones = obsr_rows.filter((observacion: ObservacionServicio) => servicio.uuid === observacion.uuidServicio);
+			observacionServicio.push(servicio);
 		});
-
 
 		return res.status(200).json(observacionServicio);
 
@@ -129,6 +119,28 @@ export const updateObservacionServicio = async (req: Request, res: Response) => 
 	}
 }
 
+// ====================> getAllServicioProyecto
+export const getAllServicioProyecto = async (req: Request, res: Response) => {
+	try {
+		const conn: Pool = await connect();
+		const uuid: string = req.params.uuid;
+
+		const [servicioProyecto]: [any[], FieldPacket[]] = await conn.query(`
+		SELECT sp.*
+			FROM servicioProyecto AS sp
+				INNER JOIN proyecto p on sp.uuidProyecto = p.uuid
+				INNER JOIN visitaProyecto vp on p.uuid = vp.uuidProyecto
+			WHERE vp.uuid = ? ORDER BY sp.creadoEn DESC;`, [uuid]);
+
+		return res.status(200).json(servicioProyecto);
+
+	} catch (error) {
+		console.log('❌Ocurrio un error:', error);
+		return res.status(400).json({
+			message: error
+		});
+	}
+}
 // ====================> deleteObservacionServicio
 export const deleteObservacionServicio = async (req: Request, res: Response) => {
 	try {
