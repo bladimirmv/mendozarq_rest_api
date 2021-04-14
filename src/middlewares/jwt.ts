@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
-import { empty } from 'rxjs';
 import config from './../config/config';
 
 export const checkJwt = (req: Request, res: Response, next: NextFunction) => {

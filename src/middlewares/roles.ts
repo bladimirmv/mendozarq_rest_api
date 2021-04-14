@@ -11,9 +11,12 @@ export const checkRole = (roles: Array<Roles>) => {
 		try {
 			let conn: Pool = await connect();
 			const [[usuario]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM usuario WHERE uuid = ?', [uuid]);
-			// conn.end();
+
 			if (usuario) {
 				const { rol }: Usuario = usuario;
+
+				res.locals.rol = rol;
+
 				// *checking rol
 				roles.includes(rol as Roles)
 					? next()
