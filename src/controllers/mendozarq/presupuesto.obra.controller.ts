@@ -3,7 +3,7 @@ import { FieldPacket, Pool } from 'mysql2/promise';
 import { v4 as uuid } from 'uuid';
 
 import { connect } from './../../classes/database';
-import { PresupuestoObra } from './../../models/mendozarq/presupuestos.interface';
+import { PresupuestoObra, PresupuestoObraView } from './../../models/mendozarq/presupuestos.interface';
 import { Roles } from './../../models/auth/usuario.interface'
 
 
@@ -61,22 +61,38 @@ export const getOnePresupuestoObra = async (req: Request, res: Response) => {
 export const getAllPresupuestoObra = async (req: Request, res: Response) => {
 	try {
 		const conn: Pool = await connect();
-		let presupuestoObra: PresupuestoObra[] = [];
+		let presupuestoObra: PresupuestoObraView[] = [];
 
 		switch (<Roles>res.locals.rol) {
 			case 'administrador':
-				const [AllRows]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM presupuestoObra ORDER BY creadoEn DESC');
-				presupuestoObra = AllRows as PresupuestoObra[];
+				const [AllRows]: [any[], FieldPacket[]] = await conn.query(`
+				SELECT p.*,
+							concat_ws(' ', u.nombre, u.apellidoPaterno, u.apellidoMaterno) as usuario,
+								concat_ws(' ', c.nombre, c.apellidoPaterno, c.apellidoMaterno) as cliente
+				FROM presupuestoObra AS p
+								INNER JOIN usuario u on p.uuidUsuario = u.uuid
+								INNER JOIN usuario c on p.uuidCliente = c.uuid
+				ORDER BY p.creadoEn DESC;`);
+				presupuestoObra = AllRows as PresupuestoObraView[];
 				break;
 
 			case 'arquitecto':
 				const [SelectedRows]: [any[], FieldPacket[]] = await conn.query(`
-				SELECT * FROM presupuestoObra WHERE uuidUsuario = ? ORDER BY creadoEn DESC;`, [res.locals.jwtPayload.uuid]);
-				presupuestoObra = SelectedRows as PresupuestoObra[];
+				SELECT p.*,
+							concat_ws(' ', u.nombre, u.apellidoPaterno, u.apellidoMaterno) as usuario,
+								concat_ws(' ', c.nombre, c.apellidoPaterno, c.apellidoMaterno) as cliente
+				FROM presupuestoObra AS p
+								INNER JOIN usuario u on p.uuidUsuario = u.uuid
+								INNER JOIN usuario c on p.uuidCliente = c.uuid
+				WHERE uuidUsuario = ?	ORDER BY p.creadoEn DESC;`, [res.locals.jwtPayload.uuid]);
+				presupuestoObra = SelectedRows as PresupuestoObraView[];
 				break;
 			default:
 				break;
 		}
+
+		console.log(presupuestoObra);
+
 
 		return res.status(200).json(presupuestoObra);
 	} catch (error) {

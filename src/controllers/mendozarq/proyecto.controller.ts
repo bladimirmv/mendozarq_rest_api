@@ -30,8 +30,7 @@ export async function addProyecto(req: Request, res: Response) {
 	} catch (error) {
 		console.log('❌ Ocurrio un error: ', error);
 		return res.status(400).json({
-			message: `Lo sentimos ocurrio un problema al guardar el proyecto. 🙁`,
-			error
+			message: error
 		});
 	}
 }
@@ -53,8 +52,7 @@ export async function getOneProyecto(req: Request, res: Response) {
 	} catch (error) {
 		console.log('❌ Ocurrio un error: ', error);
 		return res.status(400).json({
-			message: `Lo sentimos ocurrio un problema al recuperar el proyecto. 🙁`,
-			error
+			message: error
 		});
 	}
 }
@@ -71,8 +69,7 @@ export async function getAllProyecto(req: Request, res: Response) {
 	} catch (error) {
 		console.log('❌ Ocurrio un error: ', error);
 		return res.status(400).json({
-			message: `Lo sentimos ocurrio un problema al recuperar los proyectos. 🙁`,
-			error
+			message: error
 		});
 	}
 }
@@ -101,14 +98,13 @@ export async function updateProyecto(req: Request, res: Response) {
 	} catch (error) {
 		console.log('❌ Ocurrio un error: ', error);
 		return res.status(400).json({
-			message: `Lo sentimos ocurrio un problema al actualizar el proyecto. 🙁`,
-			error
+			message: error
 		});
 	}
 
 }
 
-// ====================> addProyecto
+// ====================> deleteProyecto
 export async function deleteProyecto(req: Request, res: Response) {
 	try {
 		const uuid = req.params.uuid;
@@ -130,8 +126,7 @@ export async function deleteProyecto(req: Request, res: Response) {
 	} catch (error) {
 		console.log('❌ Ocurrio un error: ', error);
 		return res.status(400).json({
-			message: `Lo sentimos ocurrio un problema al eliminar el proyecto. 🙁`,
-			error
+			message: error
 		});
 	}
 }
