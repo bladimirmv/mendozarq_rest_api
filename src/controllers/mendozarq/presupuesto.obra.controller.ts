@@ -7,7 +7,7 @@ import { PresupuestoObra, PresupuestoObraView } from './../../models/mendozarq/p
 import { Roles } from './../../models/auth/usuario.interface'
 
 
-// ====================> addPresupuestoObra
+// ====================> 
 export const addPresupuestoObra = async (req: Request, res: Response) => {
 	try {
 		const conn: Pool = await connect();
@@ -35,13 +35,20 @@ export const addPresupuestoObra = async (req: Request, res: Response) => {
 	}
 }
 
-// ====================> getOnePresupuestoObra
+// ====================>
 export const getOnePresupuestoObra = async (req: Request, res: Response) => {
 	try {
 		const conn: Pool = await connect();
 		const uuid: string = req.params.uuid;
 
-		const [[presupuestoobra]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM presupuestoObra WHERE uuid = ?', [uuid]);
+		const [[presupuestoobra]]: [any[], FieldPacket[]] = await conn.query(`
+				SELECT p.*,
+							concat_ws(' ', u.nombre, u.apellidoPaterno, u.apellidoMaterno) as usuario,
+								concat_ws(' ', c.nombre, c.apellidoPaterno, c.apellidoMaterno) as cliente
+				FROM presupuestoObra AS p
+								INNER JOIN usuario u on p.uuidUsuario = u.uuid
+								INNER JOIN usuario c on p.uuidCliente = c.uuid
+				WHERE p.uuid = ?`, [uuid]);
 
 		return presupuestoobra
 			? res.status(200).json(presupuestoobra)
@@ -57,7 +64,7 @@ export const getOnePresupuestoObra = async (req: Request, res: Response) => {
 	}
 }
 
-// ====================> getAllPresupuestoObra
+// ====================>
 export const getAllPresupuestoObra = async (req: Request, res: Response) => {
 	try {
 		const conn: Pool = await connect();
@@ -91,9 +98,6 @@ export const getAllPresupuestoObra = async (req: Request, res: Response) => {
 				break;
 		}
 
-		console.log(presupuestoObra);
-
-
 		return res.status(200).json(presupuestoObra);
 	} catch (error) {
 		console.log('❌Ocurrio un error:', error);
@@ -103,7 +107,7 @@ export const getAllPresupuestoObra = async (req: Request, res: Response) => {
 	}
 }
 
-// ====================> updatePresupuestoObra
+// ====================>
 export const updatePresupuestoObra = async (req: Request, res: Response) => {
 	try {
 		const conn: Pool = await connect();
@@ -130,7 +134,7 @@ export const updatePresupuestoObra = async (req: Request, res: Response) => {
 	}
 }
 
-// ====================> deletePresupuestoObra
+// ====================>
 export const deletePresupuestoObra = async (req: Request, res: Response) => {
 	try {
 		const conn: Pool = await connect();
@@ -156,3 +160,4 @@ export const deletePresupuestoObra = async (req: Request, res: Response) => {
 		});
 	}
 }
+

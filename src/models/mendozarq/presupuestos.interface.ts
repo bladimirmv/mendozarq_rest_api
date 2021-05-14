@@ -5,6 +5,7 @@ export interface PresupuestoObra {
 	descripcion?: string;
 	fecha?: Date;
 	iva?: number;
+	total?: number;
 	uuidCliente: string;
 	uuidUsuario: string;
 }
@@ -16,6 +17,7 @@ export interface PresupuestoObraView {
 	descripcion?: string;
 	fecha?: Date;
 	iva?: number;
+	total?: number;
 	uuidCliente: string;
 	cliente: string;
 	uuidUsuario: string;
@@ -32,6 +34,7 @@ export interface CapituloPresupuesto {
 	creadoEn?: Date;
 	nombre?: string;
 	numero?: number;
+	total?: number;
 	uuidPresupuestoObra: string;
 }
 
@@ -44,4 +47,8 @@ export interface DetalleCapitulo {
 	precioUnitario?: number;
 	total?: number;
 	uuidCapituloPresupuesto: string;
+}
+
+export interface CapituloPresupuestoView extends CapituloPresupuesto {
+	detalles?: Array<DetalleCapitulo>;
 }

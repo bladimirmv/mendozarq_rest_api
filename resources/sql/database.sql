@@ -174,6 +174,59 @@ create table observacionPersonal
 );
 
 
+create table presupuestoObra
+(
+    uuid        varchar(100) primary key,
+    creadoEn    timestamp      default current_timestamp not null,
+    nombre      varchar(100)                             not null,
+    descripcion varchar(200)                             not null,
+    fecha       date                                     not null,
+    iva         DECIMAL(12, 2),
+    total       DECIMAL(12, 2) default 0,
+    uuidCliente varchar(100)                             not null,
+    uuidUsuario varchar(100)                             not null,
+    foreign key (uuidCliente) references usuario (uuid),
+    foreign key (uuidUsuario) references usuario (uuid)
+);
+
+create table presupuestoProyecto
+(
+    uuid                varchar(100) primary key,
+    creadoEn            timestamp default current_timestamp not null,
+    uuidPresupuestoObra varchar(100)                        not null,
+    uuidProyecto        varchar(100)                        not null,
+    foreign key (uuidPresupuestoObra) references presupuestoObra (uuid),
+    foreign key (uuidProyecto) references proyecto (uuid)
+);
+
+create table capituloPresupuesto
+(
+    uuid                varchar(100) primary key,
+    creadoEn            timestamp      default current_timestamp not null,
+    nombre              text                                     not null,
+    numero              int                                      not null,
+    total               DECIMAL(12, 2) default 0,
+    uuidPresupuestoObra varchar(100)                             not null,
+    foreign key (uuidPresupuestoObra) references presupuestoObra (uuid)
+);
+
+create table detalleCapitulo
+(
+    uuid                    varchar(100) primary key,
+    creadoEn                timestamp default current_timestamp not null,
+    descripcion             text                                not null,
+    unidad                  varchar(10)                         not null,
+    cantidad                int                                 not null,
+    precioUnitario          decimal(15, 2)                      not null,
+    total                   decimal(15, 2)                      not null,
+    uuidCapituloPresupuesto varchar(100)                        not null,
+    foreign key (uuidCapituloPresupuesto) references capituloPresupuesto (uuid)
+);
+
+
+
+
+
 /*=====================================================================>*/
 create table herramienta
 (
