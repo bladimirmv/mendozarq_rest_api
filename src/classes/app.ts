@@ -26,6 +26,8 @@ import observacionPersonalRoutes from '../routes/mendozarq/observacion.personal.
 import observacionServicioRoutes from '../routes/mendozarq/observacion.servicio.routes';
 import presupuestosRoutes from '../routes/mendozarq/presupuesto.obra.routes';
 import capituloPresupuestoRoutes from '../routes/mendozarq/capitulo.presupuesto.routes';
+import detalleCapituloRoutes from '../routes/mendozarq/detalle.capitulo.presupuesto.routes';
+
 
 
 
@@ -100,6 +102,8 @@ export default class App {
 		this.app.use('/api/participanteVisita', participanteVisitaRoutes);
 		this.app.use('/api/presupuestos', presupuestosRoutes);
 		this.app.use('/api/capituloPresupuesto', capituloPresupuestoRoutes);
+		this.app.use('/api/detalleCapitulo', detalleCapituloRoutes);
+
 	}
 
 	// ==========> listen app

@@ -67,7 +67,9 @@ export const getAllCapituloPresupuesto = async (req: Request, res: Response) => 
 		SELECT * FROM capituloPresupuesto WHERE uuidPresupuestoObra = ? ORDER BY creadoEn;`, [uuid]);
 
 		const [detalleRows]: [any[], FieldPacket[]] = await conn.query(`
-		SELECT * FROM detalleCapitulo WHERE uuidCapituloPresupuesto = ? ORDER BY  creadoEn;`, [uuid]);
+		SELECT * FROM detalleCapitulo AS dc
+			INNER JOIN capituloPresupuesto cp on dc.uuidCapituloPresupuesto = cp.uuid
+			WHERE cp.uuidPresupuestoObra = ? ORDER BY  dc.creadoEn;`, [uuid]);
 
 
 		capituloRows.forEach((capituloPresupuesto: CapituloPresupuestoView) => {
