@@ -74,8 +74,19 @@ export const getAllCapituloPresupuesto = async (req: Request, res: Response) => 
 
 		capituloRows.forEach((capituloPresupuesto: CapituloPresupuestoView) => {
 			capituloPresupuesto.detalles = detalleRows.filter((detalleCapitulo: DetalleCapitulo) => capituloPresupuesto.uuid === detalleCapitulo.uuidCapituloPresupuesto);
+			let totalCapitulo: number = 0;
+			capituloPresupuesto.detalles.forEach((detalle: DetalleCapitulo) => {
+				detalle.total = Number((Number(detalle.cantidad) * Number(detalle.precioUnitario)).toFixed(2));
+				totalCapitulo += detalle.total;
+			});
+			capituloPresupuesto.precio = Number(totalCapitulo.toFixed(2));
+			capituloPresupuesto.totalDescuento = Number(((capituloPresupuesto.precio * Number(capituloPresupuesto.descuento)) / 100).toFixed(2));
+			capituloPresupuesto.total = Number((capituloPresupuesto.precio - capituloPresupuesto.totalDescuento).toFixed(2));
 			capitulosView.push(capituloPresupuesto);
 		});
+
+
+
 
 
 		return res.status(200).json(capitulosView);
