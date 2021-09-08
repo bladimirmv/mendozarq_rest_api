@@ -130,3 +130,6 @@ export async function deleteProyecto(req: Request, res: Response) {
 		});
 	}
 }
+
+
+

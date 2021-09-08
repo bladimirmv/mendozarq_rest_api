@@ -28,6 +28,8 @@ import presupuestosRoutes from '../routes/mendozarq/presupuesto.obra.routes';
 import capituloPresupuestoRoutes from '../routes/mendozarq/capitulo.presupuesto.routes';
 import detalleCapituloRoutes from '../routes/mendozarq/detalle.capitulo.presupuesto.routes';
 
+import categoriaProductoRoutes from '../routes/liraki/categoria.producto.routes';
+
 
 
 
@@ -103,6 +105,9 @@ export default class App {
 		this.app.use('/api/presupuestos', presupuestosRoutes);
 		this.app.use('/api/capituloPresupuesto', capituloPresupuestoRoutes);
 		this.app.use('/api/detalleCapitulo', detalleCapituloRoutes);
+
+		this.app.use('/api/categoriaProducto', categoriaProductoRoutes);
+
 
 	}
 
