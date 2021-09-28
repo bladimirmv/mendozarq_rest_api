@@ -224,6 +224,46 @@ create table detalleCapitulo
 );
 
 
+create table categoriaProducto
+(
+    uuid        varchar(100) primary key,
+    creadoEn    timestamp default current_timestamp not null,
+    nombre      text unique                         not null,
+    descripcion varchar(200)
+);
+
+create table producto
+(
+    uuid          varchar(100) primary key,
+    creadoEn      timestamp default current_timestamp not null,
+    nombre        text unique                         not null,
+    descripcion   varchar(200),
+    precio        decimal(15, 2)                      not null,
+    moneda        varchar(10),
+    stock         int                                 not null,
+    estado        boolean                             not null
+);
+
+create table fotoProducto
+(
+    uuid         varchar(100) primary key,
+    creadoEn     timestamp default current_timestamp not null,
+    keyName      text                                not null,
+    location     text                                not null,
+    size         int                                 not null,
+    uuidProducto varchar(100)                        not null,
+    foreign key (uuidProducto) references producto (uuid)
+);
+
+create table detalleCategoriaProducto
+(
+    uuid          varchar(100) primary key,
+    uuidCategoria varchar(100),
+    uuidProducto  varchar(100),
+    foreign key (uuidCategoria) references categoriaProducto (uuid),
+    foreign key (uuidProducto) references producto (uuid)
+);
+
 
 
 

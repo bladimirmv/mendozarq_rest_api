@@ -181,7 +181,7 @@ export const addDocumentoProyecto = async (req: Request, res: Response) => {
 		}
 
 
-		fileUploaded = await uploadOneFile(file, '/mendozarq/documents');
+		fileUploaded = await uploadOneFile(file, '/liraki/images');
 		documento.keyName = fileUploaded.data.Key;
 		documento.location = fileUploaded.data.Location;
 		documento.nombre = fileUploaded.originalName;
