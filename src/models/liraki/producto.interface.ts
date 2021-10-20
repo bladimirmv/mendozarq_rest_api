@@ -27,6 +27,6 @@ export interface DetalleCategoriaProducto {
 }
 
 export interface ProductoView extends Producto {
-	categorias: Array<CategoriaProducto>;
+	categorias?: Array<CategoriaProducto>;
 	fotos?: Array<FotoProducto>;
 }
