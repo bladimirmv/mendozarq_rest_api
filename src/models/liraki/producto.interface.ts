@@ -1,7 +1,7 @@
 import { CategoriaProducto } from './categoria.producto.interface';
 
 export interface Producto {
-	uuid?: string;
+	uuid: string;
 	creadoEn?: Date;
 	nombre: string;
 	descripcion?: string;
@@ -28,5 +28,5 @@ export interface DetalleCategoriaProducto {
 
 export interface ProductoView extends Producto {
 	categorias: Array<CategoriaProducto>;
-	fotos: Array<FotoProducto>;
+	fotos?: Array<FotoProducto>;
 }

@@ -6,7 +6,6 @@ import { CarpetaProyecto, DocumentoCarpeta, DocumentoProyCarpeta, DocumentoProye
 import { connect } from './../../classes/database';
 import { FileResponse } from '../../models/fileResponse.interface';
 import { uploadOneFile, deleteFile } from './../../classes/aws.s3';
-import e from 'cors';
 
 // ====================> addCarpetaProyecto
 export const addCarpetaProyecto = async (req: Request, res: Response) => {

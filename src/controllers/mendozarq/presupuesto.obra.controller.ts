@@ -11,17 +11,19 @@ import { Roles } from './../../models/auth/usuario.interface'
 export const addPresupuestoObra = async (req: Request, res: Response) => {
 	try {
 		const conn: Pool = await connect();
-		const presupuestObra: PresupuestoObra = req.body;
+		const presupuestoObra: PresupuestoObra = req.body;
 
-		if (!presupuestObra.nombre || !presupuestObra.uuidCliente || !presupuestObra.uuidUsuario) {
+		console.log(presupuestoObra)
+
+		if (!presupuestoObra.nombre || !presupuestoObra.uuidCliente || !presupuestoObra.uuidUsuario) {
 			return res.status(400).json({
 				message: 'No se ha podido registrar, por favor ingrese los datos del presupuesto. 🙁'
 			});
 		}
 
-		presupuestObra.uuid = uuid();
+		presupuestoObra.uuid = uuid();
 
-		await conn.query('INSERT INTO presupuestoObra SET ?', [presupuestObra]);
+		await conn.query('INSERT INTO presupuestoObra SET ?', [presupuestoObra]);
 
 		return res.status(201).json({
 			message: 'Presupuesto creado exitosamente! 😀'
@@ -97,7 +99,6 @@ export const getAllPresupuestoObra = async (req: Request, res: Response) => {
 			default:
 				break;
 		}
-
 		return res.status(200).json(presupuestoObra);
 	} catch (error) {
 		console.log('❌Ocurrio un error:', error);

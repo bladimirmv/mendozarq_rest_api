@@ -11,7 +11,6 @@ import { SERVER_PORT } from '../global/enviroment';
 import * as socket from "../webSockets/socket";
 
 // ==========> routes imports
-import IndexRoutes from '../routes/index.routes';
 import s3Routes from '../routes/s3.routes';
 import authRoutes from '../routes/auth/auth.routes';
 import usuarioRoutes from '../routes/auth/usuario.routes';
@@ -29,8 +28,7 @@ import capituloPresupuestoRoutes from '../routes/mendozarq/capitulo.presupuesto.
 import detalleCapituloRoutes from '../routes/mendozarq/detalle.capitulo.presupuesto.routes';
 
 import categoriaProductoRoutes from '../routes/liraki/categoria.producto.routes';
-
-
+import productoRoutes from '../routes/liraki/producto.routes';
 
 
 import herramientaRoutes from '../routes/mendozarq/herramienta.routes';
@@ -43,7 +41,7 @@ export default class App {
 	private static _instance: App;
 
 	// ==========> Variables
-	private app: express.Application;
+	public app: express.Application;
 	public port: number;
 
 	public io: socketIO.Server;
@@ -88,7 +86,8 @@ export default class App {
 
 	// ==========> routes
 	routes(): void {
-		this.app.use(IndexRoutes);
+
+		// **Mendozarq
 		this.app.use('/api/file', s3Routes);
 		this.app.use('/api/usuario', usuarioRoutes);
 		this.app.use('/api/auth', authRoutes);
@@ -106,9 +105,9 @@ export default class App {
 		this.app.use('/api/capituloPresupuesto', capituloPresupuestoRoutes);
 		this.app.use('/api/detalleCapitulo', detalleCapituloRoutes);
 
+		// **Lirkai
 		this.app.use('/api/categoriaProducto', categoriaProductoRoutes);
-
-
+		this.app.use('/api/producto', productoRoutes);
 	}
 
 	// ==========> listen app

@@ -281,6 +281,11 @@ create table herramienta
   urlImg          text                                not null
 );
 
+show DATABASEs;
+use mendozarq;
+
+
+
 INSERT INTO mendozarq.usuario (uuid, creadoEn, nombre, apellidoPaterno, apellidoMaterno, celular, direccion, correo,
                                username, contrasenha, rol, activo)
 VALUES ('fa27b5b3-837b-4486-b2cd-c6a306e8bd72', '2021-01-12 19:45:41', 'bladimir', 'medrano', 'vargas', 69509449,
