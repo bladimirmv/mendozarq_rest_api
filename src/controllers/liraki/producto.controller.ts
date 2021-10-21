@@ -5,6 +5,7 @@ import { Request, Response } from 'express';
 import { connect } from '../../classes/database';
 import { v4 as uuid } from 'uuid';
 import { CategoriaProducto } from '../../models/liraki/categoria.producto.interface';
+import { FileResponse } from '../../models/fileResponse.interface';
 
 
 
@@ -65,7 +66,7 @@ export const getOneProducto = async (req: Request, res: Response) => {
     );
 
     const [[categorias]]: [any[], FieldPacket[]] = await conn.query(
-      `SELECT * FROM categoriaProducto WHERE uuidProducto = ?`,
+      `SELECT * FROM categoriaProducto WHERE uuidProducto = ? ORDER BY creadoEn DESC`,
       [uuid]
     );
 
@@ -96,12 +97,12 @@ export const getAllProducto = async (req: Request, res: Response) => {
     let productoView: ProductoView[] = [];
 
     const [productos]: [any[], FieldPacket[]] = await conn.query(
-      `SELECT * FROM producto`
+      `SELECT * FROM producto ORDER BY creadoEn DESC`
     );
 
     const [categorias]: [any[], FieldPacket[]] = await conn.query(
       `SELECT cp.*, dcp.uuidProducto FROM detalleCategoriaProducto AS dcp
-      INNER JOIN categoriaProducto cp on dcp.uuidCategoria = cp.uuid;`);
+      INNER JOIN categoriaProducto cp on dcp.uuidCategoria = cp.uuid ORDER BY cp.creadoEn DESC;`);
 
     const [fotos]: [any[], FieldPacket[]] = await conn.query(
       `SELECT * FROM fotoProducto`
@@ -185,3 +186,41 @@ export const deleteProducto = async (req: Request, res: Response) => {
     });
   }
 };
+
+// ************************************ Imagenes ****************************************************
+export const addFotoProducto = async (req: Request, res: Response) => {
+  try {
+    const conn: Pool = await connect();
+    const foto: FotoProducto = JSON.parse(req.body.fotoProducto);
+    const files: Array<Express.Multer.File> | any = req.files;
+    const file: Express.Multer.File = files[0];
+    let fileUploaded: FileResponse;
+
+    if (!file) {
+      return res.status(400).json({
+        message: 'No se ha podido registrar, no se cargo la imagen. 🙁'
+      });
+    }
+
+
+    fileUploaded = await uploadOneFile(file, '/liraki/images');
+    foto.keyName = fileUploaded.data.Key;
+    foto.location = fileUploaded.data.Location;
+
+    foto.uuid = uuid();
+
+
+    await conn.query('INSERT INTO fotoProducto SET ? ', foto);
+
+
+    return res.status(201).json({
+      message: `Imagen ${fileUploaded.originalName} creado exitosamente! 😀`
+    });
+
+  } catch (error) {
+    console.log('❌Ocurrio un error:', error);
+    return res.status(400).json({
+      message: error
+    });
+  }
+}

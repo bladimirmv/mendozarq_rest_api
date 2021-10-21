@@ -175,12 +175,12 @@ export const addDocumentoProyecto = async (req: Request, res: Response) => {
 
 		if (!file) {
 			return res.status(400).json({
-				message: 'No se ha podido registrar, por favor ingrese un documento documento. 🙁'
+				message: 'No se ha podido registrar, por favor ingrese un documento. 🙁'
 			});
 		}
 
 
-		fileUploaded = await uploadOneFile(file, '/liraki/images');
+		fileUploaded = await uploadOneFile(file, '/mendozarq/documents');
 		documento.keyName = fileUploaded.data.Key;
 		documento.location = fileUploaded.data.Location;
 		documento.nombre = fileUploaded.originalName;
@@ -192,7 +192,7 @@ export const addDocumentoProyecto = async (req: Request, res: Response) => {
 
 
 		return res.status(201).json({
-			message: 'Documento creado exitosamente! 😀'
+			message: `Documento ${fileUploaded.originalName} creado exitosamente! 😀`
 		});
 
 	} catch (error) {

@@ -57,7 +57,7 @@ export const getAllcategoriaProducto = async (req: Request, res: Response) => {
     const conn: Pool = await connect();
 
     const [categoriaProducto]: [any[], FieldPacket[]] = await conn.query(
-      "SELECT * FROM categoriaProducto"
+      `SELECT * FROM categoriaProducto ORDER BY creadoEn DESC`
     );
 
     return res.status(200).json(categoriaProducto);
