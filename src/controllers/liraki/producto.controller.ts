@@ -1,4 +1,4 @@
-import { uploadOneFile } from './../../classes/aws.s3';
+import { deleteFile, uploadOneFile } from './../../classes/aws.s3';
 import { DetalleCategoriaProducto, FotoProducto, Producto, ProductoView } from './../../models/liraki/producto.interface';
 import { Pool, FieldPacket } from 'mysql2/promise';
 import { Request, Response } from 'express';
@@ -171,10 +171,27 @@ export const deleteProducto = async (req: Request, res: Response) => {
         message: 'No se pudo eliminar el producto, por que no existe. 🙁',
       });
     }
+    const [rows]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM fotoProducto WHERE uuidProducto = ? ', [uuid]);
+    const fotos: FotoProducto[] = rows as FotoProducto[];
+
+
+    fotos.forEach(async (foto: FotoProducto) => {
+      try {
+        await deleteFile(foto.keyName);
+      } catch (error) {
+        console.log('❌Ocurrio un error:', error);
+        return res.status(400).json({
+          message: error
+        });
+      }
+    });
+
+    await conn.query('DELETE FROM fotoProducto WHERE uuidProducto = ?', [uuid]);
 
     await conn.query('DELETE FROM detalleCategoriaProducto WHERE uuidProducto = ?', [uuid]);
 
     await conn.query('DELETE FROM producto WHERE uuid = ?', [uuid]);
+
 
     return res.status(200).json({
       message: 'Producto eliminado correctamente. 😀',
@@ -224,3 +241,7 @@ export const addFotoProducto = async (req: Request, res: Response) => {
     });
   }
 }
+
+
+// INSERT INTO table(id, Col1, Col2) VALUES(1, 1, 1), (2, 2, 3), (3, 9, 3), (4, 10, 12)
+// ON DUPLICATE KEY UPDATE Col1 = VALUES(Col1), Col2 = VALUES(Col2);
