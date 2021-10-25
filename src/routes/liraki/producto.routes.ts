@@ -28,7 +28,9 @@ router.route('/fotoProducto')
 		[checkJwt, checkRole(['administrador'])],
 		upload,
 		p.addFotoProducto
-	);
+	)
+	.delete([checkJwt, checkRole(['administrador'])], p.deleteFotoProducto);
+
 
 
 export default router;

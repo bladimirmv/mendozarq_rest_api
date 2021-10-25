@@ -10,7 +10,7 @@ import { Credenciales } from "./../../models/auth/credenciales.interface";
 
 // ===============================================================================
 function createToken(usuario: Usuario) {
-	return jwt.sign({ uuid: usuario.uuid, username: usuario.username, rol: usuario.rol }, config.jwtSecret, {
+	return jwt.sign({ uuid: usuario.uuid, username: usuario.username, rol: usuario.rol, nombre: usuario.nombre }, config.jwtSecret, {
 		expiresIn: '8h'
 	});
 }
@@ -52,11 +52,11 @@ export async function login(req: Request, res: Response, next: any) {
 		const isMatch = await bcrypt.compare(credenciales.contrasenha, usuario.contrasenha as string);
 		// *cheking match
 		if (isMatch) {
-			const { nombre, apellidoPaterno, apellidoMaterno, rol }: Usuario = usuario;
+			// const { nombre, apellidoPaterno, apellidoMaterno, rol }: Usuario = usuario;
 			return res.status(200).json({
-				message: `Bienvenido ${nombre}! 👋`,
+				message: `Bienvenido ${usuario.nombre}! 👋`,
 				token: createToken(usuario),
-				body: { nombre, apellidoPaterno, apellidoMaterno, rol }
+				body: usuario
 			});
 		}
 		// *return error

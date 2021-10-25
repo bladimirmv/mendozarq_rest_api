@@ -14,6 +14,8 @@ export interface Producto {
 export interface FotoProducto {
 	uuid?: string;
 	creadoEn?: Date;
+	nombre?: string;
+	indice?: number;
 	keyName: string;
 	location: string;
 	size?: number;

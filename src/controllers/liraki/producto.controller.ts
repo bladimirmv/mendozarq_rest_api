@@ -105,7 +105,7 @@ export const getAllProducto = async (req: Request, res: Response) => {
       INNER JOIN categoriaProducto cp on dcp.uuidCategoria = cp.uuid ORDER BY cp.creadoEn DESC;`);
 
     const [fotos]: [any[], FieldPacket[]] = await conn.query(
-      `SELECT * FROM fotoProducto`
+      `SELECT * FROM fotoProducto ORDER BY indice`
     );
 
 
@@ -223,6 +223,7 @@ export const addFotoProducto = async (req: Request, res: Response) => {
     fileUploaded = await uploadOneFile(file, '/liraki/images');
     foto.keyName = fileUploaded.data.Key;
     foto.location = fileUploaded.data.Location;
+    foto.nombre = fileUploaded.originalName;
 
     foto.uuid = uuid();
 
@@ -241,6 +242,42 @@ export const addFotoProducto = async (req: Request, res: Response) => {
     });
   }
 }
+
+
+
+export const deleteFotoProducto = async (req: Request, res: Response) => {
+  try {
+    const conn: Pool = await connect();
+    const uuid: string = req.params.uuid;
+
+
+    const [[row]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM fotoProducto WHERE uuid = ? ', [uuid]);
+    const foto: FotoProducto = row as FotoProducto;
+
+    if (!row) {
+      return res.status(404).json({
+        message: 'No se pudo eliminar la foto, por que no existe. 🙁',
+      });
+    }
+
+    await deleteFile(foto.keyName);
+
+    await conn.query('DELETE FROM fotoProducto WHERE uuid = ?', [uuid]);
+
+    return res.status(200).json({
+      message: 'Foto eliminado correctamente. 😀',
+      body: foto.nombre
+    });
+  } catch (error) {
+    console.log('❌Ocurrio un error:', error);
+    return res.status(400).json({
+      message: error
+    });
+  }
+};
+
+
+
 
 
 // INSERT INTO table(id, Col1, Col2) VALUES(1, 1, 1), (2, 2, 3), (3, 9, 3), (4, 10, 12)
