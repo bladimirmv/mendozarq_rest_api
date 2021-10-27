@@ -250,7 +250,6 @@ export const deleteFotoProducto = async (req: Request, res: Response) => {
     const conn: Pool = await connect();
     const uuid: string = req.params.uuid;
 
-
     const [[row]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM fotoProducto WHERE uuid = ? ', [uuid]);
     const foto: FotoProducto = row as FotoProducto;
 
@@ -277,8 +276,54 @@ export const deleteFotoProducto = async (req: Request, res: Response) => {
 };
 
 
+export const getFotoProducto = async (req: Request, res: Response) => {
+  try {
+    const conn: Pool = await connect();
+    const uuid: string = req.params.uuid;
+
+    const [fotos]: [any[], FieldPacket[]] = await conn.query(
+      `SELECT * FROM fotoProducto WHERE uuidProducto = ? ORDER BY indice`,
+      [uuid]
+    );
+
+    return (fotos)
+      ? res.status(200).json(fotos)
+      : res.status(404).json({ message: 'No se encontro las fotos de este producto. 🙁' });
+  } catch (error) {
+    console.log('❌Ocurrio un error:', error);
+    return res.status(400).json({
+      message: error,
+    });
+  }
+};
 
 
+export const updateFotoProducto = async (req: Request, res: Response) => {
+  try {
+    const conn: Pool = await connect();
+    const uuid: string = req.params.uuid;
+    const fotoProducto: FotoProducto = req.body;
 
-// INSERT INTO table(id, Col1, Col2) VALUES(1, 1, 1), (2, 2, 3), (3, 9, 3), (4, 10, 12)
-// ON DUPLICATE KEY UPDATE Col1 = VALUES(Col1), Col2 = VALUES(Col2);
+    const [[row]]: [any[], FieldPacket[]] = await conn.query(
+      `SELECT * FROM fotoProducto WHERE uuid = ?`,
+      [uuid]
+    );
+
+    if (!row) {
+      return res.status(404).json({
+        message: 'No se pudo actualizar la foto, por que no existe. 🙁',
+      });
+    }
+
+    await conn.query(`UPDATE fotoProducto SET ? WHERE uuid = ?`, [fotoProducto, uuid]);
+
+    return res.status(200).json({
+      message: 'Foto Producto actualizado correctamente! 😀',
+    });
+  } catch (error) {
+    console.log('❌Ocurrio un error:', error);
+    return res.status(400).json({
+      message: error,
+    });
+  }
+};

@@ -24,11 +24,20 @@ router
 
 
 router.route('/fotoProducto')
+
 	.post(
 		[checkJwt, checkRole(['administrador'])],
 		upload,
 		p.addFotoProducto
+	);
+
+router.route('/fotoProducto/:uuid')
+	.get(
+		[checkJwt, checkRole(['administrador', 'vendedor'])],
+		p.getFotoProducto
 	)
+	.put([checkJwt, checkRole(['administrador'])], p.updateFotoProducto)
+
 	.delete([checkJwt, checkRole(['administrador'])], p.deleteFotoProducto);
 
 

@@ -75,21 +75,47 @@ export const listFiles = (fileRef?: string): Promise<any[]> => {
 // ====================> dowloadFile
 export const downloadFile = async (req: Request, res: Response) => {
 
+
 	const params = {
 		Bucket: AWS_S3.Bucket,
 		Key: req.params.key
 	};
 
-	res.setHeader('Content-Disposition', 'attachment');
 
-	s3.getObject(params)
-		.createReadStream()
-		.on('error', error => {
-			return res.status(500).json({
-				message: 'Ocurrio un error al descargar el archivo',
-				error
-			});
-		}).pipe(res);
+	// res.setHeader('Content-Disposition', 'attachment');
+	// s3.getObject(params)
+	// 	.createReadStream()
+	// 	.on('error', error => {
+	// 		return res.status(500).json({
+	// 			message: 'Ocurrio un error al descargar el archivo',
+	// 			error
+	// 		});
+	// 	}).pipe(res);
+
+
+	s3.getObject(params, function (err: aws.AWSError, data: aws.S3.GetObjectOutput) {
+		if (err) {
+			res.status(200);
+			res.end('Error Fetching File');
+		}
+		else {
+			res.attachment(params.Key);
+			res.type(data.ContentType as string);
+			res.send(data.Body);
+		}
+	});
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 
