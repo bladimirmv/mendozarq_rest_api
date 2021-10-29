@@ -129,12 +129,15 @@ export const getAllProducto = async (req: Request, res: Response) => {
 export const updateProducto = async (req: Request, res: Response) => {
   try {
     const conn: Pool = await connect();
-    const uuid: string = req.params.uuid;
-    const producto: Producto = req.body;
+    const uuidProducto: string = req.params.uuid;
+    const { categorias, ...producto }: Producto & { categorias: string[] } = req.body;
+    let detalleCategoriaProducto: DetalleCategoriaProducto[];
+    let mRows: any[] = [];
+
 
     const [[row]]: [any[], FieldPacket[]] = await conn.query(
       `SELECT * FROM producto WHERE uuid = ?`,
-      [uuid]
+      [uuidProducto]
     );
 
     if (!row) {
@@ -143,7 +146,19 @@ export const updateProducto = async (req: Request, res: Response) => {
       });
     }
 
-    await conn.query(`UPDATE producto SET ? WHERE uuid = ?`, [producto, uuid]);
+    categorias.forEach((categoria: string) => {
+      mRows.push(Object.values({
+        uuid: uuid(),
+        uuidCategoria: categoria,
+        uuidProducto: uuidProducto
+      }));
+    });
+
+    await conn.query(`DELETE FROM detalleCategoriaProducto WHERE uuidProducto = ?`, [uuidProducto]);
+
+    await conn.query(`INSERT INTO detalleCategoriaProducto (uuid, uuidCategoria, uuidProducto) VALUES ?`, [mRows]);
+
+    await conn.query(`UPDATE producto SET ? WHERE uuid = ?`, [producto, uuidProducto]);
 
     return res.status(200).json({
       message: 'Producto actualizado correctamente! 😀',

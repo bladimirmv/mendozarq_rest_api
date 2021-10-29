@@ -75,7 +75,6 @@ export const listFiles = (fileRef?: string): Promise<any[]> => {
 // ====================> dowloadFile
 export const downloadFile = async (req: Request, res: Response) => {
 
-
 	const params = {
 		Bucket: AWS_S3.Bucket,
 		Key: req.params.key
@@ -93,7 +92,7 @@ export const downloadFile = async (req: Request, res: Response) => {
 	// 	}).pipe(res);
 
 
-	s3.getObject(params, function (err: aws.AWSError, data: aws.S3.GetObjectOutput) {
+	s3.getObject(params, (err: aws.AWSError, data: aws.S3.GetObjectOutput) => {
 		if (err) {
 			res.status(200);
 			res.end('Error Fetching File');
@@ -105,19 +104,7 @@ export const downloadFile = async (req: Request, res: Response) => {
 		}
 	});
 
-
-
-
-
-
-
-
-
-
-
-
 }
-
 
 // ====================> deleteFile
 export const deleteFile = (keyName: string) => {
