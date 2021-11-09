@@ -11,14 +11,13 @@ const router = Router();
 router
 	.route('/')
 	.get(
-		[checkJwt, checkRole(['administrador', 'vendedor'])],
 		p.getAllProducto
 	)
 	.post([checkJwt, checkRole(['administrador'])], p.addProducto);
 
 router
 	.route('/:uuid')
-	.get([checkJwt, checkRole(['administrador'])], p.getOneProducto)
+	.get(p.getOneProducto)
 	.put([checkJwt, checkRole(['administrador'])], p.updateProducto)
 	.delete([checkJwt, checkRole(['administrador'])], p.deleteProducto);
 

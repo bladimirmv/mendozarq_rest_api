@@ -106,6 +106,27 @@ export const downloadFile = async (req: Request, res: Response) => {
 
 }
 
+export const getImage = async (req: Request, res: Response) => {
+
+	const params = {
+		Bucket: AWS_S3.Bucket,
+		Key: req.params.key
+	};
+
+	s3.getObject(params, (err: aws.AWSError, data: aws.S3.GetObjectOutput) => {
+		if (err) {
+			res.status(200);
+			res.end('Error Fetching File');
+		}
+		else {
+			res.attachment(params.Key);
+			res.type(data.ContentType as string);
+			res.send(data.Body);
+		}
+	});
+
+}
+
 // ====================> deleteFile
 export const deleteFile = (keyName: string) => {
 	return new Promise<aws.S3.DeleteObjectOutput>((resolve, reject) => {

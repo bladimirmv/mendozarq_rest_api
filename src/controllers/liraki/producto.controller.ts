@@ -65,20 +65,21 @@ export const getOneProducto = async (req: Request, res: Response) => {
       [uuid]
     );
 
-    const [[categorias]]: [any[], FieldPacket[]] = await conn.query(
-      `SELECT * FROM categoriaProducto WHERE uuidProducto = ? ORDER BY creadoEn DESC`,
+    const [categorias]: [any[], FieldPacket[]] = await conn.query(
+      `SELECT cp.* FROM detalleCategoriaProducto AS dcp
+      INNER JOIN categoriaProducto cp on dcp.uuidCategoria = cp.uuid
+      WHERE dcp.uuidProducto =  ? ORDER BY cp.creadoEn DESC`,
       [uuid]
     );
 
-    const [[fotos]]: [any[], FieldPacket[]] = await conn.query(
-      `SELECT * FROM fotoProducto WHERE uuidProducto = ?`,
+    const [fotos]: [any[], FieldPacket[]] = await conn.query(
+      `SELECT * FROM fotoProducto WHERE uuidProducto = ? ORDER BY indice`,
       [uuid]
     );
 
-    productoView = producto + {
-      categorias,
-      fotos
-    };
+    productoView = producto;
+    productoView.categorias = categorias;
+    productoView.fotos = fotos;
 
     return (producto)
       ? res.status(200).json(productoView)
