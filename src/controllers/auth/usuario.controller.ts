@@ -6,6 +6,7 @@ import { Pool, FieldPacket, RowDataPacket, QueryError } from 'mysql2/promise';
 
 import { connect } from './../../classes/database';
 import { Usuario } from './../../models/auth/usuario.interface';
+import { createToken } from './auth.controller';
 
 // ===================================================================================================
 function generateUsuario(usuario: Usuario): Usuario {
@@ -83,6 +84,8 @@ export async function addUsuario(req: Request, res: Response) {
 		});
 	}
 }
+
+
 // ===================================================================================================
 export async function getUsuario(req: Request, res: Response) {
 	try {
@@ -214,3 +217,69 @@ export async function deleteUsuario(req: Request, res: Response) {
 
 }
 // ===================================================================================================
+
+// ===================================================================================================
+export async function usuarioRegister(req: Request, res: Response) {
+	try {
+		// *creating pool
+		const conn: Pool = await connect();
+		let usuario: Usuario = req.body;
+		let { contrasenha, username } = usuario;
+
+		// *checking autogenerate usuario
+		if (usuario.autoUsuario && usuario.nombre) {
+			usuario = generateUsuario(usuario);
+			username = usuario.username;
+		}
+		if (usuario.autoContrasenha) {
+			usuario = generateContrasenha(usuario);
+			contrasenha = usuario.contrasenha;
+		}
+
+		// *checking usuario data
+		if (!usuario.contrasenha || !usuario.username || !usuario.rol || !usuario.nombre) {
+			return res.status(400).json({
+				message: 'Por favor ingrese los campos requeridos. ❌',
+			});
+		}
+
+		// *encrypting contrasenha
+		const salt = await bcrypt.genSalt(10);
+		const hash = await bcrypt.hash(usuario.contrasenha, salt);
+		usuario.contrasenha = hash;
+
+		// *generating uuid
+		usuario.uuid = uuid();
+
+		// *checking username
+		const [[findUsername]]: [any[], FieldPacket[]] = await conn.query('select username from usuario where username = ?', [usuario.username]);
+
+		if (findUsername) {
+			// conn.end();
+			return res.status(400).json({
+				message: `El username \'${usuario.username}\' ya esta en uso, por favor ingrese otro valido. 🙁`,
+			});
+		} else {
+			delete usuario.autoUsuario
+			delete usuario.autoContrasenha;
+			// *adding usuario
+			await conn.query('INSERT INTO usuario SET ?', [usuario]);
+			// conn.end();
+			// *adding contrasenha and usuario
+			usuario.username = username;
+			usuario.contrasenha = contrasenha;
+			// *response
+			return res.status(201).json({
+				message: `Bienvenido ${usuario.nombre}! 👋`,
+				token: createToken(usuario),
+				body: usuario
+			});
+		}
+
+	} catch (error) {
+		console.log('❌Ocurrio un error:', error);
+		return res.status(400).json({
+			message: error
+		});
+	}
+}

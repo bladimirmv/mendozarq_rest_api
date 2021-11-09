@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 // *controllers
-import { addUsuario, getUsuario, getAllUsuarios, updateUsuario, deleteUsuario } from '../../controllers/auth/usuario.controller';
+import { addUsuario, getUsuario, getAllUsuarios, updateUsuario, deleteUsuario, usuarioRegister } from '../../controllers/auth/usuario.controller';
 import { checkJwt } from './../../middlewares/jwt';
 import { checkRole } from '../../middlewares/roles';
 
@@ -13,22 +13,28 @@ router.route('/')
 		getAllUsuarios
 	)
 	.post(
-		[checkJwt, checkRole(['administrador'])],
+		[checkJwt, checkRole(['administrador', 'vendedor'])],
 		addUsuario
 	);
 
 router.route('/:id')
 	.get(
-		[checkJwt, checkRole(['administrador'])],
+		[checkJwt, checkRole(['administrador', 'arquitecto', 'cliente', 'vendedor'])],
 		getUsuario
 	)
 	.put(
-		[checkJwt, checkRole(['administrador'])],
+		[checkJwt, checkRole(['administrador', 'arquitecto', 'cliente', 'vendedor'])],
 		updateUsuario
 	)
 	.delete(
-		[checkJwt, checkRole(['administrador'])],
+		[checkJwt, checkRole(['administrador', 'arquitecto', 'cliente', 'vendedor'])],
 		deleteUsuario
+	);
+
+
+router.route('/register/')
+	.post(
+		usuarioRegister
 	);
 
 export default router;
