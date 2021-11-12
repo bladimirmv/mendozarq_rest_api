@@ -10,7 +10,7 @@ import { Credenciales } from "./../../models/auth/credenciales.interface";
 
 // ===============================================================================
 export function createToken(usuario: Usuario) {
-	return jwt.sign({ uuid: usuario.uuid, username: usuario.username, rol: usuario.rol, nombre: usuario.nombre }, config.jwtSecret, {
+	return jwt.sign({ ...usuario }, config.jwtSecret, {
 		expiresIn: '8h'
 	});
 }

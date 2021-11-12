@@ -96,8 +96,10 @@ export async function getUsuario(req: Request, res: Response) {
 		// * finding usuario
 		const [[usuario]]: [any[], FieldPacket[]] = await conn.query('select  * from usuario where uuid = ?', [uuid]);
 		// conn.end();
+		console.log(usuario);
+
 		if (usuario) {
-			res.status(200).send(usuario[0]);
+			res.status(200).send(usuario);
 		} else {
 			return res.status(404).json({
 				message: 'No se encontro el usuario. 🙁',
@@ -113,8 +115,6 @@ export async function getUsuario(req: Request, res: Response) {
 // ===================================================================================================
 export async function getAllUsuarios(req: Request, res: Response) {
 	try {
-
-
 		// *creating pool
 		let conn: Pool = await connect();
 
