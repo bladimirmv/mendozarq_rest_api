@@ -1,28 +1,31 @@
 import { Request, Response } from "express";
 import { Pool } from "mysql2/promise";
 import { connect } from "../../classes/database";
-import { ComentarioProducto } from "../../models/liraki/comentario.producto.interface";
+import { OpinionProducto } from "../../models/liraki/opinion.producto.interface";
 import { v4 as uuid } from 'uuid';
 import { FieldPacket } from "mysql";
 
 
-export const addComentarioProducto = async (req: Request, res: Response) => {
+export const addOpinionProducto = async (req: Request, res: Response) => {
 	try {
 		const conn: Pool = await connect();
-		const comentario: ComentarioProducto = req.body;
+		const opinion: OpinionProducto = req.body;
 
-		if (!comentario.titulo || !comentario.descripcion || comentario.uuidCliente || comentario.uuidProducto) {
+		console.log(opinion);
+
+
+		if (!opinion.titulo || !opinion.descripcion || !opinion.uuidCliente || !opinion.uuidProducto) {
 			return res.status(400).json({
-				message: `No se ha podido registrar, por favor ingrese los datos del comentario. 🙁`,
+				message: `No se ha podido registrar, por favor ingrese los datos del opinion. 🙁`,
 			});
 		}
 
-		comentario.uuid = uuid();
+		opinion.uuid = uuid();
 
-		await conn.query(`INSERT INTO comentarioProducto SET ? `, [comentario]);
+		await conn.query(`INSERT INTO opinionProducto SET ? `, [opinion]);
 
 		return res.status(201).json({
-			message: "Comentario creado exitosamente! 😀",
+			message: "Opinion creado exitosamente! 😀",
 		});
 
 	} catch (error) {
@@ -33,13 +36,15 @@ export const addComentarioProducto = async (req: Request, res: Response) => {
 	}
 }
 
-export const getAllComentarioProducto = async (req: Request, res: Response) => {
+export const getAllOpinionProducto = async (req: Request, res: Response) => {
 	try {
 		const conn: Pool = await connect();
+		const uuid: string = req.params.uuid;
+
+
 
 		const [comentarrio]: [any[], FieldPacket[]] = await conn.query(
-			`SELECT * FROM comentarioProducto ORDER BY creadoEn DESC`
-		);
+			`SELECT * FROM opinionProducto WHERE uuidProducto = ? ORDER BY creadoEn DESC`, [uuid]);
 
 		return res.status(200).json(comentarrio);
 	} catch (error) {
@@ -50,26 +55,26 @@ export const getAllComentarioProducto = async (req: Request, res: Response) => {
 	}
 };
 
-export const deleteComentarioProducto = async (req: Request, res: Response) => {
+export const deleteOpinionProducto = async (req: Request, res: Response) => {
 	try {
 		const conn: Pool = await connect();
 		const uuid: string = req.params.uuid;
 
 		const [[row]]: [any[], FieldPacket[]] = await conn.query(
-			`SELECT * FROM comentarioProducto WHERE uuid = ?`,
+			`SELECT * FROM opinionProducto WHERE uuid = ?`,
 			[uuid]
 		);
 
 		if (!row) {
 			return res.status(404).json({
-				message: "No se pudo eliminar el comentario, por que no existe. 🙁",
+				message: "No se pudo eliminar el opinion, por que no existe. 🙁",
 			});
 		}
 
-		await conn.query(`DELETE FROM comentarioProducto WHERE uuid = ?`, [uuid]);
+		await conn.query(`DELETE FROM opinionProducto WHERE uuid = ?`, [uuid]);
 
 		return res.status(200).json({
-			message: "Comentario eliminado correctamente. 😀",
+			message: "Opinion eliminado correctamente. 😀",
 		});
 	} catch (error) {
 		console.log("❌Ocurrio un error:", error);

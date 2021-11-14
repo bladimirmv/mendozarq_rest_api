@@ -1,4 +1,4 @@
-export interface ComentarioProducto {
+export interface OpinionProducto {
 	uuid: string;
 	creadoEn: Date;
 	titulo: string;
@@ -9,3 +9,22 @@ export interface ComentarioProducto {
 	uuidProducto: string;
 	uuidCliente: string;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

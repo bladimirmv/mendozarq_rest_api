@@ -29,7 +29,7 @@ import detalleCapituloRoutes from '../routes/mendozarq/detalle.capitulo.presupue
 
 import categoriaProductoRoutes from '../routes/liraki/categoria.producto.routes';
 import productoRoutes from '../routes/liraki/producto.routes';
-import comentarioRoutes from './../routes/liraki/comentario.producto.routes';
+import opinionRoutes from './../routes/liraki/opinion.producto.routes';
 
 
 
@@ -110,7 +110,7 @@ export default class App {
 		// **Lirkai
 		this.app.use('/api/categoriaProducto', categoriaProductoRoutes);
 		this.app.use('/api/producto', productoRoutes);
-		this.app.use('/api/comentarioProducto', comentarioRoutes);
+		this.app.use('/api/opinionProducto', opinionRoutes);
 
 	}
 
