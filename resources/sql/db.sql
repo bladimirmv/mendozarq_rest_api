@@ -90,6 +90,7 @@ create table documentoCarpeta
     foreign key (uuidDocumento) references documentoProyecto (uuid)
 );
 
+
 create table personalProyecto
 (
     uuid         varchar(100) primary key,
@@ -224,27 +225,30 @@ create table categoriaProducto
 (
     uuid        varchar(100) primary key,
     creadoEn    timestamp default current_timestamp not null,
-    nombre      text unique                         not null,
+    nombre      varchar(100) unique                 not null,
     descripcion varchar(200)
 );
 
 create table producto
 (
     uuid        varchar(100) primary key,
-    creadoEn    timestamp default current_timestamp not null,
-    nombre      text unique                         not null,
+    creadoEn    timestamp      default current_timestamp not null,
+    nombre      varchar(300) unique                      not null,
     descripcion varchar(1000),
-    precio      decimal(15, 2)                      not null,
-    moneda      varchar(5) default  'Bs.' not null,
-    stock       int                                 not null,
-    estado      boolean                             not null
+    precio      decimal(15, 2)                           not null,
+    moneda      varchar(5)     default 'Bs.'             not null,
+    stock       int                                      not null,
+    descuento   decimal(15, 2) default 0                 not null,
+    estado      boolean                                  not null
 );
 
-drop table detalleCategoriaProducto, fotoProducto, producto;
+
 create table fotoProducto
 (
     uuid         varchar(100) primary key,
     creadoEn     timestamp default current_timestamp not null,
+    nombre       text                                not null,
+    indice       int                                 not null,
     keyName      text                                not null,
     location     text                                not null,
     size         int                                 not null,
@@ -260,5 +264,26 @@ create table detalleCategoriaProducto
     foreign key (uuidCategoria) references categoriaProducto (uuid),
     foreign key (uuidProducto) references producto (uuid)
 );
-supuesto, presupuestoProyecto, presupuestoObra;
-drop table detalleCapitulo, capituloPresupuesto;
+
+create table opinionProducto
+(
+    uuid         varchar(100) primary key,
+    creadoEn     timestamp default current_timestamp not null,
+    titulo       varchar(300)                        not null,
+    descripcion  varchar(1000)                       not null,
+    estado       boolean   default false             not null,
+    verificado   boolean   default false             not null,
+    puntuacion   int                              not null,
+    uuidProducto varchar(100)                        not null,
+    uuidCliente  varchar(100)                        not null,
+    foreign key (uuidProducto) references producto (uuid),
+    foreign key (uuidCliente) references usuario (uuid)
+);
+
+
+INSERT INTO mendozarq.usuario (uuid, creadoEn, nombre, apellidoPaterno, apellidoMaterno, celular, direccion, correo,
+                               username, contrasenha, rol, activo)
+VALUES ('fa27b5b3-837b-4486-b2cd-c6a306e8bd72', '2021-01-12 19:45:41', 'bladimir', 'medrano', 'vargas', 69509449,
+        'Av segunda entre marina nunez del prado y calle greco.', 'example@gmail.com', 'blado959',
+        '$2b$10$Ejt7X/epAQ2kfChOFJa9T.apOjSfTR2xkMWOoIfWWKT4JFh8CDu.C', 'administrador', 1);
+

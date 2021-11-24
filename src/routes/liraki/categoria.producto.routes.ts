@@ -8,10 +8,7 @@ const router = Router();
 
 router
   .route('/')
-  .get(
-    [checkJwt, checkRole(['administrador', 'vendedor'])],
-    cp.getAllcategoriaProducto
-  )
+  .get(cp.getAllcategoriaProducto)
   .post([checkJwt, checkRole(['administrador'])], cp.addCategoriaProducto);
 
 router

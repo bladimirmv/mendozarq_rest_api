@@ -14,7 +14,6 @@ router
 router
 	.route('/:uuid')
 	.get(
-		[checkJwt, checkRole(['administrador', 'vendedor'])],
 		cp.getAllOpinionProducto
 	)
 	.delete([checkJwt, checkRole(['administrador'])], cp.deleteOpinionProducto);
