@@ -287,3 +287,11 @@ VALUES ('fa27b5b3-837b-4486-b2cd-c6a306e8bd72', '2021-01-12 19:45:41', 'bladimir
         'Av segunda entre marina nunez del prado y calle greco.', 'example@gmail.com', 'blado959',
         '$2b$10$Ejt7X/epAQ2kfChOFJa9T.apOjSfTR2xkMWOoIfWWKT4JFh8CDu.C', 'administrador', 1);
 
+
+
+
+use mendozarq;
+SELECT * from producto;
+
+
+delete from

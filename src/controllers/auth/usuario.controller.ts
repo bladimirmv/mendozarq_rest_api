@@ -67,6 +67,11 @@ export async function addUsuario(req: Request, res: Response) {
 		} else {
 			delete usuario.autoUsuario
 			delete usuario.autoContrasenha;
+
+			usuario.nombre.toLocaleLowerCase();
+			usuario.apellidoMaterno?.toLocaleLowerCase();
+			usuario.apellidoMaterno?.toLocaleLowerCase();
+
 			// *adding usuario
 			await conn.query('INSERT INTO usuario SET ?', [usuario]);
 			// conn.end();
@@ -175,6 +180,9 @@ export async function updateUsuario(req: Request, res: Response) {
 
 			delete usuario.autoUsuario
 			delete usuario.autoContrasenha;
+			usuario.nombre.toLocaleLowerCase();
+			usuario.apellidoMaterno?.toLocaleLowerCase();
+			usuario.apellidoMaterno?.toLocaleLowerCase();
 
 			// *updating usuario
 			await conn.query('update usuario set ? where uuid = ?', [usuario, uuid]);

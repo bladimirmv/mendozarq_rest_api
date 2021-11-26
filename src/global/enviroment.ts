@@ -7,9 +7,9 @@ export const AWS_S3: {
 	secretAccessKey: string;
 	Bucket: string;
 } = {
-	accessKeyId: 'AKIA5D4TA3BXI5RGEODX',
-	secretAccessKey: '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',
-	Bucket: 'mendozarq-liraki'
+	accessKeyId: 'AKIAS5TJVX4USELPVU5Q',
+	secretAccessKey: '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',
+	Bucket: 'mendozarq-liraki-s3'
 };
 
 export const dbOptions: PoolOptions = process.env.dbOptions as PoolOptions || {

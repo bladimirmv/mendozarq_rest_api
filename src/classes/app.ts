@@ -5,6 +5,12 @@ import cors from 'cors';
 import http from "http";
 import socketIO, { Socket, ServerOptions } from "socket.io";
 import path from 'path';
+import { v4 as uuid } from 'uuid';
+
+import swaggerUI from 'swagger-ui-express';
+import swaggerJsDoc from 'swagger-jsdoc';
+import { options } from './../documentation/swgger.options';
+
 
 // ==========> config imprts
 import { SERVER_PORT } from '../global/enviroment';
@@ -111,6 +117,10 @@ export default class App {
 		this.app.use('/api/categoriaProducto', categoriaProductoRoutes);
 		this.app.use('/api/producto', productoRoutes);
 		this.app.use('/api/opinionProducto', opinionRoutes);
+
+		// **Swagger
+		const specs = swaggerJsDoc(options);
+		this.app.use('/', swaggerUI.serve, swaggerUI.setup(specs));
 
 	}
 
