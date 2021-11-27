@@ -3,4 +3,7 @@ export interface CategoriaProducto {
 	creadoEn?: Date;
 	nombre: string;
 	descripcion?: string;
+	keyName: string;
+	location: string;
+	estado?: boolean;
 }
