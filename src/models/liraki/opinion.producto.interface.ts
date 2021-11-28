@@ -1,3 +1,5 @@
+import { Usuario } from "../auth/usuario.interface";
+
 export interface OpinionProducto {
 	uuid: string;
 	creadoEn: Date;
@@ -10,21 +12,9 @@ export interface OpinionProducto {
 	uuidCliente: string;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export interface OpinionProductoView extends OpinionProducto {
+	usuario: Usuario
+}
 
 
 

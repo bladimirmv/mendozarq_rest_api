@@ -13,9 +13,7 @@ router
 
 router
 	.route('/:uuid')
-	.get(
-		cp.getAllOpinionProducto
-	)
+	.get(cp.getAllOpinionProductoByUuid)
 	.delete([checkJwt, checkRole(['administrador'])], cp.deleteOpinionProducto);
 
 export default router;

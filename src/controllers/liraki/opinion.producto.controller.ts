@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { Pool } from "mysql2/promise";
 import { connect } from "../../classes/database";
-import { OpinionProducto } from "../../models/liraki/opinion.producto.interface";
+import { OpinionProducto, OpinionProductoView } from "../../models/liraki/opinion.producto.interface";
 import { v4 as uuid } from 'uuid';
 import { FieldPacket } from "mysql";
+import { Usuario } from "../../models/auth/usuario.interface";
 
 
 export const addOpinionProducto = async (req: Request, res: Response) => {
@@ -36,17 +37,31 @@ export const addOpinionProducto = async (req: Request, res: Response) => {
 	}
 }
 
-export const getAllOpinionProducto = async (req: Request, res: Response) => {
+export const getAllOpinionProductoByUuid = async (req: Request, res: Response) => {
 	try {
 		const conn: Pool = await connect();
 		const uuid: string = req.params.uuid;
+		let opninionView: OpinionProductoView[] = [] as OpinionProductoView[];
 
-
-
-		const [comentarrio]: [any[], FieldPacket[]] = await conn.query(
+		const [opiniones]: [any[], FieldPacket[]] = await conn.query(
 			`SELECT * FROM opinionProducto WHERE uuidProducto = ? ORDER BY creadoEn DESC`, [uuid]);
 
-		return res.status(200).json(comentarrio);
+		const [usuarios]: [any[], FieldPacket[]] = await conn.query(`SELECT u.* FROM opinionProducto as op
+		INNER JOIN usuario u on op.uuidCliente = u.uuid
+		WHERE op.uuidProducto = ? ORDER BY op.creadoEn DESC`, [uuid])
+
+		opninionView = opiniones as OpinionProductoView[];
+
+		opninionView.map((opinion: OpinionProductoView) => {
+			opinion.usuario = usuarios.filter((usuario: Usuario) => opinion.uuidCliente === usuario.uuid)[0];
+		});
+
+
+
+		console.log(opninionView);
+
+
+		return res.status(200).json(opninionView);
 	} catch (error) {
 		console.log("❌Ocurrio un error:", error);
 		return res.status(400).json({
