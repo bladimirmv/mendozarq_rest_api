@@ -57,10 +57,6 @@ export const getAllOpinionProductoByUuid = async (req: Request, res: Response) =
 		});
 
 
-
-		console.log(opninionView);
-
-
 		return res.status(200).json(opninionView);
 	} catch (error) {
 		console.log("❌Ocurrio un error:", error);
