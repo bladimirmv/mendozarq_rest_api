@@ -37,6 +37,9 @@ import categoriaProductoRoutes from '../routes/liraki/categoria.producto.routes'
 import productoRoutes from '../routes/liraki/producto.routes';
 import opinionRoutes from './../routes/liraki/opinion.producto.routes';
 
+import pagosRoutes from './../routes/liraki/pagos.paypal.routes';
+
+
 
 
 import herramientaRoutes from '../routes/mendozarq/herramienta.routes';
@@ -117,6 +120,10 @@ export default class App {
 		this.app.use('/api/categoriaProducto', categoriaProductoRoutes);
 		this.app.use('/api/producto', productoRoutes);
 		this.app.use('/api/opinionProducto', opinionRoutes);
+
+
+		this.app.use('/api/paypal', pagosRoutes);
+
 
 		// **Swagger
 		const specs = swaggerJsDoc(options);

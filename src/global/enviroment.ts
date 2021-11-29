@@ -12,6 +12,11 @@ export const AWS_S3: {
 	Bucket: 'mendozarq-liraki-s3'
 };
 
+
+export const PAYPAL_API_CLIENT: string = 'AcJ1FfC1csSTMtiouf76c5z3xA6yAUMqtv88oG5j68ewNhd4RelzysAD8-yFB2p_wQfi5Z-qVQP23YGM';
+export const PAYPAL_API_SECRET: string = 'ENWNqW3NUHL2-26CvsjfY2ZNHvpAgmuNvsczhMCCkgQ1GbWTHVpZMMmfNmbt50HhJppGVmHmIdNqwQzs';
+export const PAYPAL_API: string = 'https://api-m.sandbox.paypal.com';
+
 export const dbOptions: PoolOptions = process.env.dbOptions as PoolOptions || {
 	host: 'localhost',
 	port: 3306,

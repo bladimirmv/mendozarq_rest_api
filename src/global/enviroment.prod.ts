@@ -11,6 +11,13 @@ export const AWS_S3: {
 	secretAccessKey: 'XXX',
 	Bucket: 'XXX'
 };
+
+
+export const PAYPAL_API_CLIENT: string = 'XXX';
+export const PAYPAL_API_SECRET: string = 'XXX';
+export const PAYPAL_API: string = 'XXX';
+
+
 export const dbOptions: PoolOptions = process.env.dbOptions as PoolOptions || {
 	host: 'localhost',
 	port: 3306,

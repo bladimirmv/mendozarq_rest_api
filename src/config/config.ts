@@ -9,6 +9,10 @@ const dbOptions: PoolOptions = {
 	connectionLimit: 10
 };
 
+
+
+
+
 export default {
 	jwtSecret: process.env.JWT_SECRET || 'mendozarqbmvliraki',
 	dbOptions
