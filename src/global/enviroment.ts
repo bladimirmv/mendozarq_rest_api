@@ -1,4 +1,6 @@
 import { PoolOptions } from 'mysql2';
+import { config } from "dotenv";
+config()
 
 export const SERVER_PORT: number = Number(process.env.PORT) || 3000;
 
@@ -13,8 +15,8 @@ export const AWS_S3: {
 };
 
 
-export const PAYPAL_API_CLIENT: string = 'AcJ1FfC1csSTMtiouf76c5z3xA6yAUMqtv88oG5j68ewNhd4RelzysAD8-yFB2p_wQfi5Z-qVQP23YGM';
-export const PAYPAL_API_SECRET: string = 'ENWNqW3NUHL2-26CvsjfY2ZNHvpAgmuNvsczhMCCkgQ1GbWTHVpZMMmfNmbt50HhJppGVmHmIdNqwQzs';
+export const PAYPAL_API_CLIENT: string = process.env.PAYPAL_API_CLIENT as string;
+export const PAYPAL_API_SECRET: string = process.env.PAYPAL_API_SECRET as string;
 export const PAYPAL_API: string = 'https://api-m.sandbox.paypal.com';
 
 export const dbOptions: PoolOptions = process.env.dbOptions as PoolOptions || {
