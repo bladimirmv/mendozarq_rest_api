@@ -4,6 +4,9 @@ config()
 
 export const SERVER_PORT: number = Number(process.env.PORT) || 3000;
 
+export const CLIENT_URL: string = process.env.CLIENT_URL as string || 'http://localhost:4200';
+export const HOST_API: string = process.env.HOST_API as string || 'http://localhost:3000';
+
 export const AWS_S3: {
 	accessKeyId: string;
 	secretAccessKey: string;

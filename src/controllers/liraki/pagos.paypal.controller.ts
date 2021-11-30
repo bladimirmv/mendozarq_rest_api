@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { PAYPAL_API, PAYPAL_API_CLIENT, PAYPAL_API_SECRET, SERVER_PORT } from './../../global/enviroment';
+import { CLIENT_URL, HOST_API, PAYPAL_API, PAYPAL_API_CLIENT, PAYPAL_API_SECRET } from './../../global/enviroment';
 import axios from 'axios';
 
 export const createOrder = async (req: Request, res: Response) => {
@@ -11,21 +11,19 @@ export const createOrder = async (req: Request, res: Response) => {
         {
           amount: {
             currency_code: "USD",
-            value: "105.70",
+            value: "100.40",
           },
-          description: 'teclado de una computadora'
+          description: 'puerta de madera'
         },
       ],
       application_context: {
-        brand_name: "mycompany.com",
+        brand_name: 'Carpinteria LIRAKI',
         landing_page: "LOGIN",
         user_action: "PAY_NOW",
-        return_url: `http://localhost:${SERVER_PORT}/api/paypal/capture-order`,
-        cancel_url: `http://localhost:${SERVER_PORT}/api/paypal/cancel-order`,
+        return_url: `${HOST_API}/api/paypal/capture-order`,
+        cancel_url: `${CLIENT_URL}/`,
       },
     };
-
-
 
     // format the body
     const params = new URLSearchParams();
@@ -60,7 +58,7 @@ export const createOrder = async (req: Request, res: Response) => {
     );
 
 
-    return res.json(response.data);
+    return res.status(200).json(response.data);
   } catch (error) {
     console.log('❌Ocurrio un error:', error);
     return res.status(500).json({
@@ -86,7 +84,7 @@ export const captureOrder = async (req: Request, res: Response) => {
 
     console.log(response.data);
 
-    res.redirect("/payed.html");
+    res.redirect(`${CLIENT_URL}/profile`);
   } catch (error) {
     console.log('❌Ocurrio un error:', error);
     return res.status(500).json({
@@ -97,12 +95,12 @@ export const captureOrder = async (req: Request, res: Response) => {
 
 
 export const cancelOrder = (req: Request, res: Response) => {
-  res.redirect("/");
+  res.redirect(`${CLIENT_URL}/`);
 }
 
 
 // weimar@liraki.com
 // wnq7I3?9
 
-// }k+G&HL9
 // bladimilmedranoblod_@hotmail.com
+// }k+G&HL9
