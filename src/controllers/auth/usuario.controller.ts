@@ -167,7 +167,7 @@ export async function updateUsuario(req: Request, res: Response) {
 		}
 
 		// *checking username
-		const [[findUsuario]]: [any[], FieldPacket[]] = await conn.query('select * from usuario where username = ?', [usuario.username]);
+		const [[findUsuario]]: [any[], FieldPacket[]] = await conn.query('select * from usuario where username = ?;', [usuario.username]);
 		const usr: Usuario = findUsuario;
 
 
@@ -184,8 +184,13 @@ export async function updateUsuario(req: Request, res: Response) {
 			usuario.apellidoMaterno?.toLocaleLowerCase();
 			usuario.apellidoMaterno?.toLocaleLowerCase();
 
+			const { nombre, apellidoMaterno, apellidoPaterno }: Usuario = res.locals.jwtPayload;
+
 			// *updating usuario
+			await conn.query('set @uuidCreadoPor = ?, @creadoPor = ?;', [res.locals.jwtPayload.uuid,
+			`${nombre} ${apellidoPaterno} ${apellidoMaterno}`]);
 			await conn.query('update usuario set ? where uuid = ?', [usuario, uuid]);
+
 			//conn.end();
 			// *adding contrasenha and usuario
 			usuario.username = username;

@@ -99,8 +99,3 @@ export const cancelOrder = (req: Request, res: Response) => {
 }
 
 
-// weimar@liraki.com
-// wnq7I3?9
-
-// bladimilmedranoblod_@hotmail.com
-// }k+G&HL9
