@@ -85,15 +85,6 @@ export async function addUsuario(req: Request, res: Response) {
       usuario.apellidoMaterno?.toLocaleLowerCase();
 
       // *adding usuario
-      const { nombre, apellidoMaterno, apellidoPaterno }: Usuario =
-        res.locals.jwtPayload;
-      await conn.query('set @uuidCreadoPor = ?, @creadoPor = ?;', [
-        res.locals.jwtPayload.uuid,
-        `${nombre} ${apellidoPaterno} ${apellidoMaterno}`,
-      ]);
-
-      console.log(usuario);
-
       await conn.query('INSERT INTO usuario SET ?', [usuario]);
 
       emitAllLogs();
@@ -212,12 +203,14 @@ export async function updateUsuario(req: Request, res: Response) {
       usuario.apellidoMaterno?.toLocaleLowerCase();
 
       // *updating usuario
-      const { nombre, apellidoMaterno, apellidoPaterno }: Usuario =
-        res.locals.jwtPayload;
-      await conn.query('set @uuidCreadoPor = ?, @creadoPor = ?;', [
-        res.locals.jwtPayload.uuid,
-        `${nombre} ${apellidoPaterno} ${apellidoMaterno}`,
-      ]);
+      // const { nombre, apellidoMaterno, apellidoPaterno }: Usuario =
+      //   res.locals.jwtPayload;
+      // await conn.query('set @uuidCreadoPor = ?, @creadoPor = ?;', [
+      //   res.locals.jwtPayload.uuid,
+      //   `${nombre} ${apellidoPaterno} ${apellidoMaterno}`,
+      // ]);
+
+      // console.log('usuario: ', res.locals.jwtPayload);
 
       await conn.query('update usuario set ? where uuid = ?', [usuario, uuid]);
 
@@ -245,12 +238,12 @@ export async function deleteUsuario(req: Request, res: Response) {
     const uuid = req.params.id;
 
     // *deleting usuario by id
-    const { nombre, apellidoMaterno, apellidoPaterno }: Usuario =
-      res.locals.jwtPayload;
-    await conn.query('set @uuidCreadoPor = ?, @creadoPor = ?;', [
-      res.locals.jwtPayload.uuid,
-      `${nombre} ${apellidoPaterno} ${apellidoMaterno}`,
-    ]);
+    // const { nombre, apellidoMaterno, apellidoPaterno }: Usuario =
+    //   res.locals.jwtPayload;
+    // await conn.query('set @uuidCreadoPor = ?, @creadoPor = ?;', [
+    //   res.locals.jwtPayload.uuid,
+    //   `${nombre} ${apellidoPaterno} ${apellidoMaterno}`,
+    // ]);
     await conn.query('DELETE from usuario where uuid = ?', [uuid]);
 
     emitAllLogs();

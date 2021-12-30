@@ -14,10 +14,10 @@ export const getAllLogs = async (client: Socket, io: SocketIO.Server) => {
       const conn: Pool = await connect();
       let logs: Logs[] = [];
       const [rows]: [any[], FieldPacket[]] = await conn.query(
-        `SELECT * FROM logs`
+        `SELECT * FROM logs ORDER BY creadoEn DESC`
       );
-      logs = rows;
 
+      logs = rows;
       io.to('administrador' as Roles).emit('ws:getLogs', logs);
     });
   } catch (error) {
@@ -32,7 +32,7 @@ export const emitAllLogs = async () => {
     const conn: Pool = await connect();
     let logs: Logs[] = [];
     const [rows]: [any[], FieldPacket[]] = await conn.query(
-      `SELECT * FROM logs`
+      `SELECT * FROM logs ORDER BY creadoEn DESC`
     );
     logs = rows;
 
