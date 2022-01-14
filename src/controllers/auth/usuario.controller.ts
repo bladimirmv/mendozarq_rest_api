@@ -18,7 +18,7 @@ function generateUsuario(usuario: Usuario): Usuario {
   }
 
   usuario.username =
-    usuario.nombre?.substr(0, 5) +
+    usuario.nombre.substring(0, 5) +
     generator.generate({ length: 5 + lack, numbers: true, uppercase: false });
   return usuario;
 }

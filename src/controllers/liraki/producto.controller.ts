@@ -1,13 +1,17 @@
 import { deleteFile, uploadOneFile } from './../../classes/aws.s3';
-import { DetalleCategoriaProducto, FotoProducto, Producto, ProductoView } from './../../models/liraki/producto.interface';
+import {
+  DetalleCategoriaProducto,
+  FotoProducto,
+  Producto,
+  ProductoView,
+} from './../../models/liraki/producto.interface';
 import { Pool, FieldPacket } from 'mysql2/promise';
 import { Request, Response } from 'express';
 import { connect } from '../../classes/database';
 import { v4 as uuid } from 'uuid';
 import { CategoriaProducto } from '../../models/liraki/categoria.producto.interface';
 import { FileResponse } from '../../models/fileResponse.interface';
-
-
+import { emitAllLogs } from '../logs/logs.controller';
 
 export const addProducto = async (req: Request, res: Response) => {
   try {
@@ -26,7 +30,7 @@ export const addProducto = async (req: Request, res: Response) => {
       return {
         uuid: uuid(),
         uuidCategoria: categoriaProducto.uuid,
-        uuidProducto: producto.uuid
+        uuidProducto: producto.uuid,
       };
     });
 
@@ -40,16 +44,21 @@ export const addProducto = async (req: Request, res: Response) => {
       mRows.push(Object.values(detalle));
     });
 
-    await conn.query(`INSERT INTO detalleCategoriaProducto (uuid, uuidCategoria, uuidProducto) VALUES ?`, [mRows]);
+    await conn.query(
+      `INSERT INTO detalleCategoriaProducto (uuid, uuidCategoria, uuidProducto) VALUES ?`,
+      [mRows]
+    );
+
+    emitAllLogs();
 
     return res.status(201).json({
       message: 'Producto creado exitosamente! 😀',
-      data: producto
+      data: producto,
     });
   } catch (error) {
     console.log('❌Ocurrio un error:', error);
     return res.status(400).json({
-      message: error
+      message: error,
     });
   }
 };
@@ -81,7 +90,7 @@ export const getOneProducto = async (req: Request, res: Response) => {
     productoView.categorias = categorias;
     productoView.fotos = fotos;
 
-    return (producto)
+    return producto
       ? res.status(200).json(productoView)
       : res.status(404).json({ message: 'No se encontro el producto. 🙁' });
   } catch (error) {
@@ -103,17 +112,18 @@ export const getAllProducto = async (req: Request, res: Response) => {
 
     const [categorias]: [any[], FieldPacket[]] = await conn.query(
       `SELECT cp.*, dcp.uuidProducto FROM detalleCategoriaProducto AS dcp
-      INNER JOIN categoriaProducto cp on dcp.uuidCategoria = cp.uuid ORDER BY cp.creadoEn DESC;`);
+      INNER JOIN categoriaProducto cp on dcp.uuidCategoria = cp.uuid ORDER BY cp.creadoEn DESC;`
+    );
 
     const [fotos]: [any[], FieldPacket[]] = await conn.query(
       `SELECT * FROM fotoProducto ORDER BY indice`
     );
 
-
-
     productos.forEach((producto: ProductoView) => {
-      producto.categorias = categorias.filter((categoria: CategoriaProducto & { uuidProducto?: string }) =>
-        categoria.uuidProducto == producto.uuid);
+      producto.categorias = categorias.filter(
+        (categoria: CategoriaProducto & { uuidProducto?: string }) =>
+          categoria.uuidProducto == producto.uuid
+      );
       producto.fotos = fotos.filter((foto: FotoProducto) => foto.uuidProducto == producto.uuid);
       productoView.push(producto);
     });
@@ -135,7 +145,6 @@ export const updateProducto = async (req: Request, res: Response) => {
     let detalleCategoriaProducto: DetalleCategoriaProducto[];
     let mRows: any[] = [];
 
-
     const [[row]]: [any[], FieldPacket[]] = await conn.query(
       `SELECT * FROM producto WHERE uuid = ?`,
       [uuidProducto]
@@ -148,18 +157,25 @@ export const updateProducto = async (req: Request, res: Response) => {
     }
 
     categorias.forEach((categoria: string) => {
-      mRows.push(Object.values({
-        uuid: uuid(),
-        uuidCategoria: categoria,
-        uuidProducto: uuidProducto
-      }));
+      mRows.push(
+        Object.values({
+          uuid: uuid(),
+          uuidCategoria: categoria,
+          uuidProducto: uuidProducto,
+        })
+      );
     });
 
     await conn.query(`DELETE FROM detalleCategoriaProducto WHERE uuidProducto = ?`, [uuidProducto]);
 
-    await conn.query(`INSERT INTO detalleCategoriaProducto (uuid, uuidCategoria, uuidProducto) VALUES ?`, [mRows]);
+    await conn.query(
+      `INSERT INTO detalleCategoriaProducto (uuid, uuidCategoria, uuidProducto) VALUES ?`,
+      [mRows]
+    );
 
     await conn.query(`UPDATE producto SET ? WHERE uuid = ?`, [producto, uuidProducto]);
+
+    emitAllLogs();
 
     return res.status(200).json({
       message: 'Producto actualizado correctamente! 😀',
@@ -187,9 +203,11 @@ export const deleteProducto = async (req: Request, res: Response) => {
         message: 'No se pudo eliminar el producto, por que no existe. 🙁',
       });
     }
-    const [rows]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM fotoProducto WHERE uuidProducto = ? ', [uuid]);
+    const [rows]: [any[], FieldPacket[]] = await conn.query(
+      'SELECT * FROM fotoProducto WHERE uuidProducto = ? ',
+      [uuid]
+    );
     const fotos: FotoProducto[] = rows as FotoProducto[];
-
 
     fotos.forEach(async (foto: FotoProducto) => {
       try {
@@ -197,17 +215,18 @@ export const deleteProducto = async (req: Request, res: Response) => {
       } catch (error) {
         console.log('❌Ocurrio un error:', error);
         return res.status(400).json({
-          message: error
+          message: error,
         });
       }
     });
 
-    await conn.query('DELETE FROM fotoProducto WHERE uuidProducto = ?', [uuid]);
+    // await conn.query('DELETE FROM fotoProducto WHERE uuidProducto = ?', [uuid]);
 
-    await conn.query('DELETE FROM detalleCategoriaProducto WHERE uuidProducto = ?', [uuid]);
+    // await conn.query('DELETE FROM detalleCategoriaProducto WHERE uuidProducto = ?', [uuid]);
 
     await conn.query('DELETE FROM producto WHERE uuid = ?', [uuid]);
 
+    emitAllLogs();
 
     return res.status(200).json({
       message: 'Producto eliminado correctamente. 😀',
@@ -215,7 +234,7 @@ export const deleteProducto = async (req: Request, res: Response) => {
   } catch (error) {
     console.log('❌Ocurrio un error:', error);
     return res.status(400).json({
-      message: error
+      message: error,
     });
   }
 };
@@ -231,10 +250,9 @@ export const addFotoProducto = async (req: Request, res: Response) => {
 
     if (!file) {
       return res.status(400).json({
-        message: 'No se ha podido registrar, no se cargo la imagen. 🙁'
+        message: 'No se ha podido registrar, no se cargo la imagen. 🙁',
       });
     }
-
 
     fileUploaded = await uploadOneFile(file, '/liraki/images');
     foto.keyName = fileUploaded.data.Key;
@@ -243,30 +261,28 @@ export const addFotoProducto = async (req: Request, res: Response) => {
 
     foto.uuid = uuid();
 
-
     await conn.query('INSERT INTO fotoProducto SET ? ', foto);
 
-
     return res.status(201).json({
-      message: `Imagen ${fileUploaded.originalName} creado exitosamente! 😀`
+      message: `Imagen ${fileUploaded.originalName} creado exitosamente! 😀`,
     });
-
   } catch (error) {
     console.log('❌Ocurrio un error:', error);
     return res.status(400).json({
-      message: error
+      message: error,
     });
   }
-}
-
-
+};
 
 export const deleteFotoProducto = async (req: Request, res: Response) => {
   try {
     const conn: Pool = await connect();
     const uuid: string = req.params.uuid;
 
-    const [[row]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM fotoProducto WHERE uuid = ? ', [uuid]);
+    const [[row]]: [any[], FieldPacket[]] = await conn.query(
+      'SELECT * FROM fotoProducto WHERE uuid = ? ',
+      [uuid]
+    );
     const foto: FotoProducto = row as FotoProducto;
 
     if (!row) {
@@ -281,16 +297,15 @@ export const deleteFotoProducto = async (req: Request, res: Response) => {
 
     return res.status(200).json({
       message: 'Foto eliminado correctamente. 😀',
-      body: foto.nombre
+      body: foto.nombre,
     });
   } catch (error) {
     console.log('❌Ocurrio un error:', error);
     return res.status(400).json({
-      message: error
+      message: error,
     });
   }
 };
-
 
 export const getFotoProducto = async (req: Request, res: Response) => {
   try {
@@ -302,7 +317,7 @@ export const getFotoProducto = async (req: Request, res: Response) => {
       [uuid]
     );
 
-    return (fotos)
+    return fotos
       ? res.status(200).json(fotos)
       : res.status(404).json({ message: 'No se encontro las fotos de este producto. 🙁' });
   } catch (error) {
@@ -312,7 +327,6 @@ export const getFotoProducto = async (req: Request, res: Response) => {
     });
   }
 };
-
 
 export const updateFotoProducto = async (req: Request, res: Response) => {
   try {

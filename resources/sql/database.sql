@@ -1,28 +1,35 @@
-create database mendozarq;
 use mendozarq;
+# ==========================================================================================================
+SHOW DATABASES;
 
-create table usuario
+SHOW TABLES;
+
+CREATE DATABASE mendozarq;
+
+USE mendozarq;
+
+CREATE TABLE usuario
 (
-    uuid            varchar(100) primary key,
-    creadoEn        timestamp default current_timestamp not null,
-    nombre          varchar(50)                         not null,
-    apellidoPaterno varchar(50)                         not null,
+    uuid            varchar(100) PRIMARY KEY,
+    creadoEn        timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    nombre          varchar(50)                         NOT NULL,
+    apellidoPaterno varchar(50)                         NOT NULL,
     apellidoMaterno varchar(50),
     celular         int,
     direccion       text,
     correo          varchar(100),
-    username        varchar(50)                         not null,
-    contrasenha     varchar(100)                        not null,
-    rol             varchar(20)                         not null,
-    activo          boolean                             not null
+    username        varchar(50)                         NOT NULL,
+    contrasenha     varchar(100)                        NOT NULL,
+    rol             varchar(20)                         NOT NULL,
+    activo          boolean                             NOT NULL
 );
 
-create table personal
+CREATE TABLE personal
 (
-    uuid            varchar(100) primary key,
-    creadoEn        timestamp default current_timestamp not null,
-    nombre          varchar(50)                         not null,
-    apellidoPaterno varchar(50)                         not null,
+    uuid            varchar(100) PRIMARY KEY,
+    creadoEn        timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    nombre          varchar(50)                         NOT NULL,
+    apellidoPaterno varchar(50)                         NOT NULL,
     apellidoMaterno varchar(50),
     celular         int,
     direccion       text,
@@ -30,265 +37,365 @@ create table personal
     descripcion     varchar(200),
     sueldo          decimal(15, 2),
     moneda          varchar(10),
-    activo          boolean                             not null
+    activo          boolean                             NOT NULL
 );
 
-create table proyecto
+CREATE TABLE proyecto
 (
-    uuid          varchar(100) primary key,
-    creadoEn      timestamp default current_timestamp not null,
-    nombre        varchar(50)                         not null,
+    uuid          varchar(100) PRIMARY KEY,
+    creadoEn      timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    nombre        varchar(50)                         NOT NULL,
     descripcion   varchar(200),
-    categoria     varchar(100)                        not null,
-    estado        boolean                             not null,
+    categoria     varchar(100)                        NOT NULL,
+    estado        boolean                             NOT NULL,
     fechaInicio   date,
     fechaFinal    date,
     lugarProyecto varchar(200),
     porcentaje    int,
     uuidCliente   varchar(100),
-    foreign key (uuidCliente) references usuario (uuid)
+    FOREIGN KEY (uuidCliente) REFERENCES usuario (uuid)
 );
 
 CREATE VIEW proyectoWiew AS
 SELECT p.*,
-       u.nombre as nombreCliente,
+       u.nombre AS nombreCliente,
        u.apellidoPaterno,
        u.apellidoMaterno
 FROM proyecto AS p
          INNER JOIN usuario AS u ON p.uuidCliente = u.uuid;
 
-
-create table carpetaProyecto
+CREATE TABLE carpetaProyecto
 (
-    uuid          varchar(100) primary key,
-    creadoEn      timestamp default current_timestamp not null,
+    uuid          varchar(100) PRIMARY KEY,
+    creadoEn      timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
     nombre        varchar(50),
     fechaCreacion date,
-    uuidProyecto  varchar(100)                        not null,
-    foreign key (uuidProyecto) references proyecto (uuid)
+    uuidProyecto  varchar(100)                        NOT NULL,
+    FOREIGN KEY (uuidProyecto) REFERENCES proyecto (uuid)
 );
 
-create table documentoProyecto
+CREATE TABLE documentoProyecto
 (
-    uuid          varchar(100) primary key,
-    creadoEn      timestamp default current_timestamp not null,
-    nombre        text                                not null,
-    keyName       text                                not null,
-    location      text                                not null,
-    fechaCreacion date                                not null,
-    uuidProyecto  varchar(100)                        not null,
-    size          int                                 not null,
-    path          varchar(10)                         not null,
-    foreign key (uuidProyecto) references proyecto (uuid)
+    uuid          varchar(100) PRIMARY KEY,
+    creadoEn      timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    nombre        text                                NOT NULL,
+    keyName       text                                NOT NULL,
+    location      text                                NOT NULL,
+    fechaCreacion date                                NOT NULL,
+    uuidProyecto  varchar(100)                        NOT NULL,
+    size          int                                 NOT NULL,
+    path          varchar(10)                         NOT NULL,
+    FOREIGN KEY (uuidProyecto) REFERENCES proyecto (uuid)
 );
 
-create table documentoCarpeta
+CREATE TABLE documentoCarpeta
 (
-    uuid          varchar(100) primary key,
-    creadoEn      timestamp default current_timestamp not null,
-    uuidCarpeta   varchar(100)                        not null,
-    uuidDocumento varchar(100)                        not null,
-    foreign key (uuidCarpeta) references carpetaProyecto (uuid),
-    foreign key (uuidDocumento) references documentoProyecto (uuid)
+    uuid          varchar(100) PRIMARY KEY,
+    creadoEn      timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    uuidCarpeta   varchar(100)                        NOT NULL,
+    uuidDocumento varchar(100)                        NOT NULL,
+    FOREIGN KEY (uuidCarpeta) REFERENCES carpetaProyecto (uuid),
+    FOREIGN KEY (uuidDocumento) REFERENCES documentoProyecto (uuid)
 );
 
-create table personalProyecto
+CREATE TABLE personalProyecto
 (
-    uuid         varchar(100) primary key,
-    creadoEn     timestamp default current_timestamp not null,
-    uuidProyecto varchar(100)                        not null,
-    uuidPersonal varchar(100)                        not null,
-    foreign key (uuidProyecto) references proyecto (uuid),
-    foreign key (uuidPersonal) references personal (uuid)
+    uuid         varchar(100) PRIMARY KEY,
+    creadoEn     timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    uuidProyecto varchar(100)                        NOT NULL,
+    uuidPersonal varchar(100)                        NOT NULL,
+    FOREIGN KEY (uuidProyecto) REFERENCES proyecto (uuid),
+    FOREIGN KEY (uuidPersonal) REFERENCES personal (uuid)
 );
 
-create table usuarioProyecto
+CREATE TABLE usuarioProyecto
 (
-    uuid         varchar(100) primary key,
-    creadoEn     timestamp default current_timestamp not null,
-    uuidProyecto varchar(100)                        not null,
-    uuidUsuario  varchar(100)                        not null,
-    foreign key (uuidProyecto) references proyecto (uuid),
-    foreign key (uuidUsuario) references usuario (uuid)
+    uuid         varchar(100) PRIMARY KEY,
+    creadoEn     timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    uuidProyecto varchar(100)                        NOT NULL,
+    uuidUsuario  varchar(100)                        NOT NULL,
+    FOREIGN KEY (uuidProyecto) REFERENCES proyecto (uuid),
+    FOREIGN KEY (uuidUsuario) REFERENCES usuario (uuid)
 );
 
-create table servicioProyecto
+CREATE TABLE servicioProyecto
 (
-    uuid         varchar(100) primary key,
-    creadoEn     timestamp default current_timestamp not null,
-    nombre       varchar(50)                         not null,
+    uuid         varchar(100) PRIMARY KEY,
+    creadoEn     timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    nombre       varchar(50)                         NOT NULL,
     descripcion  varchar(200),
-    avance       int                                 not null,
-    fechaInicio  date                                not null,
-    fechaFinal   date                                not null,
-    uuidProyecto varchar(100)                        not null,
-    foreign key (uuidProyecto) references proyecto (uuid)
+    avance       int                                 NOT NULL,
+    fechaInicio  date                                NOT NULL,
+    fechaFinal   date                                NOT NULL,
+    uuidProyecto varchar(100)                        NOT NULL,
+    FOREIGN KEY (uuidProyecto) REFERENCES proyecto (uuid)
 );
 
-create table visitaProyecto
+CREATE TABLE visitaProyecto
 (
-    uuid            varchar(100) primary key,
-    creadoEn        timestamp default current_timestamp not null,
-    nombre          varchar(50)                         not null,
-    faseDelProyecto varchar(100)                        not null,
+    uuid            varchar(100) PRIMARY KEY,
+    creadoEn        timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    nombre          varchar(50)                         NOT NULL,
+    faseDelProyecto varchar(100)                        NOT NULL,
     descripcion     varchar(200),
-    fecha           timestamp default current_timestamp not null,
-    uuidProyecto    varchar(100)                        not null,
-    foreign key (uuidProyecto) references proyecto (uuid)
+    fecha           timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    uuidProyecto    varchar(100)                        NOT NULL,
+    FOREIGN KEY (uuidProyecto) REFERENCES proyecto (uuid)
 );
 
-create table participanteVisita
+CREATE TABLE participanteVisita
 (
-    uuid               varchar(100) primary key,
-    creadoEn           timestamp default current_timestamp not null,
-    uuidVisitaProyecto varchar(100)                        not null,
-    uuidUsuario        varchar(100)                        not null,
-    foreign key (uuidVisitaProyecto) references visitaProyecto (uuid),
-    foreign key (uuidUsuario) references usuario (uuid)
+    uuid               varchar(100) PRIMARY KEY,
+    creadoEn           timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    uuidVisitaProyecto varchar(100)                        NOT NULL,
+    uuidUsuario        varchar(100)                        NOT NULL,
+    FOREIGN KEY (uuidVisitaProyecto) REFERENCES visitaProyecto (uuid),
+    FOREIGN KEY (uuidUsuario) REFERENCES usuario (uuid)
 );
 
-create table observacionServicio
+CREATE TABLE observacionServicio
 (
-    uuid         varchar(100) primary key,
-    creadoEn     timestamp default current_timestamp not null,
-    estado       varchar(100)                        not null,
-    descripcion  varchar(200)                        not null,
-    fecha        date                                not null,
-    uuidServicio varchar(100)                        not null,
-    uuidVisita   varchar(100)                        not null,
-    foreign key (uuidServicio) references servicioProyecto (uuid),
-    foreign key (uuidVisita) references visitaProyecto (uuid)
+    uuid         varchar(100) PRIMARY KEY,
+    creadoEn     timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    estado       varchar(100)                        NOT NULL,
+    descripcion  varchar(200)                        NOT NULL,
+    fecha        date                                NOT NULL,
+    uuidServicio varchar(100)                        NOT NULL,
+    uuidVisita   varchar(100)                        NOT NULL,
+    FOREIGN KEY (uuidServicio) REFERENCES servicioProyecto (uuid),
+    FOREIGN KEY (uuidVisita) REFERENCES visitaProyecto (uuid)
 );
 
-create table observacionPersonal
+CREATE TABLE observacionPersonal
 (
-    uuid         varchar(100) primary key,
-    creadoEn     timestamp default current_timestamp not null,
-    estado       varchar(100)                        not null,
-    descripcion  varchar(200)                        not null,
-    fecha        date                                not null,
-    uuidPersonal varchar(100)                        not null,
-    uuidVisita   varchar(100)                        not null,
-    foreign key (uuidPersonal) references personal (uuid),
-    foreign key (uuidVisita) references visitaProyecto (uuid)
+    uuid         varchar(100) PRIMARY KEY,
+    creadoEn     timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    estado       varchar(100)                        NOT NULL,
+    descripcion  varchar(200)                        NOT NULL,
+    fecha        date                                NOT NULL,
+    uuidPersonal varchar(100)                        NOT NULL,
+    uuidVisita   varchar(100)                        NOT NULL,
+    FOREIGN KEY (uuidPersonal) REFERENCES personal (uuid),
+    FOREIGN KEY (uuidVisita) REFERENCES visitaProyecto (uuid)
 );
 
-
-create table presupuestoObra
+CREATE TABLE presupuestoObra
 (
-    uuid        varchar(100) primary key,
-    creadoEn    timestamp      default current_timestamp not null,
-    nombre      varchar(100)                             not null,
-    descripcion varchar(200)                             not null,
-    fecha       date                                     not null,
+    uuid        varchar(100) PRIMARY KEY,
+    creadoEn    timestamp      DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    nombre      varchar(100)                             NOT NULL,
+    descripcion varchar(200)                             NOT NULL,
+    fecha       date                                     NOT NULL,
     iva         DECIMAL(12, 2),
-    total       DECIMAL(12, 2) default 0,
-    uuidCliente varchar(100)                             not null,
-    uuidUsuario varchar(100)                             not null,
-    foreign key (uuidCliente) references usuario (uuid),
-    foreign key (uuidUsuario) references usuario (uuid)
+    total       DECIMAL(12, 2) DEFAULT 0,
+    uuidCliente varchar(100)                             NOT NULL,
+    uuidUsuario varchar(100)                             NOT NULL,
+    FOREIGN KEY (uuidCliente) REFERENCES usuario (uuid),
+    FOREIGN KEY (uuidUsuario) REFERENCES usuario (uuid)
 );
 
-create table presupuestoProyecto
+CREATE TABLE presupuestoProyecto
 (
-    uuid                varchar(100) primary key,
-    creadoEn            timestamp default current_timestamp not null,
-    uuidPresupuestoObra varchar(100)                        not null,
-    uuidProyecto        varchar(100)                        not null,
-    foreign key (uuidPresupuestoObra) references presupuestoObra (uuid),
-    foreign key (uuidProyecto) references proyecto (uuid)
+    uuid                varchar(100) PRIMARY KEY,
+    creadoEn            timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    uuidPresupuestoObra varchar(100)                        NOT NULL,
+    uuidProyecto        varchar(100)                        NOT NULL,
+    FOREIGN KEY (uuidPresupuestoObra) REFERENCES presupuestoObra (uuid),
+    FOREIGN KEY (uuidProyecto) REFERENCES proyecto (uuid)
 );
 
-create table capituloPresupuesto
+CREATE TABLE capituloPresupuesto
 (
-    uuid                varchar(100) primary key,
-    creadoEn            timestamp      default current_timestamp not null,
-    nombre              text                                     not null,
-    numero              int                                      not null,
-    total               DECIMAL(12, 2) default 0,
-    uuidPresupuestoObra varchar(100)                             not null,
-    foreign key (uuidPresupuestoObra) references presupuestoObra (uuid)
+    uuid                varchar(100) PRIMARY KEY,
+    creadoEn            timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    nombre              text                                NOT NULL,
+    descuento           int       DEFAULT 0                 NOT NULL,
+    #     total               DECIMAL(12, 2) default 0,hub usb
+    uuidPresupuestoObra varchar(100)                        NOT NULL,
+    FOREIGN KEY (uuidPresupuestoObra) REFERENCES presupuestoObra (uuid)
 );
 
-create table detalleCapitulo
+CREATE TABLE detalleCapitulo
 (
-    uuid                    varchar(100) primary key,
-    creadoEn                timestamp default current_timestamp not null,
-    descripcion             text                                not null,
-    unidad                  varchar(10)                         not null,
-    cantidad                int                                 not null,
-    precioUnitario          decimal(15, 2)                      not null,
-    total                   decimal(15, 2)                      not null,
-    uuidCapituloPresupuesto varchar(100)                        not null,
-    foreign key (uuidCapituloPresupuesto) references capituloPresupuesto (uuid)
+    uuid                    varchar(100) PRIMARY KEY,
+    creadoEn                timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    descripcion             text                                NOT NULL,
+    unidad                  varchar(10)                         NOT NULL,
+    cantidad                int                                 NOT NULL,
+    precioUnitario          decimal(15, 2)                      NOT NULL,
+    #     total                   decimal(15, 2)                      not null,
+    uuidCapituloPresupuesto varchar(100)                        NOT NULL,
+    FOREIGN KEY (uuidCapituloPresupuesto) REFERENCES capituloPresupuesto (uuid) on delete cascade
 );
 
 
-create table categoriaProducto
+CREATE TABLE categoriaProducto
 (
-    uuid        varchar(100) primary key,
-    creadoEn    timestamp default current_timestamp not null,
-    nombre      text unique                         not null,
-    descripcion varchar(200)
+    uuid        varchar(100) PRIMARY KEY,
+    creadoEn    timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    nombre      varchar(100) UNIQUE                 NOT NULL,
+    descripcion varchar(200),
+    keyName     text                                NOT NULL,
+    location    text                                NOT NULL,
+    estado      boolean                             NOT NULL
 );
 
-create table producto
+CREATE TABLE producto
 (
-    uuid          varchar(100) primary key,
-    creadoEn      timestamp default current_timestamp not null,
-    nombre        text unique                         not null,
-    descripcion   varchar(200),
-    precio        decimal(15, 2)                      not null,
-    moneda        varchar(10),
-    stock         int                                 not null,
-    estado        boolean                             not null
+    uuid        varchar(100) PRIMARY KEY,
+    creadoEn    timestamp      DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    nombre      varchar(300) UNIQUE                      NOT NULL,
+    descripcion varchar(1000),
+    precio      decimal(15, 2)                           NOT NULL,
+    moneda      varchar(5)     DEFAULT 'Bs.'             NOT NULL,
+    stock       int                                      NOT NULL,
+    descuento   decimal(15, 2) DEFAULT 0                 NOT NULL,
+    estado      boolean                                  NOT NULL
 );
 
-create table fotoProducto
+CREATE TABLE fotoProducto
 (
-    uuid         varchar(100) primary key,
-    creadoEn     timestamp default current_timestamp not null,
-    keyName      text                                not null,
-    location     text                                not null,
-    size         int                                 not null,
-    uuidProducto varchar(100)                        not null,
-    foreign key (uuidProducto) references producto (uuid)
+    uuid         varchar(100) PRIMARY KEY,
+    creadoEn     timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    nombre       text                                NOT NULL,
+    indice       int                                 NOT NULL,
+    keyName      text                                NOT NULL,
+    location     text                                NOT NULL,
+    size         int                                 NOT NULL,
+    uuidProducto varchar(100)                        NOT NULL,
+    FOREIGN KEY (uuidProducto) REFERENCES producto (uuid) on delete  cascade
 );
 
-create table detalleCategoriaProducto
+
+CREATE TABLE detalleCategoriaProducto
 (
-    uuid          varchar(100) primary key,
+    uuid          varchar(100) PRIMARY KEY,
     uuidCategoria varchar(100),
     uuidProducto  varchar(100),
-    foreign key (uuidCategoria) references categoriaProducto (uuid),
-    foreign key (uuidProducto) references producto (uuid)
+    FOREIGN KEY (uuidCategoria) REFERENCES categoriaProducto (uuid),
+    FOREIGN KEY (uuidProducto) REFERENCES producto (uuid) on delete  cascade
 );
 
-
-
-
-/*=====================================================================>*/
-create table herramienta
+CREATE TABLE opinionProducto
 (
-  uuid            varchar(100) primary key,
-  creadoEn        timestamp default current_timestamp not null,
-  nombre          varchar(50)                         not null,
-  categoria       varchar(30)                         not null,
-  descripcion     varchar(200),
-  estado          boolean                             not null,
-  keyImg          text,
-  originalNameImg varchar(50),
-  urlImg          text                                not null
+    uuid         varchar(100) PRIMARY KEY,
+    creadoEn     timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    titulo       varchar(300)                        NOT NULL,
+    descripcion  varchar(1000)                       NOT NULL,
+    estado       boolean   DEFAULT false             NOT NULL,
+    verificado   boolean   DEFAULT false             NOT NULL,
+    puntuacion   int                                 NOT NULL,
+    uuidProducto varchar(100)                        NOT NULL,
+    uuidCliente  varchar(100)                        NOT NULL,
+    FOREIGN KEY (uuidProducto) REFERENCES producto (uuid),
+    FOREIGN KEY (uuidCliente) REFERENCES usuario (uuid)
 );
 
-show DATABASEs;
+CREATE TABLE ventaProducto
+(
+    uuid         varchar(100) PRIMARY KEY,
+    creadoEn     timestamp    DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    uuidCliente  varchar(100)                           NOT NULL,
+    uuidVendedor varchar(100) DEFAULT NULL,
+    tipoVenta    TEXT                                   NOT NULL,
+    metodoPago   text                                   NOT NULL,
+    FOREIGN KEY (uuidCliente) REFERENCES usuario (uuid),
+    FOREIGN KEY (uuidVendedor) REFERENCES usuario(uuid)
+);
+
+CREATE TABLE detalleVentaProducto
+(
+    uuid              varchar(100) PRIMARY KEY,
+    creadoEn          timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    uuidVentaProducto varchar(100)                        NOT NULL,
+    uuidProducto      varchar(100)                        NOT NULL,
+    cantidad          int                                 NOT NULL,
+    precio            decimal(15, 2)                      NOT NULL,
+    FOREIGN KEY (uuidVentaProducto) REFERENCES ventaProducto (uuid) on delete cascade,
+    FOREIGN KEY (uuidProducto) REFERENCES producto (uuid)
+);
+
+
+
+# LOGS
 use mendozarq;
 
+CREATE TABLE log_usuario
+(
+    operacion     CHAR(1)                         NOT NULL,
+    creadoEn      TIMESTAMP                       NOT NULL,
+    creadoPor     TEXT,
+    uuidCreadoPor TEXT,
+    hostname      TEXT,
+    tabla         TEXT default 'usuario'          NOT NULL,
+    path          text default 'mendozarq-liraki' NOT NULL,
+    uuidRow       varchar(100)                    NOT NULL
+);
+
+CREATE TABLE log_personal
+(
+    operacion     CHAR(1)                  NOT NULL,
+    creadoEn      TIMESTAMP                NOT NULL,
+    creadoPor     TEXT,
+    uuidCreadoPor TEXT,
+    hostname      TEXT,
+    tabla         TEXT default 'personal'  NOT NULL,
+    path          text default 'mendozarq' not null,
+    uuidRow       varchar(100)             NOT NULL
+);
+
+CREATE TABLE log_proyecto
+(
+    operacion     CHAR(1)                  NOT NULL,
+    creadoEn      TIMESTAMP                NOT NULL,
+    creadoPor     TEXT,
+    uuidCreadoPor TEXT,
+    hostname      TEXT,
+    tabla         TEXT default 'proyecto'  NOT NULL,
+    path          text default 'mendozarq' not null,
+    uuidRow       varchar(100)             NOT NULL
+);
+
+CREATE TABLE log_documentos
+(
+    operacion     CHAR(1)                   NOT NULL,
+    creadoEn      TIMESTAMP                 NOT NULL,
+    creadoPor     TEXT,
+    uuidCreadoPor TEXT,
+    hostname      TEXT,
+    tabla         TEXT default 'documentos' NOT NULL,
+    path          text default 'mendozarq'  not null,
+    uuidRow       varchar(100)              NOT NULL
+);
+
+CREATE TABLE log_producto
+(
+    operacion     CHAR(1)                 NOT NULL,
+    creadoEn      TIMESTAMP               NOT NULL,
+    creadoPor     TEXT,
+    uuidCreadoPor TEXT,
+    hostname      TEXT,
+    tabla         TEXT default 'producto' NOT NULL,
+    path          text default 'liraki'   not null,
+    uuidRow       varchar(100)            NOT NULL
+);
 
 
-INSERT INTO mendozarq.usuario (uuid, creadoEn, nombre, apellidoPaterno, apellidoMaterno, celular, direccion, correo,
-                               username, contrasenha, rol, activo)
-VALUES ('fa27b5b3-837b-4486-b2cd-c6a306e8bd72', '2021-01-12 19:45:41', 'bladimir', 'medrano', 'vargas', 69509449,
-        'Av segunda entre marina nunez del prado y calle greco.', 'example@gmail.com', 'blado959',
-        '$2b$10$Ejt7X/epAQ2kfChOFJa9T.apOjSfTR2xkMWOoIfWWKT4JFh8CDu.C', 'administrador', 1);
+drop view logs;
+create view logs AS
+select *
+from log_usuario
+union
+select *
+from log_personal
+union
+select *
+from log_proyecto
+union
+select *
+from log_documentos
+union
+select *
+from log_producto;
+
 

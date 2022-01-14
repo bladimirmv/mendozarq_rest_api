@@ -12,6 +12,7 @@ import {
 import { connect } from './../../classes/database';
 import { FileResponse } from '../../models/fileResponse.interface';
 import { uploadOneFile, deleteFile } from './../../classes/aws.s3';
+import { emitAllLogs } from '../logs/logs.controller';
 
 // ====================> addCarpetaProyecto
 export const addCarpetaProyecto = async (req: Request, res: Response) => {
@@ -21,8 +22,7 @@ export const addCarpetaProyecto = async (req: Request, res: Response) => {
 
     if (!carpeta.nombre) {
       return res.status(400).json({
-        message:
-          'No se ha podido registrar, por favor ingrese los datos de la carpeta. 🙁',
+        message: 'No se ha podido registrar, por favor ingrese los datos de la carpeta. 🙁',
       });
     }
 
@@ -98,10 +98,7 @@ export const getAllCarpetaProyecto = async (req: Request, res: Response) => {
 };
 
 // ====================> getAllCarpetaProyectoByUuid
-export const getAllCarpetaProyectoByUuid = async (
-  req: Request,
-  res: Response
-) => {
+export const getAllCarpetaProyectoByUuid = async (req: Request, res: Response) => {
   try {
     const conn: Pool = await connect();
     const uuid: string = req.params.uuid;
@@ -148,10 +145,7 @@ export const updateCarpetaProyecto = async (req: Request, res: Response) => {
       });
     }
 
-    await conn.query('UPDATE carpetaProyecto SET ? WHERE uuid = ?', [
-      carpeta,
-      uuid,
-    ]);
+    await conn.query('UPDATE carpetaProyecto SET ? WHERE uuid = ?', [carpeta, uuid]);
     return res.status(200).json({
       message: 'Carpeta actualizado correctamente! 😀',
     });
@@ -204,8 +198,7 @@ export const addDocumentoProyecto = async (req: Request, res: Response) => {
 
     if (!file) {
       return res.status(400).json({
-        message:
-          'No se ha podido registrar, por favor ingrese un documento. 🙁',
+        message: 'No se ha podido registrar, por favor ingrese un documento. 🙁',
       });
     }
 
@@ -217,6 +210,8 @@ export const addDocumentoProyecto = async (req: Request, res: Response) => {
     documento.uuid = uuid();
 
     await conn.query('INSERT INTO documentoProyecto SET ? ', documento);
+
+    emitAllLogs();
 
     return res.status(201).json({
       message: `Documento ${fileUploaded.originalName} creado exitosamente! 😀`,
@@ -230,10 +225,7 @@ export const addDocumentoProyecto = async (req: Request, res: Response) => {
 };
 
 // ====================> getAllDocumentoProyectoByUuid
-export const getAllDocumentoProyectoByUuid = async (
-  req: Request,
-  res: Response
-) => {
+export const getAllDocumentoProyectoByUuid = async (req: Request, res: Response) => {
   try {
     const conn: Pool = await connect();
     const uuid: string = req.params.uuid;
@@ -274,12 +266,12 @@ export const deleteDocumento = async (req: Request, res: Response) => {
     const deletedData = await deleteFile(documento.keyName);
 
     if (documento.path === 'folder') {
-      await conn.query('DELETE FROM documentoCarpeta WHERE uuidDocumento = ?', [
-        documento.uuid,
-      ]);
+      await conn.query('DELETE FROM documentoCarpeta WHERE uuidDocumento = ?', [documento.uuid]);
     }
 
     await conn.query('DELETE FROM documentoProyecto WHERE uuid = ?', [uuid]);
+
+    emitAllLogs();
 
     return res.status(200).json({
       message: 'Documento eliminado correctamento. 😀',
@@ -321,10 +313,10 @@ export const updateDocumentoProyecto = async (req: Request, res: Response) => {
       });
     }
 
-    await conn.query('UPDATE documentoProyecto SET ? WHERE uuid = ?', [
-      documento,
-      uuid,
-    ]);
+    await conn.query('UPDATE documentoProyecto SET ? WHERE uuid = ?', [documento, uuid]);
+
+    emitAllLogs();
+
     return res.status(200).json({
       message: 'Documento actualizado correctamente! 😀',
     });
@@ -350,8 +342,7 @@ export const addDocumentoCarpeta = async (req: Request, res: Response) => {
 
     if (!file) {
       return res.status(400).json({
-        message:
-          'No se ha podido registrar, por favor ingrese un documento documento. 🙁',
+        message: 'No se ha podido registrar, por favor ingrese un documento documento. 🙁',
       });
     }
 
@@ -373,6 +364,8 @@ export const addDocumentoCarpeta = async (req: Request, res: Response) => {
 
     await conn.query('INSERT INTO documentoCarpeta SET ? ', documentoCarpeta);
 
+    emitAllLogs();
+
     return res.status(201).json({
       message: 'Documento creado exitosamente! 😀',
     });
@@ -385,10 +378,7 @@ export const addDocumentoCarpeta = async (req: Request, res: Response) => {
 };
 
 // ====================> getAllDocumentoCarpetaByUuid
-export const getAllDocumentoCarpetaByUuid = async (
-  req: Request,
-  res: Response
-) => {
+export const getAllDocumentoCarpetaByUuid = async (req: Request, res: Response) => {
   try {
     const conn: Pool = await connect();
     const uuid: string = req.params.uuid;
