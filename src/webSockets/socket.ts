@@ -35,7 +35,7 @@ export const logIn = (client: Socket, io: socketIO.Server) => {
 
 export const disconnect = (client: Socket) => {
   client.on('disconnect', () => {
-    console.log(`Client ${client.id} disconnected`);
+    console.log(`📕 ws: Client ${client.id} disconnected`);
   });
 };
 

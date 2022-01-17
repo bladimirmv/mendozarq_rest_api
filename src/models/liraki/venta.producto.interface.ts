@@ -1,7 +1,7 @@
 import { Usuario } from '../auth/usuario.interface';
 
 export type tipoVenta = 'online' | 'fisica';
-export type metodoPago = 'efectivo' | 'paypal';
+export type metodoPago = 'efectivo' | 'tarjeta' | 'paypal';
 
 export interface Venta {
   uuid: string;
@@ -22,10 +22,10 @@ export interface DetalleVentaProducto {
 }
 
 export interface VentaProducto extends Venta {
-  detalleVenta: DetalleVentaProducto;
+  detalleVenta: Array<DetalleVentaProducto>;
 }
 
 export interface VentaView extends VentaProducto {
-  cliente: Usuario;
-  vendedor: Usuario;
+  cliente: string;
+  vendedor: string;
 }

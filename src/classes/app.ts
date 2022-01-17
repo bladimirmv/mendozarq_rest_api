@@ -130,10 +130,7 @@ export default class App {
         console.log(`Listening server on port ==> ${this.port}`);
       });
     } catch (error) {
-      console.log(
-        `❌Ocurrio un error al escuchar en el puerto "${this.port}":`,
-        error
-      );
+      console.log(`❌Ocurrio un error al escuchar en el puerto "${this.port}":`, error);
     }
   }
 
@@ -143,7 +140,7 @@ export default class App {
 
     this.io.on('connection', async (client: Socket) => {
       // *CLient on connected
-      console.log(`ws: Client ${client.id} connected!`);
+      console.log(`📗 ws: Client ${client.id} connected!`);
 
       // *logIn client
       socket.logIn(client, this.io);
