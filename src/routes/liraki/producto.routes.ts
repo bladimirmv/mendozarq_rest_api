@@ -19,23 +19,19 @@ router
   .put([checkJwt, checkRole(['administrador'])], p.updateProducto)
   .delete([checkJwt, checkRole(['administrador'])], p.deleteProducto);
 
+router
+  .route('/fotoProducto')
 
-router.route('/fotoProducto')
+  .post([checkJwt, checkRole(['administrador'])], upload, p.addFotoProducto);
 
-  .post(
-    [checkJwt, checkRole(['administrador'])],
-    upload,
-    p.addFotoProducto
-  );
-
-router.route('/fotoProducto/:uuid')
-  .get(
-    [checkJwt, checkRole(['administrador', 'vendedor'])],
-    p.getFotoProducto
-  )
+router
+  .route('/fotoProducto/:uuid')
+  .get([checkJwt, checkRole(['administrador', 'vendedor'])], p.getFotoProducto)
   .put([checkJwt, checkRole(['administrador'])], p.updateFotoProducto)
 
   .delete([checkJwt, checkRole(['administrador'])], p.deleteFotoProducto);
+
+export default router;
 
 /**
  * @swagger
@@ -106,14 +102,12 @@ router.route('/fotoProducto/:uuid')
  *      description: uuid del producto
  */
 
-
 /**
  * @swagger
  * tags:
  *  name: Productos
  *  description: Producto endpoint
  */
-
 
 /**
  * @swagger
@@ -131,7 +125,6 @@ router.route('/fotoProducto/:uuid')
  *              items:
  *                $ref: '#/components/schemas/Producto'
  */
-
 
 /**
  * @swagger
@@ -155,8 +148,6 @@ router.route('/fotoProducto/:uuid')
  *            schema:
  *              $ref: '#/components/schemas/ProductoNotFound'
  */
-
-
 
 /**
  * @swagger
@@ -205,7 +196,6 @@ router.route('/fotoProducto/:uuid')
  *
  */
 
-
 /**
  * @swagger
  * /producto/{uuid}:
@@ -235,6 +225,3 @@ router.route('/fotoProducto/:uuid')
  *              $ref: '#/components/schemas/ProductoNotFound'
  *
  */
-
-
-export default router;

@@ -1,5 +1,3 @@
-import { Usuario } from '../auth/usuario.interface';
-
 export type tipoVenta = 'online' | 'fisica';
 export type metodoPago = 'efectivo' | 'tarjeta' | 'paypal';
 
@@ -28,4 +26,5 @@ export interface VentaProducto extends Venta {
 export interface VentaView extends VentaProducto {
   cliente: string;
   vendedor: string;
+  total: number;
 }
