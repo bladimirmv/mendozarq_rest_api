@@ -129,7 +129,7 @@ export default class App {
   async start() {
     try {
       await this.httpServer.listen(this.port, () => {
-        console.log(`Listening server on port ==> ${this.port}`);
+        console.log(`📗 Listening server on port ==> ${this.port}`);
       });
     } catch (error) {
       console.log(`❌Ocurrio un error al escuchar en el puerto "${this.port}":`, error);
@@ -138,7 +138,7 @@ export default class App {
 
   // ==========> listen sockets
   private listenSockets() {
-    console.log('Listening conections ==> sockets');
+    console.log('📗 Listening conections ==> sockets');
 
     this.io.on('connection', async (client: Socket) => {
       // *CLient on connected

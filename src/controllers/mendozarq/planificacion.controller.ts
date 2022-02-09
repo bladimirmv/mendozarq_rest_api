@@ -126,18 +126,18 @@ export const addCapituloPlanificacionProyecto = async (req: Request, res: Respon
   try {
     const conn: Pool = await connect();
 
-    const tareaPlanificacionProyecto: TareaPlanificacionProyecto = req.body;
+    const capituloPlanificacionProyecto: CapituloPlanificacionProyecto = req.body;
 
-    if (!tareaPlanificacionProyecto.uuidCapitulo) {
+    if (!capituloPlanificacionProyecto.uuidPlanificacionProyecto) {
       return res.status(400).json({
         message: 'No se ha podido registrar, por favor ingrese los datos requeridos',
       });
     }
 
-    tareaPlanificacionProyecto.uuid = uuid();
+    capituloPlanificacionProyecto.uuid = uuid();
 
     await conn.query(`INSERT INTO capituloPlanificacionProyecto SET ? `, [
-      tareaPlanificacionProyecto,
+      capituloPlanificacionProyecto,
     ]);
     res.status(201).json({
       message: 'Tarea creado correctamente! 😀',
@@ -190,14 +190,14 @@ export const deleteCapituloPlanificacionProyecto = async (req: Request, res: Res
     console.log('uuid: ', uuid);
 
     const [[row]]: [any[], FieldPacket[]] = await conn.query(
-      `SELECT * FROM tareaPlanificacionProyecto WHERE uuid = ?;`,
+      `SELECT * FROM capituloPlanificacionProyecto WHERE uuid = ?;`,
       [uuid]
     );
-    const tareaPlanificion: TareaPlanificacionProyecto = row as TareaPlanificacionProyecto;
+    const capituloPlanificion: CapituloPlanificacionProyecto = row as CapituloPlanificacionProyecto;
 
-    if (!tareaPlanificion) {
+    if (!capituloPlanificion) {
       return res.status(404).json({
-        message: 'No se pudo eliminar la tarea, por que no existe. 🙁',
+        message: 'No se pudo eliminar el capitulo, por que no existe. 🙁',
       });
     }
 
