@@ -28,7 +28,8 @@ router
   .delete(
     [checkJwt, checkRole(['administrador', 'arquitecto'])],
     p.deleteTareaPlanificacionProyecto
-  );
+  )
+  .put([checkJwt, checkRole(['administrador', 'arquitecto'])], p.updateTareaPlanificacionProyecto);
 
 router
   .route('/capitulo')
@@ -39,6 +40,10 @@ router
   .delete(
     [checkJwt, checkRole(['administrador', 'arquitecto'])],
     p.deleteCapituloPlanificacionProyecto
+  )
+  .put(
+    [checkJwt, checkRole(['administrador', 'arquitecto'])],
+    p.updateCapittuloPlanificacionProyecto
   );
 
 export default router;
