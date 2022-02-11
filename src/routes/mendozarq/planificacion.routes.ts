@@ -13,7 +13,8 @@ router
 
 router
   .route('/:uuid')
-  .get([checkJwt, checkRole(['administrador', 'arquitecto'])], p.getPlanificacionProyecto);
+  .get([checkJwt, checkRole(['administrador', 'arquitecto'])], p.getPlanificacionProyecto)
+  .put([checkJwt, checkRole(['administrador', 'arquitecto'])], p.updatePlanificacionProyecto);
 
 router
   .route('/all/:uuid')

@@ -96,6 +96,44 @@ export const getAllPlanificacionProyecto = async (req: Request, res: Response) =
   }
 };
 
+export const updatePlanificacionProyecto = async (req: Request, res: Response) => {
+  try {
+    const conn: Pool = await connect();
+    const uuidPlanificacion: string = req.params.uuid;
+    const planificacion: PlanificacionProyecto = req.body;
+
+    if (!uuidPlanificacion) {
+      return res.status(400).json({
+        message: 'No se ha podido registrar, por favor ingrese los datos requeridos',
+      });
+    }
+    const [[row]]: [any[], FieldPacket[]] = await conn.query(
+      `SELECT * FROM planificacionProyecto WHERE uuid = ?`,
+      [uuidPlanificacion]
+    );
+
+    if (!row) {
+      return res.status(404).json({
+        message: 'No se pudo actualizar la planificacion, por que no existe. 🙁',
+      });
+    }
+
+    await conn.query(`UPDATE planificacionProyecto SET ? WHERE uuid = ? `, [
+      planificacion,
+      uuidPlanificacion,
+    ]);
+
+    res.status(201).json({
+      message: 'Planificacion actualizado correctamente! 😀',
+    });
+  } catch (error) {
+    console.log('❌Ocurrio un error:', error);
+    return res.status(400).json({
+      message: error,
+    });
+  }
+};
+
 export const addTareaPlanificacionProyecto = async (req: Request, res: Response) => {
   try {
     const conn: Pool = await connect();
