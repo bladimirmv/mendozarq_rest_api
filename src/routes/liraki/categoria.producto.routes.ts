@@ -1,15 +1,17 @@
 import { Router } from 'express';
+import multer from 'multer';
 
 import * as cp from './../../controllers/liraki/categoria.producto.controller';
 import { checkJwt } from './../../middlewares/jwt';
 import { checkRole } from './../../middlewares/roles';
 
+const upload = multer().any();
 const router = Router();
 
 router
   .route('/')
   .get(cp.getAllcategoriaProducto)
-  .post([checkJwt, checkRole(['administrador'])], cp.addCategoriaProducto);
+  .post([checkJwt, checkRole(['administrador'])], upload, cp.addCategoriaProducto);
 
 router
   .route('/:uuid')
