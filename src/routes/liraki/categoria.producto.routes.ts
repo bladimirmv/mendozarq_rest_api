@@ -19,4 +19,6 @@ router
   .put([checkJwt, checkRole(['administrador'])], cp.updatecategoriaProducto)
   .delete([checkJwt, checkRole(['administrador'])], cp.deletecategoriaProducto);
 
+router.route('/multer/:uuid').put([checkJwt, checkRole(['administrador'])], upload, cp.updatecategoriaProductoMulter);
+
 export default router;

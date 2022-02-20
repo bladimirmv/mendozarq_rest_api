@@ -36,6 +36,7 @@ import planificacionRoutes from '../routes/mendozarq/planificacion.routes';
 import categoriaProductoRoutes from '../routes/liraki/categoria.producto.routes';
 import productoRoutes from '../routes/liraki/producto.routes';
 import opinionRoutes from './../routes/liraki/opinion.producto.routes';
+import carritoRoutes from './../routes/liraki/carrito.producto.routes';
 
 import pagosRoutes from './../routes/liraki/pagos.paypal.routes';
 
@@ -116,6 +117,7 @@ export default class App {
     this.app.use('/api/categoriaProducto', categoriaProductoRoutes);
     this.app.use('/api/producto', productoRoutes);
     this.app.use('/api/opinionProducto', opinionRoutes);
+    this.app.use('/api/carritoProyecto', carritoRoutes);
 
     this.app.use('/api/paypal', pagosRoutes);
 

@@ -1,4 +1,4 @@
-import { uploadOneFile } from './../../classes/aws.s3';
+import { deleteFile, uploadOneFile } from './../../classes/aws.s3';
 import { FileResponse } from './../../models/fileResponse.interface';
 import { Response, Request } from 'express';
 import { FieldPacket, Pool } from 'mysql2/promise';
@@ -91,10 +91,7 @@ export const updatecategoriaProducto = async (req: Request, res: Response) => {
     const uuid: string = req.params.uuid;
     const categoriaProducto: CategoriaProducto = req.body;
 
-    const [[row]]: [any[], FieldPacket[]] = await conn.query(
-      'SELECT * FROM categoriaProducto WHERE uuid = ?',
-      [uuid]
-    );
+    const [[row]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM categoriaProducto WHERE uuid = ?', [uuid]);
 
     if (!row) {
       return res.status(404).json({
@@ -115,15 +112,63 @@ export const updatecategoriaProducto = async (req: Request, res: Response) => {
   }
 };
 
+export const updatecategoriaProductoMulter = async (req: Request, res: Response) => {
+  try {
+    const uuid: string = req.params.uuid;
+    const conn: Pool = await connect();
+    const files: Array<Express.Multer.File> | any = req.files;
+    const file: Express.Multer.File = files[0];
+    let categoriaProducto: CategoriaProducto = JSON.parse(req.body.categoriaProducto);
+    let fileUploaded: FileResponse;
+
+    if (!file) {
+      return res.status(400).json({
+        message: 'No se ha podido registrar, no se cargo la imagen. 🙁',
+      });
+    }
+
+    if (!categoriaProducto.nombre) {
+      return res.status(400).json({
+        message: `No se ha podido registrar, por favor ingrese los datos de la categoria. 🙁`,
+      });
+    }
+
+    const [[row]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM categoriaProducto WHERE uuid = ?', [uuid]);
+
+    if (!row) {
+      return res.status(404).json({
+        message: 'No se pudo actualizar la categoria, por que no existe. 🙁',
+      });
+    }
+
+    if (row.keyName) {
+      await deleteFile(row.keyName);
+    }
+
+    fileUploaded = await uploadOneFile(file, '/liraki/images');
+    categoriaProducto.keyName = fileUploaded.data.Key;
+    categoriaProducto.location = fileUploaded.data.Location;
+    categoriaProducto.fileName = fileUploaded.originalName;
+
+    await conn.query('UPDATE categoriaProducto SET ? WHERE uuid = ?', [categoriaProducto, uuid]);
+
+    return res.status(200).json({
+      message: 'Categoria actualizado correctamente! 😀',
+    });
+  } catch (error) {
+    console.log('❌Ocurrio un error:', error);
+    return res.status(400).json({
+      message: error,
+    });
+  }
+};
+
 export const deletecategoriaProducto = async (req: Request, res: Response) => {
   try {
     const conn: Pool = await connect();
     const uuid: string = req.params.uuid;
 
-    const [[row]]: [any[], FieldPacket[]] = await conn.query(
-      'SELECT * FROM categoriaProducto WHERE uuid = ?',
-      [uuid]
-    );
+    const [[row]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM categoriaProducto WHERE uuid = ?', [uuid]);
 
     if (!row) {
       return res.status(404).json({
