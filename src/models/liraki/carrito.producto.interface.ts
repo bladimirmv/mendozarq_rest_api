@@ -7,6 +7,14 @@ export interface CarritoProducto {
   cantidad: number;
 }
 
+export interface CarritoProductoInline extends Producto {
+  uuidCP: string;
+  creadoEnCP?: Date;
+  uuidProducto: string;
+  uuidCliente: string;
+  cantidad: number;
+}
+
 export interface CarritoProductoView extends CarritoProducto {
   producto: Producto;
 }

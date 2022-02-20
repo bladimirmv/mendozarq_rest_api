@@ -1,9 +1,14 @@
+import { Producto } from './../../models/liraki/producto.interface';
 import { Response, Request } from 'express';
 import { FieldPacket, Pool } from 'mysql2/promise';
 import { v4 as uuid } from 'uuid';
 
 import { connect } from './../../classes/database';
-import { CarritoProducto } from './../../models/liraki/carrito.producto.interface';
+import {
+  CarritoProducto,
+  CarritoProductoView,
+  CarritoProductoInline,
+} from './../../models/liraki/carrito.producto.interface';
 
 // ====================> addCarritoProducto
 export const addCarritoProducto = async (req: Request, res: Response) => {
@@ -35,20 +40,34 @@ export const getCarritoProducto = async (req: Request, res: Response) => {
   try {
     const conn: Pool = await connect();
     const uuid: string = req.params.uuid;
+    let carrito: CarritoProductoView[];
+    let carritoProducto: CarritoProductoInline[];
 
-    const [CarritoProducto]: [any[], FieldPacket[]] = await conn.query(
-      `SELECT * FROM carritoProducto AS cp
-			INNER JOIN producto p on cp.uuidProducto = p.uuid
-			WHERE  cp.uuidCliente = ? ORDER BY cp.creadoEn DESC;`,
+    const [rows]: [any[], FieldPacket[]] = await conn.query(
+      `SELECT   p.*, cp.uuid as uuidCP, cp.creadoEn as cradoEnCP, cp.uuidProducto, cp.uuidCliente, cp.cantidad
+      FROM carritoProducto AS cp
+               INNER JOIN producto p on cp.uuidProducto = p.uuid
+      WHERE cp.uuidCliente = ?
+      ORDER BY cp.creadoEn DESC;`,
       [uuid]
     );
+    carritoProducto = rows as CarritoProductoInline[];
 
-    res.status(200).json(CarritoProducto);
-    // return CarritoProducto
-    //   ? res.status(200).json(CarritoProducto)
-    //   : res.status(404).json({
-    //       message: 'No se encontro el ningun producto en el carrito. 🙁',
-    //     });
+    carrito = carritoProducto.map((carrito) => {
+      let data: CarritoProductoView;
+      const { uuidCP, creadoEnCP, uuidProducto, uuidCliente, cantidad, ...producto } = carrito;
+      data = {
+        uuid: uuidCP,
+        creadoEn: creadoEnCP,
+        uuidProducto,
+        uuidCliente,
+        cantidad,
+        producto,
+      };
+      return data;
+    });
+
+    res.status(200).json(carrito);
   } catch (error) {
     console.log('❌Ocurrio un error:', error);
     return res.status(400).json({
