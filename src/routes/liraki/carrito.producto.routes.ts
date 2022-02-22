@@ -6,13 +6,9 @@ import { checkJwt } from './../../middlewares/jwt';
 
 const router: Router = Router();
 // ====================> route Personal /
-router.route('/').post([checkJwt, checkRole(['administrador'])], cp.addCarritoProducto);
+router.route('/').post(checkJwt, cp.addCarritoProducto);
 
 // ====================> route Personal /:id
-router
-  .route('/:uuid')
-  .get([checkJwt, checkRole(['administrador'])], cp.getCarritoProducto)
-  .put([checkJwt, checkRole(['administrador'])], cp.updateCarritoProducto)
-  .delete([checkJwt, checkRole(['administrador'])], cp.deleteCarritoProducto);
+router.route('/:uuid').get(cp.getCarritoProducto).put(cp.updateCarritoProducto).delete(cp.deleteCarritoProducto);
 
 export default router;

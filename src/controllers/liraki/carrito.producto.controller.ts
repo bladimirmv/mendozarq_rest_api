@@ -22,7 +22,9 @@ export const addCarritoProducto = async (req: Request, res: Response) => {
     }
     CarritoProducto.uuid = uuid();
 
-    await conn.query('INSERT INTO carritoProducto SET ?', [CarritoProducto]);
+    await conn.query(`INSERT INTO carritoProducto SET ? ON DUPLICATE KEY UPDATE cantidad = cantidad + 1;`, [
+      CarritoProducto,
+    ]);
 
     return res.status(201).json({
       message: 'Se ha agregado al carrito exitosamente! 😀',
@@ -44,10 +46,12 @@ export const getCarritoProducto = async (req: Request, res: Response) => {
     let carritoProducto: CarritoProductoInline[];
 
     const [rows]: [any[], FieldPacket[]] = await conn.query(
-      `SELECT   p.*, cp.uuid as uuidCP, cp.creadoEn as cradoEnCP, cp.uuidProducto, cp.uuidCliente, cp.cantidad
+      `SELECT fp.keyName, p.*, cp.uuid as uuidCP, cp.creadoEn as creadoEnCP, cp.uuidProducto, cp.uuidCliente, cp.cantidad
       FROM carritoProducto AS cp
                INNER JOIN producto p on cp.uuidProducto = p.uuid
+               INNER JOIN fotoProducto fp on p.uuid = fp.uuidProducto
       WHERE cp.uuidCliente = ?
+        and fp.indice = 0
       ORDER BY cp.creadoEn DESC;`,
       [uuid]
     );
@@ -66,6 +70,8 @@ export const getCarritoProducto = async (req: Request, res: Response) => {
       };
       return data;
     });
+
+    console.log(carrito);
 
     res.status(200).json(carrito);
   } catch (error) {

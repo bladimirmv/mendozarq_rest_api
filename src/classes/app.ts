@@ -117,7 +117,7 @@ export default class App {
     this.app.use('/api/categoriaProducto', categoriaProductoRoutes);
     this.app.use('/api/producto', productoRoutes);
     this.app.use('/api/opinionProducto', opinionRoutes);
-    this.app.use('/api/carritoProyecto', carritoRoutes);
+    this.app.use('/api/carrito', carritoRoutes);
 
     this.app.use('/api/paypal', pagosRoutes);
 

@@ -13,8 +13,9 @@ export interface CarritoProductoInline extends Producto {
   uuidProducto: string;
   uuidCliente: string;
   cantidad: number;
+  keyName: string;
 }
 
 export interface CarritoProductoView extends CarritoProducto {
-  producto: Producto;
+  producto: { keyName: string } & Producto;
 }
