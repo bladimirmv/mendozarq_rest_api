@@ -137,8 +137,8 @@ export const deleteCarritoProducto = async (req: Request, res: Response) => {
     const conn: Pool = await connect();
     const uuid: string = req.params.uuid;
 
-    const [[CarritoProducto]]: [any[], FieldPacket[]] = await conn.query(
-      'SELECT * FROM carritoProducto WHERE uuid = ?',
+    const [CarritoProducto]: [any[], FieldPacket[]] = await conn.query(
+      'SELECT * FROM carritoProducto WHERE uuidCliente = ?',
       [uuid]
     );
 
@@ -148,7 +148,7 @@ export const deleteCarritoProducto = async (req: Request, res: Response) => {
       });
     }
 
-    await conn.query('DELETE FROM carritoProducto WHERE uuid = ?', [uuid]);
+    await conn.query('DELETE FROM carritoProducto WHERE uuidCliente = ?', [uuid]);
     return res.status(200).json({
       message: 'Producto eliminado correctamente del carrito. 😀',
     });
