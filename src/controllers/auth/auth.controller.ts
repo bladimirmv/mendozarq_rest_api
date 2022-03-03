@@ -30,10 +30,9 @@ export async function login(req: Request, res: Response, next: any) {
     }
 
     // *finding usuario
-    const [[findUsername]]: [any[], FieldPacket[]] = await conn.query(
-      'select * from usuario where username = ?',
-      [credenciales.username]
-    );
+    const [[findUsername]]: [any[], FieldPacket[]] = await conn.query('select * from usuario where username = ?', [
+      credenciales.username,
+    ]);
     // conn.end();
     const usuario: Usuario = findUsername as Usuario;
 
@@ -52,10 +51,7 @@ export async function login(req: Request, res: Response, next: any) {
     }
 
     // *comparing contrasenha
-    const isMatch = await bcrypt.compare(
-      credenciales.contrasenha,
-      usuario.contrasenha as string
-    );
+    const isMatch = await bcrypt.compare(credenciales.contrasenha, usuario.contrasenha as string);
     // *cheking match
     if (isMatch) {
       // const { nombre, apellidoPaterno, apellidoMaterno, rol }: Usuario = usuario;

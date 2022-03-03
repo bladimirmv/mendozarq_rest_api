@@ -71,8 +71,6 @@ export const getCarritoProducto = async (req: Request, res: Response) => {
       return data;
     });
 
-    console.log(carrito);
-
     res.status(200).json(carrito);
   } catch (error) {
     console.log('❌Ocurrio un error:', error);
@@ -149,6 +147,34 @@ export const deleteCarritoProducto = async (req: Request, res: Response) => {
     }
 
     await conn.query('DELETE FROM carritoProducto WHERE uuidCliente = ?', [uuid]);
+    return res.status(200).json({
+      message: 'Producto eliminado correctamente del carrito. 😀',
+    });
+  } catch (error) {
+    console.log('❌Ocurrio un error:', error);
+    return res.status(400).json({
+      message: error,
+    });
+  }
+};
+
+// ====================> deleteCarritoProducto
+export const deleteProductoFromCarrito = async (req: Request, res: Response) => {
+  try {
+    const conn: Pool = await connect();
+    const uuid: string = req.params.uuid;
+
+    const [CarritoProducto]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM carritoProducto WHERE uuid = ?', [
+      uuid,
+    ]);
+
+    if (!CarritoProducto) {
+      return res.status(404).json({
+        message: 'No se pudo eliminar el producto del carrito, por que no existe. 🙁',
+      });
+    }
+
+    await conn.query('DELETE FROM carritoProducto WHERE uuid = ?', [uuid]);
     return res.status(200).json({
       message: 'Producto eliminado correctamente del carrito. 😀',
     });

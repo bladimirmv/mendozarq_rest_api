@@ -33,15 +33,17 @@ import capituloPresupuestoRoutes from '../routes/mendozarq/capitulo.presupuesto.
 import detalleCapituloRoutes from '../routes/mendozarq/detalle.capitulo.presupuesto.routes';
 import planificacionRoutes from '../routes/mendozarq/planificacion.routes';
 
+// **Lirkai
 import categoriaProductoRoutes from '../routes/liraki/categoria.producto.routes';
 import productoRoutes from '../routes/liraki/producto.routes';
 import opinionRoutes from './../routes/liraki/opinion.producto.routes';
 import carritoRoutes from './../routes/liraki/carrito.producto.routes';
+import pedidoRoutes from './../routes/liraki/pedido.producto.routes';
 
 import pagosRoutes from './../routes/liraki/pagos.paypal.routes';
-
 import herramientaRoutes from '../routes/mendozarq/herramienta.routes';
 
+// **Logs
 import { getAllLogs } from './../controllers/logs/logs.controller';
 
 // ==========> App class
@@ -118,6 +120,7 @@ export default class App {
     this.app.use('/api/producto', productoRoutes);
     this.app.use('/api/opinionProducto', opinionRoutes);
     this.app.use('/api/carrito', carritoRoutes);
+    this.app.use('/api/pedidoProducto', pedidoRoutes);
 
     this.app.use('/api/paypal', pagosRoutes);
 

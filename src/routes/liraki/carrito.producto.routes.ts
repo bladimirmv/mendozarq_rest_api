@@ -11,4 +11,6 @@ router.route('/').post(checkJwt, cp.addCarritoProducto);
 // ====================> route Personal /:id
 router.route('/:uuid').get(cp.getCarritoProducto).put(cp.updateCarritoProducto).delete(cp.deleteCarritoProducto);
 
+router.route('/producto/:uuid').delete(cp.deleteProductoFromCarrito);
+
 export default router;
