@@ -1,3 +1,4 @@
+import { ApiResponse } from './../../models/api/api.response.interface';
 import { Request, Response } from 'express';
 import { PedidoProducto } from '../../models/liraki/pedido.producto.interface';
 import { connect } from './../../classes/database';
@@ -8,15 +9,16 @@ export const addPedidoProducto = async (req: Request, res: Response) => {
   try {
     const conn: Pool = await connect();
     const pedidoProducto: PedidoProducto = req.body;
+    const { carrito, ...pedido } = pedidoProducto;
 
-    if (!pedidoProducto.uuidCliente || !pedidoProducto.nitCI) {
+    if (!pedido.uuidCliente || !pedido.nitCI) {
       return res.status(400).json({
         message: 'No se ha podido realizar el pedido, ocurrio un problema con el producto o el usuario. 🙁',
       });
     }
-    pedidoProducto.uuid = uuid();
 
-    await conn.query(`INSERT INTO pedidoProducto SET ?;`, [pedidoProducto]);
+    pedido.uuid = uuid();
+    await conn.query(`INSERT INTO pedidoProducto SET ?;`, [pedido]);
 
     return res.status(201).json({
       message: 'El pedido se ha agregado  correctamente! 😀',

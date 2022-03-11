@@ -18,8 +18,7 @@ function generateUsuario(usuario: Usuario): Usuario {
   }
 
   usuario.username =
-    usuario.nombre.substring(0, 5) +
-    generator.generate({ length: 5 + lack, numbers: true, uppercase: false });
+    usuario.nombre.substring(0, 5) + generator.generate({ length: 5 + lack, numbers: true, uppercase: false });
   return usuario;
 }
 // ===================================================================================================
@@ -46,12 +45,7 @@ export async function addUsuario(req: Request, res: Response) {
     }
 
     // *checking usuario data
-    if (
-      !usuario.contrasenha ||
-      !usuario.username ||
-      !usuario.rol ||
-      !usuario.nombre
-    ) {
+    if (!usuario.contrasenha || !usuario.username || !usuario.rol || !usuario.nombre) {
       return res.status(400).json({
         message: 'Por favor ingrese los campos requeridos. ❌',
       });
@@ -112,12 +106,9 @@ export async function getUsuario(req: Request, res: Response) {
     const conn: Pool = await connect();
 
     // * finding usuario
-    const [[usuario]]: [any[], FieldPacket[]] = await conn.query(
-      'select  * from usuario where uuid = ?',
-      [uuid]
-    );
+    const [[usuario]]: [any[], FieldPacket[]] = await conn.query('select  * from usuario where uuid = ?', [uuid]);
     // conn.end();
-    console.log(usuario);
+    // console.log(usuario);
 
     if (usuario) {
       res.status(200).send(usuario);
@@ -139,9 +130,7 @@ export async function getAllUsuarios(req: Request, res: Response) {
     let conn: Pool = await connect();
 
     // *geting all usuarios
-    const [usuarios]: [any[], FieldPacket[]] = await conn.query(
-      'select * from usuario order by creadoEn desc'
-    );
+    const [usuarios]: [any[], FieldPacket[]] = await conn.query('select * from usuario order by creadoEn desc');
     // conn.end();
 
     // *returning data
@@ -184,10 +173,9 @@ export async function updateUsuario(req: Request, res: Response) {
     }
 
     // *checking username
-    const [[findUsuario]]: [any[], FieldPacket[]] = await conn.query(
-      'select * from usuario where username = ?;',
-      [usuario.username]
-    );
+    const [[findUsuario]]: [any[], FieldPacket[]] = await conn.query('select * from usuario where username = ?;', [
+      usuario.username,
+    ]);
     const usr: Usuario = findUsuario;
 
     if (findUsuario && usr.uuid !== uuid) {
@@ -279,12 +267,7 @@ export async function usuarioRegister(req: Request, res: Response) {
     }
 
     // *checking usuario data
-    if (
-      !usuario.contrasenha ||
-      !usuario.username ||
-      !usuario.rol ||
-      !usuario.nombre
-    ) {
+    if (!usuario.contrasenha || !usuario.username || !usuario.rol || !usuario.nombre) {
       return res.status(400).json({
         message: 'Por favor ingrese los campos requeridos. ❌',
       });

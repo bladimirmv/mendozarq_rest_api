@@ -13,6 +13,8 @@ router
   .get(p.getAllProducto)
   .post([checkJwt, checkRole(['administrador'])], p.addProducto);
 
+router.route('/page/:page').get(p.getAllProductoByPage);
+
 router
   .route('/:uuid')
   .get(p.getOneProducto)
