@@ -1,3 +1,4 @@
+import { getHomePage } from './../controllers/liraki/home.page.controller';
 // ==========> libraries imports
 import express from 'express';
 import morgan from 'morgan';
@@ -39,6 +40,7 @@ import productoRoutes from '../routes/liraki/producto.routes';
 import opinionRoutes from './../routes/liraki/opinion.producto.routes';
 import carritoRoutes from './../routes/liraki/carrito.producto.routes';
 import pedidoRoutes from './../routes/liraki/pedido.producto.routes';
+import homePageRoutes from './../routes/liraki/home.page.routes';
 
 import pagosRoutes from './../routes/liraki/pagos.paypal.routes';
 import herramientaRoutes from '../routes/mendozarq/herramienta.routes';
@@ -115,12 +117,15 @@ export default class App {
     this.app.use('/api/detalleCapitulo', detalleCapituloRoutes);
     this.app.use('/api/planificacionProyecto', planificacionRoutes);
 
+    getHomePage();
+
     // **Lirkai
     this.app.use('/api/categoriaProducto', categoriaProductoRoutes);
     this.app.use('/api/producto', productoRoutes);
     this.app.use('/api/opinionProducto', opinionRoutes);
     this.app.use('/api/carrito', carritoRoutes);
     this.app.use('/api/pedidoProducto', pedidoRoutes);
+    this.app.use('/api/homePage', homePageRoutes);
 
     this.app.use('/api/paypal', pagosRoutes);
 
