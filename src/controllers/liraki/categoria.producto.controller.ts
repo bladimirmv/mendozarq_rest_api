@@ -85,6 +85,26 @@ export const getAllcategoriaProducto = async (req: Request, res: Response) => {
   }
 };
 
+export const getAllcategoriaProductoByPage = async (req: Request, res: Response) => {
+  try {
+    const page: string = req.params.page;
+    const size: number = 15;
+    const conn: Pool = await connect();
+
+    const [categoriaProducto]: [any[], FieldPacket[]] = await conn.query(
+      `SELECT * FROM categoriaProducto ORDER BY creadoEn DESC LIMIT ?, ? ;`,
+      [(Number(page) - 1) * size, size]
+    );
+
+    return res.status(200).json(categoriaProducto);
+  } catch (error) {
+    console.log('❌Ocurrio un error:', error);
+    return res.status(400).json({
+      message: error,
+    });
+  }
+};
+
 export const updatecategoriaProducto = async (req: Request, res: Response) => {
   try {
     const conn: Pool = await connect();

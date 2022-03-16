@@ -9,5 +9,6 @@ const upload = multer().any();
 const router = Router();
 
 router.route('/').get(hp.getHomePage);
+router.route('/recienAgregados').get(hp.getRecienAgregados);
 
 export default router;

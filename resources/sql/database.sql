@@ -315,6 +315,45 @@ CREATE TABLE detalleVentaProducto
     FOREIGN KEY (uuidProducto) REFERENCES producto (uuid)
 );
 
+CREATE TABLE pedidoProducto
+(
+    uuid            varchar(100) PRIMARY KEY,
+    creadoEn        timestamp                                      DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    numeroPedido    int unique auto_increment                                                NOT NULL,
+    nombre          varchar(50)                                                              NOT NULL,
+    apellidoPaterno varchar(50)                                                              NOT NULL,
+    apellidoMaterno varchar(50),
+    celular         int                                                                      not null,
+    direccion       text                                                                     not null,
+    correo          varchar(100)                                                             not null,
+    nombreFactura   varchar(50)                                                              not null,
+    nitCI           text                                                                     not null,
+    tipoEnvio       enum ('delivery', 'carpinteria'),
+    descripcion     varchar(500)                                                             not null,
+    metodoDePago    enum ( 'efectivo','deposito_transferencia_qr', 'paypal')                 not null,
+    total           decimal(15, 2)                                                           NOT NULL,
+    uuidCliente     varchar(100)                                                             not null,
+    estado          enum ('pendiente', 'confirmado', 'completado') default 'pendiente'       not null,
+    FOREIGN KEY (uuidCliente) REFERENCES usuario (uuid)
+);
+
+alter table pedidoProducto
+    auto_increment = 1000000;
+
+CREATE TABLE carritoPedido
+(
+    uuid         varchar(100) PRIMARY KEY,
+    creadoEn     timestamp      DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    cantidad     int            default 1                 not null,
+    uuidProducto varchar(100) unique                      not null,
+    uuidPedido   varchar(100)                             not null,
+    precio       decimal(15, 2)                           NOT NULL,
+    descuento    decimal(15, 2) DEFAULT 0                 NOT NULL,
+    nombre       varchar(300) UNIQUE                      NOT NULL,
+    descripcion  varchar(1000),
+    FOREIGN KEY (uuidProducto) REFERENCES producto (uuid),
+    FOREIGN KEY (uuidPedido) REFERENCES pedidoProducto (uuid)
+);
 
 
 # LOGS

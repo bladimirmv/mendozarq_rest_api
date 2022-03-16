@@ -13,6 +13,8 @@ router
   .get(cp.getAllcategoriaProducto)
   .post([checkJwt, checkRole(['administrador'])], upload, cp.addCategoriaProducto);
 
+router.route('/page/:page').get(cp.getAllcategoriaProductoByPage);
+
 router
   .route('/:uuid')
   .get([checkJwt, checkRole(['administrador'])], cp.getOneCategoriaProducto)

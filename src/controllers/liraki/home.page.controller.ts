@@ -58,3 +58,22 @@ export const getHomePage = async (req?: Request, res?: Response) => {
     });
   }
 };
+
+export const getRecienAgregados = async (req?: Request, res?: Response) => {
+  try {
+    const conn: Pool = await connect();
+
+    const [recienAgregados]: [any[], FieldPacket[]] = await conn.query(`SELECT p.*, fp.keyName
+		FROM producto as p
+		INNER JOIN fotoProducto fp on p.uuid = fp.uuidProducto
+		WHERE fp.indice = 0
+		ORDER BY p.creadoEn   DESC  LIMIT 10;`);
+
+    return res?.status(200).json(recienAgregados);
+  } catch (error) {
+    console.log('❌Ocurrio un error:', error);
+    return res?.status(400).json({
+      message: error,
+    });
+  }
+};
