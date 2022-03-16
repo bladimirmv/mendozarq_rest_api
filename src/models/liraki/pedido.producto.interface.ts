@@ -1,7 +1,7 @@
 import { CarritoProductoView } from './carrito.producto.interface';
 export type metodoDePago = 'efectivo' | 'deposito_transferencia_qr' | 'paypal';
 export type tipoEnvio = 'delivery' | 'carpinteria';
-
+type estado = 'pagando' | 'pendiente' | 'confirmado' | 'completado';
 export interface PedidoProducto {
   uuid?: string;
   creadoEn?: Date;
@@ -19,4 +19,6 @@ export interface PedidoProducto {
   total: number;
   carrito: Array<CarritoProductoView>;
   uuidCliente: string;
+
+  estado: estado;
 }

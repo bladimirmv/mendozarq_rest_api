@@ -6,17 +6,10 @@ import { checkRole } from './../../middlewares/roles';
 
 const router = Router();
 
-router
-  .route('/create-order')
-  .post(pp.createOrder)
+router.route('/create-order').post(pp.createOrder);
 
+router.route('/capture-order/:uuid').get(pp.captureOrder);
 
-router
-  .route('/capture-order')
-  .get(pp.captureOrder)
-
-router
-  .route('/cancel-order')
-  .get(pp.cancelOrder)
+router.route('/cancel-order').get(pp.cancelOrder);
 
 export default router;
