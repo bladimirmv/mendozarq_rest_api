@@ -62,7 +62,7 @@ export const createOrder = async (req: Request, res: Response) => {
         brand_name: 'Carpinteria LIRAKI',
         landing_page: 'LOGIN',
         user_action: 'PAY_NOW',
-        return_url: `${HOST_API}/api/paypal/capture-order/${pedido.uuid}`,
+        return_url: `${HOST_API}/api/paypal/capture-order/${pedido.uuidCliente}`,
         cancel_url: `${CLIENT_URL}`,
       },
     };
@@ -101,20 +101,18 @@ export const createOrder = async (req: Request, res: Response) => {
 };
 
 export const captureOrder = async (req: Request, res: Response) => {
-  const { token } = req.query;
-
-  const uuidPedido = req.params.uuid;
-  let pedidoProducto: PedidoProducto = {} as PedidoProducto;
-
-  const conn: Pool = await connect();
-
-  const [[pedido]]: [any[], FieldPacket[]] = await conn.query(`SELECT * FROM pedidoProducto AS pp WHERE pp.uuid = ?;`, [
-    uuidPedido,
-  ]);
-  pedidoProducto = pedido as PedidoProducto;
-  pedidoProducto.estado = 'pendiente';
-
   try {
+    const { token } = req.query;
+    // const uuidPedido = req.params.uuid;
+    // let pedidoProducto: PedidoProducto = {} as PedidoProducto;
+
+    // const conn: Pool = await connect();
+
+    // const [[pedido]]: [any[], FieldPacket[]] = await conn.query(`SELECT * FROM pedidoProducto AS pp WHERE pp.uuid = ?;`, [
+    //   uuidPedido,
+    // ]);
+    // pedidoProducto = pedido as PedidoProducto;
+    // pedidoProducto.estado = 'pendiente';
     const response = await axios.post(
       `${PAYPAL_API}/v2/checkout/orders/${token}/capture`,
       {},
@@ -126,7 +124,7 @@ export const captureOrder = async (req: Request, res: Response) => {
       }
     );
 
-    await conn.query(`UPDATE pedidoProducto SET ? WHERE uuid = ?`, [pedidoProducto, uuidPedido]);
+    // await conn.query(`UPDATE pedidoProducto SET ? WHERE uuid = ?`, [pedidoProducto, uuidPedido]);
 
     res.redirect(`${CLIENT_URL}/profile`);
   } catch (error) {

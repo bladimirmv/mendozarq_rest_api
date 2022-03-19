@@ -40,7 +40,7 @@ export const addProducto = async (req: Request, res: Response) => {
 
     let mRows: any[] = [];
 
-    detalleCategoriaProducto.forEach(async (detalle) => {
+    detalleCategoriaProducto.forEach((detalle) => {
       mRows.push(Object.values(detalle));
     });
 

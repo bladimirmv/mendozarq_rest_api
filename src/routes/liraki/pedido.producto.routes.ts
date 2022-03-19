@@ -13,11 +13,11 @@ router
   .post([checkJwt, checkRole(['administrador', 'arquitecto', 'cliente', 'vendedor'])], pp.addPedidoProducto);
 // .get(cp.getAllcategoriaProducto)
 
-// router
-//   .route('/:uuid')
-//   .get([checkJwt, checkRole(['administrador'])], cp.getOneCategoriaProducto)
-//   .put([checkJwt, checkRole(['administrador'])], cp.updatecategoriaProducto)
-//   .delete([checkJwt, checkRole(['administrador'])], cp.deletecategoriaProducto);
+router
+  .route('/:uuid')
+  .get([checkJwt, checkRole(['administrador', 'arquitecto', 'cliente', 'vendedor'])], pp.getOnePedido);
+// .put([checkJwt, checkRole(['administrador'])], cp.updatecategoriaProducto)
+// .delete([checkJwt, checkRole(['administrador'])], cp.deletecategoriaProducto);
 
 // router.route('/multer/:uuid').put([checkJwt, checkRole(['administrador'])], upload, cp.updatecategoriaProductoMulter);
 
