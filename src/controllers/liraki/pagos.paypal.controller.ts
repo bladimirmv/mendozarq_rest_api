@@ -1,5 +1,5 @@
 import { Pool, FieldPacket } from 'mysql2/promise';
-import { PedidoProducto } from './../../models/liraki/pedido.producto.interface';
+import { PedidoProducto, CarritoPedido } from './../../models/liraki/pedido.producto.interface';
 import { Request, Response } from 'express';
 import { CLIENT_URL, HOST_API, PAYPAL_API, PAYPAL_API_CLIENT, PAYPAL_API_SECRET } from './../../global/enviroment';
 import axios from 'axios';
@@ -11,6 +11,7 @@ export const createOrder = async (req: Request, res: Response) => {
     const conn: Pool = await connect();
     const pedidoProducto: PedidoProducto = req.body;
     const { carrito, ...pedido } = pedidoProducto;
+    let mRows: any[] = [];
 
     if (!pedido.uuidCliente || !pedido.nitCI) {
       return res.status(400).json({
@@ -34,6 +35,26 @@ export const createOrder = async (req: Request, res: Response) => {
 
     pedido.uuid = uuid();
     await conn.query(`INSERT INTO pedidoProducto SET ?;`, [pedido]);
+
+    carrito.forEach((ca) => {
+      mRows.push(
+        Object.values({
+          uuid: uuid(),
+          cantidad: ca.cantidad,
+          uuidProducto: ca.uuidProducto,
+          uuidPedido: pedido.uuid,
+          precio: ca.producto.precio,
+          descuento: ca.producto.descuento,
+          nombre: ca.producto.nombre,
+          descripcion: ca.producto.descripcion,
+        } as CarritoPedido)
+      );
+    });
+
+    await conn.query(
+      `INSERT  INTO carritoPedido(uuid, cantidad, uuidProducto, uuidPedido, precio, descuento, nombre, descripcion) VALUES ?;`,
+      [mRows]
+    );
 
     let productos: any[] = [];
 
@@ -103,16 +124,17 @@ export const createOrder = async (req: Request, res: Response) => {
 export const captureOrder = async (req: Request, res: Response) => {
   try {
     const { token } = req.query;
-    // const uuidPedido = req.params.uuid;
-    // let pedidoProducto: PedidoProducto = {} as PedidoProducto;
+    const uuid = req.params.uuid;
+    let pedidoProducto: PedidoProducto = {} as PedidoProducto;
 
-    // const conn: Pool = await connect();
+    const conn: Pool = await connect();
 
-    // const [[pedido]]: [any[], FieldPacket[]] = await conn.query(`SELECT * FROM pedidoProducto AS pp WHERE pp.uuid = ?;`, [
-    //   uuidPedido,
-    // ]);
-    // pedidoProducto = pedido as PedidoProducto;
-    // pedidoProducto.estado = 'pendiente';
+    const [[pedido]]: [any[], FieldPacket[]] = await conn.query(
+      `SELECT * FROM pedidoProducto AS pp WHERE pp.uuidCliente = ? && pp.estado = 'pagando' ;`,
+      [uuid]
+    );
+    pedidoProducto = pedido as PedidoProducto;
+    pedidoProducto.estado = 'pendiente';
     const response = await axios.post(
       `${PAYPAL_API}/v2/checkout/orders/${token}/capture`,
       {},
@@ -124,7 +146,8 @@ export const captureOrder = async (req: Request, res: Response) => {
       }
     );
 
-    // await conn.query(`UPDATE pedidoProducto SET ? WHERE uuid = ?`, [pedidoProducto, uuidPedido]);
+    await conn.query(`UPDATE pedidoProducto SET ? WHERE uuid = ?`, [pedidoProducto, pedido.uuid]);
+    await conn.query('DELETE FROM carritoProducto WHERE uuidCliente = ?', [uuid]);
 
     res.redirect(`${CLIENT_URL}/profile`);
   } catch (error) {
