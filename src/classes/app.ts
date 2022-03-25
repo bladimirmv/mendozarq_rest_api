@@ -41,6 +41,7 @@ import opinionRoutes from './../routes/liraki/opinion.producto.routes';
 import carritoRoutes from './../routes/liraki/carrito.producto.routes';
 import pedidoRoutes from './../routes/liraki/pedido.producto.routes';
 import homePageRoutes from './../routes/liraki/home.page.routes';
+import ventaRoutes from './../routes/liraki/venta.producto.routes';
 
 import pagosRoutes from './../routes/liraki/pagos.paypal.routes';
 import herramientaRoutes from '../routes/mendozarq/herramienta.routes';
@@ -126,6 +127,7 @@ export default class App {
     this.app.use('/api/carrito', carritoRoutes);
     this.app.use('/api/pedidoProducto', pedidoRoutes);
     this.app.use('/api/homePage', homePageRoutes);
+    this.app.use('/api/venta', ventaRoutes);
 
     this.app.use('/api/paypal', pagosRoutes);
 

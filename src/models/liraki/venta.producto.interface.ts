@@ -1,30 +1,44 @@
-export type tipoVenta = 'online' | 'fisica';
-export type metodoPago = 'efectivo' | 'tarjeta' | 'paypal';
+export type departamento = 'cbba' | 'lp' | 'scz';
+export type tipoEnvio = 'delivery' | 'personal';
+export type tipoVenta = 'fisica' | 'online';
+export type metodoDePago = 'efectivo' | 'tarjeta' | 'paypal' | 'deposito_transferencia_qr';
+export type estado = 'pagando' | 'pendiente' | 'confirmado' | 'envio_entrega' | 'completado';
 
 export interface Venta {
-  uuid: string;
+  uuid?: string;
   creadoEn?: Date;
-  uuidCliente: string;
-  uuidVendedor?: string;
+  numeroVenta: number;
+  nombreFactura: string;
+  nitCiCex: string;
+  departamento: departamento;
+  direccion: string;
+  descripcion?: string;
   tipoVenta: tipoVenta;
-  metodoPago: metodoPago;
+  tipoEnvio: tipoEnvio;
+  metodoDePago: metodoDePago;
+  estado: estado;
+  total?: number;
+  uuidCliente: string;
+  uuidVendedor: string;
 }
 
-export interface DetalleVentaProducto {
-  uuid: string;
+export interface ConceptoVenta {
+  uuid?: string;
   creadoEn?: Date;
-  uuidVentaProducto: string;
-  uuidProducto: string;
   cantidad: number;
-  precio: number;
+  precioUnitario: number;
+  descuento: number;
+  importe: number;
+  uuidProducto: string;
+  uuidVenta: string;
 }
 
-export interface VentaProducto extends Venta {
-  detalleVenta: Array<DetalleVentaProducto>;
+export interface ConceptoVentaView extends ConceptoVenta {
+  nombre: string;
 }
 
-export interface VentaView extends VentaProducto {
-  cliente: string;
-  vendedor: string;
-  total: number;
+export interface VentaView extends Venta {
+  vendedor?: string;
+  cliente?: string;
+  conceptos: ConceptoVentaView[];
 }
