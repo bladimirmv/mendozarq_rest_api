@@ -2,7 +2,7 @@ export type departamento = 'cbba' | 'lp' | 'scz';
 export type tipoEnvio = 'delivery' | 'personal';
 export type tipoVenta = 'fisica' | 'online';
 export type metodoDePago = 'efectivo' | 'tarjeta' | 'paypal' | 'deposito_transferencia_qr';
-export type estado = 'pagando' | 'pendiente' | 'confirmado' | 'envio_entrega' | 'completado';
+export type estado = 'pagando' | 'pendiente' | 'confirmado' | 'en_envio' | 'para_recoger' | 'completado';
 
 export interface Venta {
   uuid?: string;
@@ -34,7 +34,12 @@ export interface ConceptoVenta {
 }
 
 export interface ConceptoVentaView extends ConceptoVenta {
-  nombre: string;
+  nombre?: string;
+  stock?: number;
+}
+
+export interface VentaProducto extends Venta {
+  conceptos: ConceptoVentaView[];
 }
 
 export interface VentaView extends Venta {

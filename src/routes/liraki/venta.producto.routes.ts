@@ -7,6 +7,10 @@ const router = Router();
 
 router
   .route('/fisica/')
-  .get([checkJwt, checkRole(['administrador', 'arquitecto', 'cliente', 'vendedor'])], v.getAllVentaFisica);
+  .get([checkJwt, checkRole(['administrador', 'arquitecto', 'cliente', 'vendedor'])], v.getAllVentaFisica)
+  .post([checkJwt, checkRole(['administrador', 'arquitecto', 'cliente', 'vendedor'])], v.addVentaFisica);
 
+router
+  .route('/fisica/:uuid')
+  .put([checkJwt, checkRole(['administrador', 'arquitecto', 'cliente', 'vendedor'])], v.updateVenta);
 export default router;

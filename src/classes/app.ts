@@ -118,8 +118,6 @@ export default class App {
     this.app.use('/api/detalleCapitulo', detalleCapituloRoutes);
     this.app.use('/api/planificacionProyecto', planificacionRoutes);
 
-    getHomePage();
-
     // **Lirkai
     this.app.use('/api/categoriaProducto', categoriaProductoRoutes);
     this.app.use('/api/producto', productoRoutes);
@@ -133,7 +131,6 @@ export default class App {
 
     // **Swagger
     const specs = swaggerJsDoc(options);
-
     this.app.use('/', swaggerUI.serve, swaggerUI.setup(specs));
   }
 
