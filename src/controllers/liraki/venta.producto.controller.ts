@@ -1,8 +1,10 @@
+import { emitVentas } from './../logs/logs.controller';
 import {
   VentaView,
   ConceptoVenta,
   ConceptoVentaView,
   VentaProducto,
+  estado,
 } from './../../models/liraki/venta.producto.interface';
 import { Pool, FieldPacket } from 'mysql2/promise';
 import { Request, Response } from 'express';
@@ -44,6 +46,9 @@ export const addVentaFisica = async (req: Request, res: Response) => {
       `INSERT  INTO conceptoVenta(uuid, cantidad, precioUnitario, descuento, importe, uuidProducto, uuidVenta) VALUES ?;`,
       [mRows]
     );
+
+    emitVentas(venta.uuidCliente);
+
     return res.status(201).json({
       message: 'El pedido se ha agregado  correctamente! 😀',
     });
@@ -109,6 +114,12 @@ export const updateVenta = async (req: Request, res: Response) => {
       });
     }
 
+    venta.estado =
+      (venta.tipoEnvio === 'delivery' && venta.estado === 'para_recoger') ||
+      (venta.tipoEnvio === 'personal' && venta.estado === 'en_envio')
+        ? 'confirmado'
+        : venta.estado;
+
     conceptos.forEach((ct) => {
       mRows.push(
         Object.values({
@@ -131,8 +142,39 @@ export const updateVenta = async (req: Request, res: Response) => {
       [mRows]
     );
 
+    emitVentas(venta.uuidCliente);
+
     return res.status(200).json({
-      message: 'Producto actualizado correctamente! 😀',
+      message: 'Venta actualizado correctamente! 😀',
+    });
+  } catch (error) {
+    console.log('❌Ocurrio un error:', error);
+    return res.status(400).json({
+      message: error,
+    });
+  }
+};
+
+export const updateEstadoVenta = async (req: Request, res: Response) => {
+  try {
+    const conn: Pool = await connect();
+    const uuidVenta: string = req.params.uuid;
+    const { estado, uuidCliente }: VentaView = req.body;
+
+    const [[row]]: [any[], FieldPacket[]] = await conn.query(`SELECT * FROM venta WHERE uuid = ?`, [uuidVenta]);
+
+    if (!row) {
+      return res.status(404).json({
+        message: 'No se pudo actualizar el producto, por que no existe. 🙁',
+      });
+    }
+
+    await conn.query(`UPDATE venta SET ? WHERE uuid = ?`, [{ estado }, uuidVenta]);
+
+    emitVentas(uuidCliente);
+
+    return res.status(200).json({
+      message: 'Estado actualizado correctamente! 😀',
     });
   } catch (error) {
     console.log('❌Ocurrio un error:', error);

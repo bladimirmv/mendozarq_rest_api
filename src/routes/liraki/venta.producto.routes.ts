@@ -13,4 +13,8 @@ router
 router
   .route('/fisica/:uuid')
   .put([checkJwt, checkRole(['administrador', 'arquitecto', 'cliente', 'vendedor'])], v.updateVenta);
+
+router
+  .route('/estado/:uuid')
+  .put([checkJwt, checkRole(['administrador', 'arquitecto', 'cliente', 'vendedor'])], v.updateEstadoVenta);
 export default router;

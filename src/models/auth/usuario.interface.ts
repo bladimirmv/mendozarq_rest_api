@@ -1,9 +1,4 @@
-export type Roles =
-  | 'administrador'
-  | 'arquitecto'
-  | 'cliente'
-  | 'vendedor'
-  | 'ninguno';
+export type Roles = 'administrador' | 'arquitecto' | 'cliente' | 'vendedor' | 'ninguno';
 export interface Usuario {
   uuid?: string;
   creadoEn?: Date;
@@ -25,4 +20,9 @@ export interface TokenUsuario {
   uuid?: string;
   username?: string;
   rol?: Roles;
+}
+
+export interface UsuarioSocket {
+  usuarioToken: string;
+  from: 'liraki' | 'mendozarq';
 }
