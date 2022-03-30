@@ -246,6 +246,18 @@ export const addVentaOnline = async (req: Request, res: Response) => {
       });
     }
 
+    const [pedidos]: [any[], FieldPacket[]] = await conn.query(
+      `SELECT * FROM venta AS pp WHERE pp.uuidCliente = ? && pp.estado = 'pendiente';`,
+      [venta.uuidCliente]
+    );
+
+    if (pedidos.length > 1) {
+      return res.status(400).json({
+        message:
+          '🙁 Tienes pedidos por confirmar, por favor mantente al contacto con nosostros te enviaremos un mensaje para la confirmación de los mismos. ',
+      });
+    }
+
     venta.estado = 'pendiente';
     venta.tipoVenta = 'online';
 

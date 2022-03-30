@@ -22,9 +22,26 @@ export const addCarritoProducto = async (req: Request, res: Response) => {
     }
     CarritoProducto.uuid = uuid();
 
-    await conn.query(`INSERT INTO carritoProducto SET ? ON DUPLICATE KEY UPDATE cantidad = cantidad + 1;`, [
-      CarritoProducto,
-    ]);
+    const [carrito]: [any[], FieldPacket[]] = await conn.query(
+      `SELECT  * FROM carritoProducto WHERE uuidCliente = ? AND uuidProducto = ?;`,
+      [CarritoProducto.uuidCliente, CarritoProducto.uuidProducto]
+    );
+
+    if (carrito.length >= 1) {
+      console.log('si hay xd');
+
+      await conn.query(
+        `
+      UPDATE carritoProducto SET cantidad = cantidad + 1 WHERE uuidProducto= ? AND  uuidCliente = ?;`,
+        [CarritoProducto.uuidProducto, CarritoProducto.uuidCliente]
+      );
+
+      return res.status(201).json({
+        message: 'Se ha agregado al carrito exitosamente! 😀',
+      });
+    }
+
+    await conn.query(`INSERT INTO carritoProducto SET ? ;`, [CarritoProducto]);
 
     return res.status(201).json({
       message: 'Se ha agregado al carrito exitosamente! 😀',

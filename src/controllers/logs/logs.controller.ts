@@ -168,7 +168,7 @@ export const emitVentasOnline = async (uuid: string) => {
       `SELECT v.*, concat_ws(' ', c.nombre, c.apellidoPaterno, c.apellidoMaterno) as cliente,concat_ws(' ', vr.nombre, vr.apellidoPaterno, vr.apellidoMaterno) as vendedor
 			FROM venta AS v
 			INNER JOIN usuario c on v.uuidCliente = c.uuid
-			INNER JOIN usuario vr on v.uuidVendedor = vr.uuid
+			LEFT JOIN usuario vr on v.uuidVendedor = vr.uuid
 			WHERE v.tipoVenta = 'online' AND v.estado != 'pagando'
 			ORDER BY v.creadoEn DESC;`
     );
@@ -211,7 +211,7 @@ export const getAllVentasOnline = async (client: Socket, io: SocketIO.Server) =>
           `SELECT v.*, concat_ws(' ', c.nombre, c.apellidoPaterno, c.apellidoMaterno) as cliente,concat_ws(' ', vr.nombre, vr.apellidoPaterno, vr.apellidoMaterno) as vendedor
           FROM venta AS v
           INNER JOIN usuario c on v.uuidCliente = c.uuid
-          INNER JOIN usuario vr on v.uuidVendedor = vr.uuid
+          LEFT JOIN usuario vr on v.uuidVendedor = vr.uuid
           WHERE v.tipoVenta = 'online' AND v.estado != 'pagando' AND v.uuidCliente = ?
           ORDER BY v.creadoEn DESC;`,
           [data.uuid]
@@ -240,7 +240,7 @@ export const getAllVentasOnline = async (client: Socket, io: SocketIO.Server) =>
           `SELECT v.*, concat_ws(' ', c.nombre, c.apellidoPaterno, c.apellidoMaterno) as cliente,concat_ws(' ', vr.nombre, vr.apellidoPaterno, vr.apellidoMaterno) as vendedor
           FROM venta AS v
           INNER JOIN usuario c on v.uuidCliente = c.uuid
-          INNER JOIN usuario vr on v.uuidVendedor = vr.uuid
+          LEFT JOIN usuario vr on v.uuidVendedor = vr.uuid
           WHERE v.tipoVenta = 'online' AND v.estado != 'pagando'
           ORDER BY v.creadoEn DESC;`
         );
