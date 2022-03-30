@@ -1,10 +1,10 @@
-import { emitVentas } from './../logs/logs.controller';
+import { emitVentas, emitVentasOnline } from './../logs/logs.controller';
 import {
   VentaView,
   ConceptoVenta,
   ConceptoVentaView,
   VentaProducto,
-  estado,
+  Venta,
 } from './../../models/liraki/venta.producto.interface';
 import { Pool, FieldPacket } from 'mysql2/promise';
 import { Request, Response } from 'express';
@@ -142,7 +142,13 @@ export const updateVenta = async (req: Request, res: Response) => {
       [mRows]
     );
 
-    emitVentas(venta.uuidCliente);
+    if (venta.tipoVenta === 'fisica') {
+      emitVentas(venta.uuidCliente);
+    }
+
+    if (venta.tipoVenta === 'online') {
+      emitVentasOnline(venta.uuidCliente);
+    }
 
     return res.status(200).json({
       message: 'Venta actualizado correctamente! 😀',
@@ -159,7 +165,7 @@ export const updateEstadoVenta = async (req: Request, res: Response) => {
   try {
     const conn: Pool = await connect();
     const uuidVenta: string = req.params.uuid;
-    const { estado, uuidCliente }: VentaView = req.body;
+    const { estado, uuidCliente, tipoVenta }: VentaView = req.body;
 
     const [[row]]: [any[], FieldPacket[]] = await conn.query(`SELECT * FROM venta WHERE uuid = ?`, [uuidVenta]);
 
@@ -171,10 +177,104 @@ export const updateEstadoVenta = async (req: Request, res: Response) => {
 
     await conn.query(`UPDATE venta SET ? WHERE uuid = ?`, [{ estado }, uuidVenta]);
 
-    emitVentas(uuidCliente);
+    if (tipoVenta === 'fisica') {
+      emitVentas(uuidCliente);
+    }
+
+    if (tipoVenta === 'online') {
+      emitVentasOnline(uuidCliente);
+    }
 
     return res.status(200).json({
       message: 'Estado actualizado correctamente! 😀',
+    });
+  } catch (error) {
+    console.log('❌Ocurrio un error:', error);
+    return res.status(400).json({
+      message: error,
+    });
+  }
+};
+export const deleteVenta = async (req: Request, res: Response) => {
+  try {
+    const conn: Pool = await connect();
+    const uuid: string = req.params.uuid;
+    let venta: Venta = {} as Venta;
+
+    const [[row]]: [any[], FieldPacket[]] = await conn.query(`SELECT * FROM venta WHERE uuid = ?`, [uuid]);
+
+    venta = row as Venta;
+
+    if (!row) {
+      return res.status(404).json({
+        message: 'No se pudo eliminar, por que no existe. 🙁',
+      });
+    }
+
+    await conn.query('DELETE FROM venta WHERE uuid = ?', [uuid]);
+
+    if (venta.tipoVenta === 'fisica') {
+      emitVentas(venta.uuidCliente);
+    }
+
+    if (venta.tipoVenta === 'online') {
+      emitVentasOnline(venta.uuidCliente);
+    }
+
+    return res.status(200).json({
+      message: 'Producto eliminado correctamente. 😀',
+    });
+  } catch (error) {
+    console.log('❌Ocurrio un error:', error);
+    return res.status(400).json({
+      message: error,
+    });
+  }
+};
+
+// *vetans online
+
+export const addVentaOnline = async (req: Request, res: Response) => {
+  const conn: Pool = await connect();
+  const ventaView: VentaProducto = req.body;
+  const { conceptos, ...venta } = ventaView;
+  let mRows: any[] = [];
+  try {
+    if (!venta.uuidCliente) {
+      return res.status(400).json({
+        message: 'No se ha podido realizar el pedido, ocurrio un problema con el producto o el usuario. 🙁',
+      });
+    }
+
+    venta.estado = 'pendiente';
+    venta.tipoVenta = 'online';
+
+    venta.uuid = uuid();
+    await conn.query(`INSERT INTO venta SET ?;`, [venta]);
+
+    conceptos.forEach((ct) => {
+      mRows.push(
+        Object.values({
+          uuid: uuid(),
+          cantidad: ct.cantidad,
+          precioUnitario: ct.precioUnitario,
+          descuento: ct.descuento,
+          importe: ct.importe,
+          uuidProducto: ct.uuidProducto,
+          uuidVenta: venta.uuid,
+        } as ConceptoVenta)
+      );
+    });
+
+    await conn.query(
+      `INSERT  INTO conceptoVenta(uuid, cantidad, precioUnitario, descuento, importe, uuidProducto, uuidVenta) VALUES ?;`,
+      [mRows]
+    );
+
+    emitVentasOnline(venta.uuidCliente);
+
+    return res.status(201).json({
+      message: 'El pedido se ha agregado  correctamente! 😀',
     });
   } catch (error) {
     console.log('❌Ocurrio un error:', error);

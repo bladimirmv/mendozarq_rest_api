@@ -47,7 +47,7 @@ import pagosRoutes from './../routes/liraki/pagos.paypal.routes';
 import herramientaRoutes from '../routes/mendozarq/herramienta.routes';
 
 // **Logs
-import { getAllLogs, getAllVentas } from './../controllers/logs/logs.controller';
+import { getAllLogs, getAllVentasFisicas, getAllVentasOnline } from './../controllers/logs/logs.controller';
 
 // ==========> App class
 export default class App {
@@ -162,7 +162,9 @@ export default class App {
       getAllLogs(client, this.io);
 
       // *ventas
-      getAllVentas(client, this.io);
+      getAllVentasFisicas(client, this.io);
+
+      getAllVentasOnline(client, this.io);
 
       // *Disconnect
       socket.disconnect(client);

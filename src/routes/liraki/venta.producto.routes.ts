@@ -5,6 +5,8 @@ import { checkRole } from './../../middlewares/roles';
 
 const router = Router();
 
+router.route('/:uuid').delete([checkJwt, checkRole(['administrador'])], v.deleteVenta);
+
 router
   .route('/fisica/')
   .get([checkJwt, checkRole(['administrador', 'arquitecto', 'cliente', 'vendedor'])], v.getAllVentaFisica)
@@ -17,4 +19,8 @@ router
 router
   .route('/estado/:uuid')
   .put([checkJwt, checkRole(['administrador', 'arquitecto', 'cliente', 'vendedor'])], v.updateEstadoVenta);
+
+router
+  .route('/online/')
+  .post([checkJwt, checkRole(['administrador', 'arquitecto', 'cliente', 'vendedor'])], v.addVentaOnline);
 export default router;
