@@ -1,5 +1,5 @@
+import { VentaProducto, ConceptoVenta, Venta } from './../../models/liraki/venta.producto.interface';
 import { Pool, FieldPacket } from 'mysql2/promise';
-import { PedidoProducto, CarritoPedido } from './../../models/liraki/pedido.producto.interface';
 import { Request, Response } from 'express';
 import { CLIENT_URL, HOST_API, PAYPAL_API, PAYPAL_API_CLIENT, PAYPAL_API_SECRET } from './../../global/enviroment';
 import axios from 'axios';
@@ -9,19 +9,19 @@ import { v4 as uuid } from 'uuid';
 export const createOrder = async (req: Request, res: Response) => {
   try {
     const conn: Pool = await connect();
-    const pedidoProducto: PedidoProducto = req.body;
-    const { carrito, ...pedido } = pedidoProducto;
+    const ventaView: VentaProducto = req.body;
+    const { conceptos, ...venta } = ventaView;
     let mRows: any[] = [];
 
-    if (!pedido.uuidCliente || !pedido.nitCI) {
+    if (!venta.uuidCliente) {
       return res.status(400).json({
         message: 'No se ha podido realizar el pedido, ocurrio un problema con el producto o el usuario. 🙁',
       });
     }
 
     const [pedidos]: [any[], FieldPacket[]] = await conn.query(
-      `SELECT * FROM pedidoProducto AS pp WHERE pp.uuidCliente = ? && pp.estado = 'pendiente';`,
-      [pedido.uuidCliente]
+      `SELECT * FROM venta AS pp WHERE pp.uuidCliente = ? && pp.estado = 'pendiente';`,
+      [venta.uuidCliente]
     );
 
     if (pedidos.length > 1) {
@@ -31,42 +31,32 @@ export const createOrder = async (req: Request, res: Response) => {
       });
     }
 
-    pedido.estado = 'pagando';
+    venta.estado = 'pagando';
+    venta.tipoVenta = 'online';
 
-    pedido.uuid = uuid();
-    await conn.query(`INSERT INTO pedidoProducto SET ?;`, [pedido]);
+    venta.uuid = uuid();
+    await conn.query(`INSERT INTO venta SET ?;`, [venta]);
 
-    carrito.forEach((ca) => {
+    conceptos.forEach((ct) => {
       mRows.push(
         Object.values({
           uuid: uuid(),
-          cantidad: ca.cantidad,
-          uuidProducto: ca.uuidProducto,
-          uuidPedido: pedido.uuid,
-          precio: ca.producto.precio,
-          descuento: ca.producto.descuento,
-          nombre: ca.producto.nombre,
-          descripcion: ca.producto.descripcion,
-        } as CarritoPedido)
+          cantidad: ct.cantidad,
+          precioUnitario: ct.precioUnitario,
+          descuento: ct.descuento,
+          importe: ct.importe,
+          uuidProducto: ct.uuidProducto,
+          uuidVenta: venta.uuid,
+        } as ConceptoVenta)
       );
     });
 
     await conn.query(
-      `INSERT  INTO carritoPedido(uuid, cantidad, uuidProducto, uuidPedido, precio, descuento, nombre, descripcion) VALUES ?;`,
+      `INSERT  INTO conceptoVenta(uuid, cantidad, precioUnitario, descuento, importe, uuidProducto, uuidVenta) VALUES ?;`,
       [mRows]
     );
 
     let productos: any[] = [];
-
-    pedidoProducto.carrito.forEach((carrito) => {
-      productos.push({
-        amount: {
-          currency_code: 'USD',
-          value: carrito.producto.precio,
-        },
-        description: carrito.producto.descripcion,
-      });
-    });
 
     const order = {
       intent: 'CAPTURE',
@@ -74,16 +64,16 @@ export const createOrder = async (req: Request, res: Response) => {
         {
           amount: {
             currency_code: 'USD',
-            value: (pedido.total / 7).toFixed(2),
+            value: (Number(venta.total) / 7).toFixed(2),
           },
-          description: 'Pedido de productos  a la Carpinteria Liraki',
+          description: `Pedido de productos a la Carpinteria Liraki por parte de ${venta.uuidCliente}`,
         },
       ],
       application_context: {
         brand_name: 'Carpinteria LIRAKI',
         landing_page: 'LOGIN',
         user_action: 'PAY_NOW',
-        return_url: `${HOST_API}/api/paypal/capture-order/${pedido.uuidCliente}`,
+        return_url: `${HOST_API}/api/paypal/capture-order/${venta.uuidCliente}`,
         cancel_url: `${CLIENT_URL}`,
       },
     };
@@ -125,16 +115,18 @@ export const captureOrder = async (req: Request, res: Response) => {
   try {
     const { token } = req.query;
     const uuid = req.params.uuid;
-    let pedidoProducto: PedidoProducto = {} as PedidoProducto;
+    let venta: Venta = {} as Venta;
 
     const conn: Pool = await connect();
 
-    const [[pedido]]: [any[], FieldPacket[]] = await conn.query(
-      `SELECT * FROM pedidoProducto AS pp WHERE pp.uuidCliente = ? && pp.estado = 'pagando' ;`,
+    const [[venta_row]]: [any[], FieldPacket[]] = await conn.query(
+      `SELECT * FROM venta AS v WHERE v.uuidCliente = ? && v.estado = 'pagando' ;`,
       [uuid]
     );
-    pedidoProducto = pedido as PedidoProducto;
-    pedidoProducto.estado = 'pendiente';
+
+    venta = venta_row as VentaProducto;
+    venta.estado = 'pendiente';
+
     const response = await axios.post(
       `${PAYPAL_API}/v2/checkout/orders/${token}/capture`,
       {},
@@ -146,8 +138,8 @@ export const captureOrder = async (req: Request, res: Response) => {
       }
     );
 
-    await conn.query(`UPDATE pedidoProducto SET ? WHERE uuid = ?`, [pedidoProducto, pedido.uuid]);
-    await conn.query('DELETE FROM carritoProducto WHERE uuidCliente = ?', [uuid]);
+    await conn.query(`UPDATE venta SET ? WHERE uuid = ?`, [venta, venta.uuid]);
+    await conn.query(`DELETE FROM carritoProducto WHERE uuidCliente = ?`, [uuid]);
 
     res.redirect(`${CLIENT_URL}/profile`);
   } catch (error) {

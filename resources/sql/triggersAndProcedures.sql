@@ -79,8 +79,6 @@ BEGIN
 END;
 
 
-
-
 # PERSONAL
 
 CREATE PROCEDURE personal_procedure(
@@ -93,11 +91,11 @@ CREATE PROCEDURE personal_procedure(
 )
 BEGIN
     INSERT INTO log_personal(operacion,
-                            creadoEn,
-                            creadoPor,
-                            uuidCreadoPor,
-                            hostname,
-                            uuidRow)
+                             creadoEn,
+                             creadoPor,
+                             uuidCreadoPor,
+                             hostname,
+                             uuidRow)
     SELECT operacion,
            creadoEn,
            creadoPor,
@@ -161,9 +159,6 @@ BEGIN
 END;
 
 
-
-
-
 # PROYECTO
 
 CREATE PROCEDURE proyecto_procedure(
@@ -176,11 +171,11 @@ CREATE PROCEDURE proyecto_procedure(
 )
 BEGIN
     INSERT INTO log_proyecto (operacion,
-                            creadoEn,
-                            creadoPor,
-                            uuidCreadoPor,
-                            hostname,
-                            uuidRow)
+                              creadoEn,
+                              creadoPor,
+                              uuidCreadoPor,
+                              hostname,
+                              uuidRow)
     SELECT operacion,
            creadoEn,
            creadoPor,
@@ -244,7 +239,6 @@ BEGIN
 END;
 
 
-
 #DOCUMENTOS
 
 CREATE PROCEDURE documentos_procedure(
@@ -257,11 +251,11 @@ CREATE PROCEDURE documentos_procedure(
 )
 BEGIN
     INSERT INTO log_documentos (operacion,
-                            creadoEn,
-                            creadoPor,
-                            uuidCreadoPor,
-                            hostname,
-                            uuidRow)
+                                creadoEn,
+                                creadoPor,
+                                uuidCreadoPor,
+                                hostname,
+                                uuidRow)
     SELECT operacion,
            creadoEn,
            creadoPor,
@@ -337,11 +331,11 @@ CREATE PROCEDURE producto_procedure(
 )
 BEGIN
     INSERT INTO log_producto (operacion,
-                            creadoEn,
-                            creadoPor,
-                            uuidCreadoPor,
-                            hostname,
-                            uuidRow)
+                              creadoEn,
+                              creadoPor,
+                              uuidCreadoPor,
+                              hostname,
+                              uuidRow)
     SELECT operacion,
            creadoEn,
            creadoPor,
@@ -403,3 +397,66 @@ BEGIN
 
     set @uuidCreadoPor = '', @creadoPor = '';
 END;
+
+
+# =============================== trigger ventas
+
+CREATE TRIGGER insert_conceptoVenta_trigger
+    AFTER
+        INSERT
+    ON conceptoVenta
+    FOR EACH ROW
+BEGIN
+    UPDATE producto AS p
+        INNER JOIN conceptoventa c on p.uuid = c.uuidProducto
+        INNER JOIN venta v on c.uuidVenta = v.uuid
+    SET p.stock = p.stock - NEW.cantidad
+    WHERE p.uuid = NEW.uuidProducto
+      AND v.estado != 'pendiente' AND v.estado!= 'pagando' AND NEW.uuid = c.uuid;
+END;
+
+drop trigger insert_conceptoVenta_trigger;
+
+
+
+
+CREATE TRIGGER delete_venta_trigger
+    BEFORE
+        DELETE
+    ON venta
+    FOR EACH ROW
+BEGIN
+    UPDATE producto AS p INNER JOIN conceptoventa c on p.uuid = c.uuidProducto
+    INNER JOIN venta v on c.uuidVenta = v.uuid
+    SET p.stock = p.stock + c.cantidad
+    WHERE c.uuidVenta = OLD.uuid AND v.estado != 'pendiente' AND v.estado!= 'pagando';
+END;
+
+
+CREATE TRIGGER delete_ventaConcepto_trigger
+    AFTER
+        DELETE
+    ON conceptoventa
+    FOR EACH ROW
+BEGIN
+    UPDATE producto AS p
+    INNER JOIN conceptoventa c on p.uuid = c.uuidProducto
+    INNER JOIN venta v on c.uuidVenta = v.uuid
+    SET p.stock = p.stock + OLD.cantidad
+    WHERE p.uuid = OLD.uuidProducto AND v.estado != 'pendiente' AND v.estado!= 'pagando';
+END;
+
+
+CREATE TRIGGER update_venta_trigger
+    AFTER
+        UPDATE
+    ON venta
+    FOR EACH ROW
+BEGIN
+    UPDATE producto AS p
+    INNER JOIN conceptoventa c on p.uuid = c.uuidProducto
+    INNER JOIN venta v on c.uuidVenta = v.uuid
+    SET p.stock = p.stock - c.cantidad
+    WHERE  v.estado != 'pendiente' AND v.estado!= 'pagando' AND v.uuid = NEW.uuid AND v.tipoVenta = 'online';
+END;
+
