@@ -22,13 +22,6 @@ create index uuidCliente
 create index uuidProducto
     on opinionproducto (uuidProducto);
 
-INSERT INTO mendozarq.opinionproducto (uuid, creadoEn, titulo, descripcion, estado, verificado, puntuacion, uuidProducto, uuidCliente) VALUES ('4f9de555-30b8-437a-8371-986a32f39915', '2022-01-05 16:58:18', 'Demasidado car!', 'Ayer compre este producto y resulta que en la chancha esta a mitad de precio, no lo compren es una estafa xd.', 0, 0, 5, '7d9ca4bb-b259-4ce2-b069-4893f074b597', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72');
-INSERT INTO mendozarq.opinionproducto (uuid, creadoEn, titulo, descripcion, estado, verificado, puntuacion, uuidProducto, uuidCliente) VALUES ('74042bcf-0a6e-43d2-83b1-c57a1388d688', '2022-01-05 16:59:20', 'dasd', 'dasdasdasdsadsadsadsad', 0, 0, 1, '7d9ca4bb-b259-4ce2-b069-4893f074b597', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72');
-INSERT INTO mendozarq.opinionproducto (uuid, creadoEn, titulo, descripcion, estado, verificado, puntuacion, uuidProducto, uuidCliente) VALUES ('9e92aac4-8bb3-4d14-8c8c-d13e61fa6777', '2021-11-27 22:00:26', 'Mala calidad', 'La calidad de estr producto se ve reflejado en que apenas lo mire y se rompio xd.', 0, 0, 1, '2fe5ff3e-f808-4e6d-916a-d4959bb87227', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72');
-INSERT INTO mendozarq.opinionproducto (uuid, creadoEn, titulo, descripcion, estado, verificado, puntuacion, uuidProducto, uuidCliente) VALUES ('ca8ad072-2f80-450f-b1c3-bfb93af2f32c', '2021-12-20 21:48:50', 'dsadsa', 'dsadasdsadasdasdsaasdd', 0, 0, 5, '7d9ca4bb-b259-4ce2-b069-4893f074b597', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72');
-INSERT INTO mendozarq.opinionproducto (uuid, creadoEn, titulo, descripcion, estado, verificado, puntuacion, uuidProducto, uuidCliente) VALUES ('da8513d6-2a00-4008-9c9a-12445c168ee4', '2021-11-27 22:01:55', 'Exelente  Recomendado', 'Abalada Descifrable Ficoideo Géminis Gencianeo Cencapa. Engastadura Cenestesia
-Batavia Abajadero Gendarmería. Genearca Descervigamiento Descerrajar Fidecomiso
-Engaste Cencerro Batatazo Engastador. Batavia Cenceñada Abajo
-Abalada Descifrable Ficoideo Géminis Gencianeo Cencapa. Engastadura Cenestesia
-Batavia Abajadero Gendarmería. Genearca Descervigamiento Descerrajar Fidecomiso
-Engaste Cencerro Batatazo Engastador. Batavia Cenceñada Abajo', 0, 0, 5, '2fe5ff3e-f808-4e6d-916a-d4959bb87227', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72');
+INSERT INTO mendozarq.opinionproducto (uuid, creadoEn, titulo, descripcion, estado, verificado, puntuacion, uuidProducto, uuidCliente) VALUES ('5ba26b9e-f051-40ed-a878-4f439889ea88', '2022-03-29 15:39:48', 'rewrewr', 'werrrrrrrrrrrrrrrrrrrrrrrrrrrr', 0, 0, 3, 'fa97335b-3efd-499d-9ec2-78c49597a301', 'bf493a64-4573-433f-92b0-edbcae73a98b');
+INSERT INTO mendozarq.opinionproducto (uuid, creadoEn, titulo, descripcion, estado, verificado, puntuacion, uuidProducto, uuidCliente) VALUES ('78a9061b-56ad-43a2-ba91-f83407ba0f88', '2022-03-29 15:40:10', 'rrrrrrrrrrrr', 'rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr', 0, 0, 4, 'fa97335b-3efd-499d-9ec2-78c49597a301', 'bf493a64-4573-433f-92b0-edbcae73a98b');
+INSERT INTO mendozarq.opinionproducto (uuid, creadoEn, titulo, descripcion, estado, verificado, puntuacion, uuidProducto, uuidCliente) VALUES ('8376e961-9286-49e8-982e-a688c006ec95', '2022-03-29 15:39:35', 'tret', 'ertretretertretretert', 1, 0, 5, 'fa97335b-3efd-499d-9ec2-78c49597a301', 'bf493a64-4573-433f-92b0-edbcae73a98b');
