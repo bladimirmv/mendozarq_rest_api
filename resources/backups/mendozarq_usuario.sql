@@ -20,11 +20,11 @@ INSERT INTO mendozarq.usuario (uuid, creadoEn, nombre, apellidoPaterno, apellido
 INSERT INTO mendozarq.usuario (uuid, creadoEn, nombre, apellidoPaterno, apellidoMaterno, celular, direccion, correo, username, contrasenha, rol, activo) VALUES ('178e1faa-b3f0-4900-a7b5-a19085c0cf9c', '2021-11-24 20:29:26', 'salomón', 'ruano', '', 72686187, '4265 Korta hernandez Vía Pública
 ', 'Francisco_Santana@yahoo.com', 'salomo1ydq', '$2b$10$MKlyLpWKHpnwOglfWDOMfeCnT0zwwFKXPEnWbyb7WZvyGTxo0HCiu', 'cliente', 1);
 INSERT INTO mendozarq.usuario (uuid, creadoEn, nombre, apellidoPaterno, apellidoMaterno, celular, direccion, correo, username, contrasenha, rol, activo) VALUES ('2319b069-bde2-452c-af94-ec08f68c722c', '2021-11-24 20:39:52', 'leandra', 'villa', 'jordán', 74568926, '817 Tamayo Grupo
-', 'XimenaGuadalupe18@yahoo.com', 'leandhbal2', '$2b$10$IN951.qE1yf.gHGRTlZp6.2ymwuyZmflQhmtd/xFjNb0ntGXpxF4m', 'vendedor', 1);
+', 'XimenaGuadalupe18@yahoo.com', 'leandhbal2', '$2b$10$g5h4utbZBrmhjrKTMV64.O3x6d43Zper9cu5CA7q9zpz5sQSSdHm6', 'vendedor', 1);
 INSERT INTO mendozarq.usuario (uuid, creadoEn, nombre, apellidoPaterno, apellidoMaterno, celular, direccion, correo, username, contrasenha, rol, activo) VALUES ('35f44215-b58f-491e-a439-4b39ea044442', '2021-11-24 20:42:26', 'sergio', 'olivé', 'lerma', 70045451, '9431 Contreras Puente
 ', 'Aarn.Gaitn22@example.com', 'sergimbswp', '$2b$10$ix0pSZUTSrJPnXcMfRxsCeuwS8RgwaEXRojgpxf.dD.yP2Ulsi1N2', 'administrador', 1);
 INSERT INTO mendozarq.usuario (uuid, creadoEn, nombre, apellidoPaterno, apellidoMaterno, celular, direccion, correo, username, contrasenha, rol, activo) VALUES ('36f1f6d4-163d-4856-a964-aae308769f27', '2021-11-24 20:39:06', 'severiano', 'peña', 'campillo', 66365952, '3803 Miranda Vía Pública
-', 'Jorge.Tello@corpfolder.com', 'severx0md2', '$2b$10$To8MZqCW0e6oYkvWzHAhPukq20Loln7Y6PPrBbaAJ9gV.mOepPjym', 'arquitecto', 1);
+', 'Jorge.Tello@corpfolder.com', 'severx0md2', '$2b$10$1gKBcTW.CzxQB2kmJ8slqeu4kHTpgbgfOBCFOWoDML9siHcVb0qtu', 'arquitecto', 1);
 INSERT INTO mendozarq.usuario (uuid, creadoEn, nombre, apellidoPaterno, apellidoMaterno, celular, direccion, correo, username, contrasenha, rol, activo) VALUES ('4655d3ef-55cb-4579-9776-7f39377f5368', '2021-11-24 20:34:38', 'josé', 'figueroa', 'ibáñez', 62256672, '931 Miranda Rambla
 ', 'Gabriela_Zelaya97@gmail.com', 'joséijvxca', '$2b$10$h0hwzjwGhhLlQDgosMOfM.fwVWmSatBoQ3VY1Yv6dp1Chi0oP8f.G', 'arquitecto', 1);
 INSERT INTO mendozarq.usuario (uuid, creadoEn, nombre, apellidoPaterno, apellidoMaterno, celular, direccion, correo, username, contrasenha, rol, activo) VALUES ('665d2f27-32f8-4ac2-81fc-f972bcfdce78', '2021-11-24 20:37:57', 'evangelina', 'molina', 'mercader', 66383117, '077 Negrete Gran Subida

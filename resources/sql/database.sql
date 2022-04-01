@@ -445,6 +445,30 @@ CREATE TABLE conceptoVenta
     FOREIGN KEY (uuidProducto) REFERENCES producto (uuid)
 );
 
+CREATE TABLE recurso
+(
+    uuid           varchar(100) PRIMARY KEY,
+    creadoEn       timestamp                                                      DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    nombre         varchar(100)                                                                             NOT NULL,
+    descripcion    varchar(200),
+    tipoRecurso    enum ('materia_prima', 'maquinas', 'material_de_construccion') DEFAULT 'materia_prima',
+    area           enum ('mendozarq', 'liraki', 'mendoraki')                      DEFAULT 'mendozarq',
+    precioUnitario decimal(15, 2)                                                 DEFAULT 0,
+    precioPorMayor decimal(15, 2)                                                 DEFAULT 0
+);
+
+CREATE TABLE proveedor
+(
+    uuid        varchar(100) PRIMARY KEY,
+    creadoEn    timestamp    DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    nombre      varchar(100)                           NOT NULL,
+    celular     int,
+    direccion   varchar(200),
+    descripcion varchar(200),
+    uuidRecurso varchar(100) DEFAULT NULL,
+    FOREIGN KEY (uuidRecurso) REFERENCES recurso (uuid)
+);
+
 
 
 /* ////////////////////////////// */

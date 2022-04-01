@@ -24,3 +24,4 @@ adipisicing elit. Deleniti fugiat ipsum, sequi, quis eaque in nobis ullam volupt
 aspernat', 'construccion', 1, '2021-11-27', '2022-12-31', ' Lorem ipsum dolor sit amet consectetur,
 adipisicing elit. Deleniti fugiat ipsum, sequi, quis eaque in nobis ullam voluptate id quia magni tempore pariatur voluptatem? Eos officia ut modi rem
 aspernat', 0, 'bf493a64-4573-433f-92b0-edbcae73a98b');
+INSERT INTO mendozarq.proyecto (uuid, creadoEn, nombre, descripcion, categoria, estado, fechaInicio, fechaFinal, lugarProyecto, porcentaje, uuidCliente) VALUES ('8ee6d457-1315-4c9b-bfae-7d7e04ac75a8', '2022-03-30 21:51:37', 'proyecto de prueba', 'proyecto de prueba de la constructora mendozarq', 'construccion', 1, '2022-03-18', '2022-03-31', 'dsaas', 0, 'bf493a64-4573-433f-92b0-edbcae73a98b');
