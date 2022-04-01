@@ -107,10 +107,9 @@ export const updatePlanificacionProyecto = async (req: Request, res: Response) =
         message: 'No se ha podido registrar, por favor ingrese los datos requeridos',
       });
     }
-    const [[row]]: [any[], FieldPacket[]] = await conn.query(
-      `SELECT * FROM planificacionProyecto WHERE uuid = ?`,
-      [uuidPlanificacion]
-    );
+    const [[row]]: [any[], FieldPacket[]] = await conn.query(`SELECT * FROM planificacionProyecto WHERE uuid = ?`, [
+      uuidPlanificacion,
+    ]);
 
     if (!row) {
       return res.status(404).json({
@@ -118,13 +117,39 @@ export const updatePlanificacionProyecto = async (req: Request, res: Response) =
       });
     }
 
-    await conn.query(`UPDATE planificacionProyecto SET ? WHERE uuid = ? `, [
-      planificacion,
-      uuidPlanificacion,
-    ]);
+    await conn.query(`UPDATE planificacionProyecto SET ? WHERE uuid = ? `, [planificacion, uuidPlanificacion]);
 
     res.status(201).json({
       message: 'Planificacion actualizado correctamente! 😀',
+    });
+  } catch (error) {
+    console.log('❌Ocurrio un error:', error);
+    return res.status(400).json({
+      message: error,
+    });
+  }
+};
+
+export const deletePlanificacionProyecto = async (req: Request, res: Response) => {
+  try {
+    const conn: Pool = await connect();
+    const uuid: string = req.params.uuid;
+
+    const [[row]]: [any[], FieldPacket[]] = await conn.query(`SELECT * FROM planificacionProyecto WHERE uuid = ?;`, [
+      uuid,
+    ]);
+    const capituloPlanificion: CapituloPlanificacionProyecto = row as CapituloPlanificacionProyecto;
+
+    if (!capituloPlanificion) {
+      return res.status(404).json({
+        message: 'No se pudo eliminar la planificacion, por que no existe. 🙁',
+      });
+    }
+
+    await conn.query(`DELETE FROM planificacionProyecto WHERE uuid = ?;`, [uuid]);
+
+    return res.status(200).json({
+      message: 'Tarea eliminado correctamente. 😀',
     });
   } catch (error) {
     console.log('❌Ocurrio un error:', error);
@@ -174,9 +199,7 @@ export const addCapituloPlanificacionProyecto = async (req: Request, res: Respon
 
     capituloPlanificacionProyecto.uuid = uuid();
 
-    await conn.query(`INSERT INTO capituloPlanificacionProyecto SET ? `, [
-      capituloPlanificacionProyecto,
-    ]);
+    await conn.query(`INSERT INTO capituloPlanificacionProyecto SET ? `, [capituloPlanificacionProyecto]);
     res.status(201).json({
       message: 'Tarea creado correctamente! 😀',
     });
@@ -248,10 +271,7 @@ export const updateTareaPlanificacionProyecto = async (req: Request, res: Respon
       });
     }
 
-    await conn.query(`UPDATE tareaPlanificacionProyecto SET ? WHERE uuid = ? `, [
-      tareaPlanificacion,
-      uuidTarea,
-    ]);
+    await conn.query(`UPDATE tareaPlanificacionProyecto SET ? WHERE uuid = ? `, [tareaPlanificacion, uuidTarea]);
 
     res.status(201).json({
       message: 'Tarea actualizado correctamente! 😀',
@@ -268,8 +288,6 @@ export const deleteTareaPlanificacionProyecto = async (req: Request, res: Respon
   try {
     const conn: Pool = await connect();
     const uuid: string = req.params.uuid;
-
-    console.log('uuid: ', uuid);
 
     const [[row]]: [any[], FieldPacket[]] = await conn.query(
       `SELECT * FROM tareaPlanificacionProyecto WHERE uuid = ?;`,
@@ -300,8 +318,6 @@ export const deleteCapituloPlanificacionProyecto = async (req: Request, res: Res
   try {
     const conn: Pool = await connect();
     const uuid: string = req.params.uuid;
-
-    console.log('uuid: ', uuid);
 
     const [[row]]: [any[], FieldPacket[]] = await conn.query(
       `SELECT * FROM capituloPlanificacionProyecto WHERE uuid = ?;`,

@@ -9,28 +9,15 @@ const upload = multer().any();
 
 const router = Router();
 
-router.route('/')
-	.get(
-		[checkJwt, checkRole(['administrador'])],
-		p.getAllProyecto
-	)
-	.post(
-		[checkJwt, checkRole(['administrador'])],
-		p.addProyecto
-	);
+router
+  .route('/')
+  .get([checkJwt, checkRole(['administrador', 'arquitecto'])], p.getAllProyecto)
+  .post([checkJwt, checkRole(['administrador', 'arquitecto'])], p.addProyecto);
 
-router.route('/:uuid')
-	.get(
-		[checkJwt, checkRole(['administrador'])],
-		p.getOneProyecto
-	)
-	.put(
-		[checkJwt, checkRole(['administrador'])],
-		p.updateProyecto
-	)
-	.delete(
-		[checkJwt, checkRole(['administrador'])],
-		p.deleteProyecto
-	);
+router
+  .route('/:uuid')
+  .get([checkJwt, checkRole(['administrador', 'arquitecto'])], p.getOneProyecto)
+  .put([checkJwt, checkRole(['administrador', 'arquitecto'])], p.updateProyecto)
+  .delete([checkJwt, checkRole(['administrador'])], p.deleteProyecto);
 
 export default router;

@@ -43,6 +43,10 @@ import pedidoRoutes from './../routes/liraki/pedido.producto.routes';
 import homePageRoutes from './../routes/liraki/home.page.routes';
 import ventaRoutes from './../routes/liraki/venta.producto.routes';
 
+// *Mendoraki
+import recursoRoutes from './../routes/mendoraki/recurso.routes';
+import proveedorRoutes from './../routes/mendoraki/proveedor.routes';
+
 import pagosRoutes from './../routes/liraki/pagos.paypal.routes';
 import herramientaRoutes from '../routes/mendozarq/herramienta.routes';
 
@@ -126,6 +130,10 @@ export default class App {
     this.app.use('/api/pedidoProducto', pedidoRoutes);
     this.app.use('/api/homePage', homePageRoutes);
     this.app.use('/api/venta', ventaRoutes);
+
+    // *Mendoraki
+    this.app.use('/api/recurso', recursoRoutes);
+    this.app.use('/api/proveedor', proveedorRoutes);
 
     this.app.use('/api/paypal', pagosRoutes);
 
