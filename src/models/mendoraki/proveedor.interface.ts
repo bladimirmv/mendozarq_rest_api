@@ -5,5 +5,5 @@ export interface Proveedor {
   celular: number;
   direccion: string;
   descripcion: string;
-  uuidRecurso?: string;
+  uuidRecurso?: string | null;
 }

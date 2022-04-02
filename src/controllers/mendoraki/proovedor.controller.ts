@@ -17,6 +17,8 @@ export const addProveedor = async (req: Request, res: Response) => {
     }
     proveedor.uuid = uuid();
 
+    proveedor.uuidRecurso = proveedor.uuidRecurso === 'null' ? null : proveedor.uuidRecurso;
+
     await conn.query('INSERT INTO proveedor SET ?', [proveedor]);
 
     return res.status(201).json({
@@ -56,7 +58,9 @@ export const getAllProveedor = async (req: Request, res: Response) => {
   try {
     const conn: Pool = await connect();
 
-    const [proveedor]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM proveedor ORDER BY creadoEn DESC');
+    const [proveedor]: [any[], FieldPacket[]] = await conn.query(`SELECT p.*, r.nombre AS recurso FROM proveedor AS p
+    LEFT JOIN recurso r on p.uuidRecurso = r.uuid
+    ORDER BY p.creadoEn DESC;`);
 
     return res.status(200).json(proveedor);
   } catch (error) {
