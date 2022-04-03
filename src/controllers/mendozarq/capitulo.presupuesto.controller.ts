@@ -43,7 +43,31 @@ export const getAllCapitulos = async (req: Request, res: Response) => {
     const conn: Pool = await connect();
 
     const [presupuestoobra]: [any[], FieldPacket[]] = await conn.query(
-      `SELECT * FROM capituloPresupuesto ORDER BY creadoEn`
+      `SELECT * FROM capituloPresupuesto  GROUP BY nombre ORDER BY nombre; `
+    );
+
+    res.status(200).json(presupuestoobra);
+  } catch (error) {
+    console.log('❌Ocurrio un error:', error);
+    return res.status(400).json({
+      message: error,
+    });
+  }
+};
+
+// ====================>
+export const getAllCapitulosByProyecto = async (req: Request, res: Response) => {
+  try {
+    const conn: Pool = await connect();
+    const uuid: string = req.params.uuid;
+
+    const [presupuestoobra]: [any[], FieldPacket[]] = await conn.query(
+      `SELECT c.*
+      FROM capituloPresupuesto AS c
+      LEFT JOIN presupuestoObra po on c.uuidPresupuestoObra = po.uuid
+      LEFT JOIN proyecto p on po.uuidProyecto = p.uuid
+      WHERE p.uuid = ? ORDER BY c.creadoEn;`,
+      [uuid]
     );
 
     res.status(200).json(presupuestoobra);

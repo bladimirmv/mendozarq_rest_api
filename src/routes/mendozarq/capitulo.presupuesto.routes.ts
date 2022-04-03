@@ -18,4 +18,7 @@ router
   .put([checkJwt, checkRole(['administrador', 'arquitecto'])], cp.updateCapituloPresupuesto)
   .delete([checkJwt, checkRole(['administrador', 'arquitecto'])], cp.deleteCapituloPresupuesto);
 
+router
+  .route('/proyecto/:uuid')
+  .get([checkJwt, checkRole(['administrador', 'arquitecto'])], cp.getAllCapitulosByProyecto);
 export default router;
