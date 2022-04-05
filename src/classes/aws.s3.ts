@@ -6,7 +6,6 @@ import { ManagedUpload } from 'aws-sdk/clients/s3';
 import { s3ClientConfiguration } from './../classes/aws.s3.config';
 import { AWS_S3 } from './../global/enviroment';
 import { FileResponse } from './../models/fileResponse.interface';
-import { reject, resolve } from 'bluebird';
 
 const s3 = new aws.S3(s3ClientConfiguration);
 
@@ -73,16 +72,6 @@ export const downloadFile = async (req: Request, res: Response) => {
     Key: req.params.key,
   };
 
-  // res.setHeader('Content-Disposition', 'attachment');
-  // s3.getObject(params)
-  // 	.createReadStream()
-  // 	.on('error', error => {
-  // 		return res.status(500).json({
-  // 			message: 'Ocurrio un error al descargar el archivo',
-  // 			error
-  // 		});
-  // 	}).pipe(res);
-
   s3.getObject(params, (err: aws.AWSError, data: aws.S3.GetObjectOutput) => {
     if (err) {
       res.status(200);
@@ -120,6 +109,7 @@ export const deleteFile = (keyName: string) => {
       Bucket: AWS_S3.Bucket,
       Key: keyName,
     };
+
     s3.deleteObject(params, (error: aws.AWSError, data: aws.S3.DeleteObjectOutput) => {
       return error ? reject(error) : resolve(data);
     });
