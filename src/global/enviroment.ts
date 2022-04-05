@@ -12,11 +12,9 @@ export const AWS_S3: {
   secretAccessKey: string;
   Bucket: string;
 } = {
-  // accessKeyId: 'AKIAS5TJVX4USELPVU5Q',
-  // secretAccessKey: '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',
-  accessKeyId: 'AKIAS5TJVX4U6UC6PT77',
-  secretAccessKey: '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',
-  Bucket: 'mendozarq-liraki-s3',
+  accessKeyId: process.env.accessKeyId as string,
+  secretAccessKey: process.env.secretAccessKey as string,
+  Bucket: process.env.Bucket as string,
 };
 
 export const PAYPAL_API_CLIENT: string = process.env.PAYPAL_API_CLIENT as string;
