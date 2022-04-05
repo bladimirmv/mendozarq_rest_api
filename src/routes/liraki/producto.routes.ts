@@ -21,10 +21,7 @@ router
   .put([checkJwt, checkRole(['administrador'])], p.updateProducto)
   .delete([checkJwt, checkRole(['administrador'])], p.deleteProducto);
 
-router
-  .route('/fotoProducto')
-
-  .post([checkJwt, checkRole(['administrador'])], upload, p.addFotoProducto);
+router.route('/fotoProducto').post([checkJwt, checkRole(['administrador'])], upload, p.addFotoProducto);
 
 router
   .route('/fotoProducto/:uuid')

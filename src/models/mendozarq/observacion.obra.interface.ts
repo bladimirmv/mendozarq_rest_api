@@ -1,10 +1,22 @@
-export type Estado = 'En curso' | 'Pendiente' | 'Fecha limite' | 'Aprobar' | 'Con retraso' | 'Finalizado';
-
 export interface ObservacionObra {
-	uuid?: string;
-	creadoEn?: Date;
-	estado?: Estado;
-	fecha?: Date;
-	descripcion?: string;
-	uuidVisita: string;
+  uuid?: string;
+  creadoEn?: Date;
+  puntoDeInspeccion: string;
+  observacion: string;
+  levantamientoObservacion: string;
+  uuidVisita: string;
+}
+
+export interface FotoObservacionObra {
+  uuid?: string;
+  creadoEn?: Date;
+  keyName: string;
+  fileName: string;
+  location: string;
+  size: string;
+  uuidObservacionObra: string;
+}
+
+export interface ObservacionObraView extends ObservacionObra {
+  fotos: FotoObservacionObra[];
 }

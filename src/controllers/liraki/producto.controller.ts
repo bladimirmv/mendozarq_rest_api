@@ -235,10 +235,6 @@ export const deleteProducto = async (req: Request, res: Response) => {
       }
     });
 
-    // await conn.query('DELETE FROM fotoProducto WHERE uuidProducto = ?', [uuid]);
-
-    // await conn.query('DELETE FROM detalleCategoriaProducto WHERE uuidProducto = ?', [uuid]);
-
     await conn.query('DELETE FROM producto WHERE uuid = ?', [uuid]);
 
     emitAllLogs();

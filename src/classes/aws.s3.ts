@@ -13,11 +13,7 @@ const s3 = new aws.S3(s3ClientConfiguration);
 export type aclS3 = 'private' | 'public-read' | 'public-read-write';
 
 // ====================> uploadOneFile
-export const uploadOneFile = (
-  file: Express.Multer.File,
-  fileRef?: string,
-  ACL?: aclS3
-): Promise<FileResponse> => {
+export const uploadOneFile = (file: Express.Multer.File, fileRef?: string, ACL?: aclS3): Promise<FileResponse> => {
   return new Promise<FileResponse>((resolve, reject) => {
     const originalName = file.originalname;
     const myFile = file.originalname.split('.');
@@ -38,11 +34,7 @@ export const uploadOneFile = (
 };
 
 // ====================> uploadMoreThanOneFile
-export const uploadFiles = (
-  files: Express.Multer.File[],
-  fileRef?: string,
-  ACL?: aclS3
-): Promise<FileResponse[]> => {
+export const uploadFiles = (files: Express.Multer.File[], fileRef?: string, ACL?: aclS3): Promise<FileResponse[]> => {
   return Promise.all(
     files.map((file: Express.Multer.File) => {
       return uploadOneFile(file, fileRef, ACL);
@@ -128,11 +120,8 @@ export const deleteFile = (keyName: string) => {
       Bucket: AWS_S3.Bucket,
       Key: keyName,
     };
-    s3.deleteObject(
-      params,
-      (error: aws.AWSError, data: aws.S3.DeleteObjectOutput) => {
-        return error ? reject(error) : resolve(data);
-      }
-    );
+    s3.deleteObject(params, (error: aws.AWSError, data: aws.S3.DeleteObjectOutput) => {
+      return error ? reject(error) : resolve(data);
+    });
   });
 };
