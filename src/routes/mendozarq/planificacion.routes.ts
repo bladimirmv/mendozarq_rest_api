@@ -12,7 +12,7 @@ router.route('/').post([checkJwt, checkRole(['administrador', 'arquitecto'])], p
 router
   .route('/:uuid')
   .get([checkJwt, checkRole(['administrador', 'arquitecto'])], p.getPlanificacionProyecto)
-  .delete([checkJwt, checkRole(['administrador', 'arquitecto'])], p.deletePlanificacionProyecto)
+  .delete([checkJwt, checkRole(['administrador'])], p.deletePlanificacionProyecto)
   .put([checkJwt, checkRole(['administrador', 'arquitecto'])], p.updatePlanificacionProyecto);
 
 router.route('/all/:uuid').get([checkJwt, checkRole(['administrador', 'arquitecto'])], p.getAllPlanificacionProyecto);
@@ -30,7 +30,7 @@ router
 
 router
   .route('/capitulo/:uuid')
-  .delete([checkJwt, checkRole(['administrador', 'arquitecto'])], p.deleteCapituloPlanificacionProyecto)
+  .delete([checkJwt, checkRole(['administrador'])], p.deleteCapituloPlanificacionProyecto)
   .put([checkJwt, checkRole(['administrador', 'arquitecto'])], p.updateCapittuloPlanificacionProyecto);
 
 export default router;

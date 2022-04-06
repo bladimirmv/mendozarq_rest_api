@@ -10,7 +10,7 @@ import { createToken } from './auth.controller';
 
 import { emitAllLogs } from './../../controllers/logs/logs.controller';
 
-// ===================================================================================================
+// ========================================================================================
 function generateUsuario(usuario: Usuario): Usuario {
   let lack = 0;
   if (String(usuario.nombre).length < 5) {
@@ -21,12 +21,12 @@ function generateUsuario(usuario: Usuario): Usuario {
     usuario.nombre.substring(0, 5) + generator.generate({ length: 5 + lack, numbers: true, uppercase: false });
   return usuario;
 }
-// ===================================================================================================
+// =================================================================================
 function generateContrasenha(usuario: Usuario): Usuario {
   usuario.contrasenha = generator.generate({ length: 10, numbers: true });
   return usuario;
 }
-// ===================================================================================================
+// ======================================================================
 export async function addUsuario(req: Request, res: Response) {
   try {
     // *creating pool
@@ -308,6 +308,30 @@ export async function usuarioRegister(req: Request, res: Response) {
         body: usuario,
       });
     }
+  } catch (error) {
+    console.log('❌Ocurrio un error:', error);
+    return res.status(400).json({
+      message: error,
+    });
+  }
+}
+
+export async function getAllStatsUsuarios(req: Request, res: Response) {
+  try {
+    // *creating pool
+    let conn: Pool = await connect();
+
+    // *geting all usuarios
+    const [[usuarios]]: [any[], FieldPacket[]] =
+      await conn.query(`select sum(case when u.rol = 'administrador' then 1 else 0 end) as administrador,
+    sum(case when u.rol = 'arquitecto' then 1 else 0 end) as arquitecto,
+    sum(case when u.rol = 'vendedor' then 1 else 0 end) as vendedor,
+    sum(case when u.rol = 'cliente' then 1 else 0 end) as cliente
+    from usuario as u;`);
+    // conn.end();
+
+    // *returning data
+    return res.status(200).send(usuarios);
   } catch (error) {
     console.log('❌Ocurrio un error:', error);
     return res.status(400).json({

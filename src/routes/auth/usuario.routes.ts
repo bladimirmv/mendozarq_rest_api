@@ -8,6 +8,7 @@ import {
   updateUsuario,
   deleteUsuario,
   usuarioRegister,
+  getAllStatsUsuarios,
 } from '../../controllers/auth/usuario.controller';
 import { checkJwt } from './../../middlewares/jwt';
 import { checkRole } from '../../middlewares/roles';
@@ -26,5 +27,7 @@ router
   .delete([checkJwt, checkRole(['administrador'])], deleteUsuario);
 
 router.route('/register/').post(usuarioRegister);
+
+router.route('/stats/rol').get([checkJwt, checkRole(['administrador', 'vendedor', 'arquitecto'])], getAllStatsUsuarios);
 
 export default router;
