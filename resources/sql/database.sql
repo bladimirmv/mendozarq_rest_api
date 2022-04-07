@@ -129,8 +129,9 @@ CREATE TABLE visitaProyecto
 (
     uuid            varchar(100) PRIMARY KEY,
     creadoEn        timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    estado          boolean   default false,
     nombre          varchar(50)                         NOT NULL,
-    faseDelProyecto varchar(100)                        NOT NULL,
+    faseDelProyecto TEXT                                NOT NULL,
     descripcion     varchar(200),
     fecha           timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
     uuidProyecto    varchar(100)                        NOT NULL,
@@ -280,37 +281,6 @@ CREATE TABLE opinionProducto
     FOREIGN KEY (uuidCliente) REFERENCES usuario (uuid)
 );
 
-
-
-CREATE TABLE ventaProducto
-(
-    uuid         varchar(100) PRIMARY KEY,
-    creadoEn     timestamp    DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    uuidCliente  varchar(100)                           NOT NULL,
-    uuidVendedor varchar(100) DEFAULT NULL,
-    tipoVenta    TEXT                                   NOT NULL,
-    metodoPago   text                                   NOT NULL,
-    FOREIGN KEY (uuidCliente) REFERENCES usuario (uuid),
-    FOREIGN KEY (uuidVendedor) REFERENCES usuario (uuid)
-);
-
-
-
-CREATE TABLE detalleVentaProducto
-(
-    uuid              varchar(100) PRIMARY KEY,
-    creadoEn          timestamp      DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    uuidVentaProducto varchar(100)                             NOT NULL,
-    uuidProducto      varchar(100)                             NOT NULL,
-    descuento         decimal(15, 2) DEFAULT 0                 NOT NULL,
-    cantidad          int                                      NOT NULL,
-    precio            decimal(15, 2)                           NOT NULL,
-    FOREIGN KEY (uuidVentaProducto) REFERENCES ventaProducto (uuid) on delete cascade,
-    FOREIGN KEY (uuidProducto) REFERENCES producto (uuid)
-);
-
-
-
 CREATE TABLE planificacionProyecto
 (
     uuid         varchar(100) PRIMARY KEY,
@@ -320,8 +290,6 @@ CREATE TABLE planificacionProyecto
     uuidProyecto varchar(100)                        not null,
     FOREIGN KEY (uuidProyecto) REFERENCES proyecto (uuid) on delete cascade
 );
-
-
 
 CREATE TABLE capituloPlanificacionProyecto
 (
@@ -349,6 +317,7 @@ CREATE TABLE tareaPlanificacionProyecto
     dependencia  varchar(100),
     hito         boolean   default false,
     color        text,
+    actividades  text,
     uuidCapitulo varchar(100)                        not null,
     FOREIGN KEY (uuidCapitulo) REFERENCES capituloPlanificacionProyecto (uuid) ON DELETE CASCADE
 );
@@ -363,49 +332,6 @@ CREATE TABLE carritoProducto
     FOREIGN KEY (uuidProducto) REFERENCES producto (uuid),
     FOREIGN KEY (uuidCliente) REFERENCES usuario (uuid)
 );
-
-
-CREATE TABLE pedidoProducto
-(
-    uuid            varchar(100) PRIMARY KEY,
-    creadoEn        timestamp                                                        DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    numeroPedido    int unique auto_increment                                                                  NOT NULL,
-    nombre          varchar(50)                                                                                NOT NULL,
-    apellidoPaterno varchar(50)                                                                                NOT NULL,
-    apellidoMaterno varchar(50),
-    celular         int                                                                                        not null,
-    direccion       text                                                                                       not null,
-    correo          varchar(100)                                                                               not null,
-    nombreFactura   varchar(50)                                                                                not null,
-    nitCI           text                                                                                       not null,
-    tipoEnvio       enum ('delivery', 'carpinteria'),
-    descripcion     varchar(500)                                                                               not null,
-    metodoDePago    enum ( 'efectivo','deposito_transferencia_qr', 'paypal')                                   not null,
-    total           decimal(15, 2)                                                                             NOT NULL,
-    uuidCliente     varchar(100)                                                                               not null,
-    estado          enum ('pagando','pendiente', 'confirmado','envio', 'completado') default 'pendiente'       not null,
-    FOREIGN KEY (uuidCliente) REFERENCES usuario (uuid)
-);
-
-drop table if exists carritoPedido, pedidoProducto;
-
-alter table pedidoProducto
-    auto_increment = 1000001;
-CREATE TABLE carritoPedido
-(
-    uuid         varchar(100) PRIMARY KEY,
-    creadoEn     timestamp      DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    cantidad     int            default 1                 not null,
-    uuidProducto varchar(100)                             not null,
-    uuidPedido   varchar(100)                             not null,
-    precio       decimal(15, 2)                           NOT NULL,
-    descuento    decimal(15, 2) DEFAULT 0                 NOT NULL,
-    nombre       varchar(300)                             NOT NULL,
-    descripcion  varchar(1000),
-    FOREIGN KEY (uuidProducto) REFERENCES producto (uuid),
-    FOREIGN KEY (uuidPedido) REFERENCES pedidoProducto (uuid) ON DELETE CASCADE
-);
-
 
 CREATE TABLE venta
 (
@@ -428,9 +354,9 @@ CREATE TABLE venta
     FOREIGN KEY (uuidVendedor) REFERENCES usuario (uuid)
 );
 
-drop table if exists conceptoVenta, venta;
 alter table venta
     auto_increment = 1000001;
+
 CREATE TABLE conceptoVenta
 (
     uuid           varchar(100) PRIMARY KEY,
@@ -469,11 +395,34 @@ CREATE TABLE proveedor
     FOREIGN KEY (uuidRecurso) REFERENCES recurso (uuid)
 );
 
+CREATE TABLE observacionObra
+(
+    uuid                     varchar(100) PRIMARY KEY,
+    creadoEn                 timestamp    DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    puntoDeInspeccion        TEXT,
+    observacion              varchar(100),
+    levantamientoObservacion TEXT,
+    uuidVisita               varchar(100) DEFAULT NULL,
+    FOREIGN KEY (uuidVisita) REFERENCES visitaProyecto (uuid)
+);
+
+CREATE TABLE fotoObservacionObra
+(
+    uuid                varchar(100) PRIMARY KEY,
+    creadoEn            timestamp    DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    keyName             text                                   NOT NULL,
+    fileName            text                                   not null,
+    location            text                                   NOT NULL,
+    size                int                                    not null,
+    uuidObservacionObra varchar(100) DEFAULT NULL,
+    FOREIGN KEY (uuidObservacionObra) REFERENCES observacionObra (uuid) ON DELETE CASCADE
+);
 
 
-/* ////////////////////////////// */
 
-use mendozarq;
+/* //////////////////////////////////////////////////////////////////////////////////////////////////// */
+
+
 
 CREATE PROCEDURE usuario_procedure(
     IN operacion CHAR(1),
@@ -887,11 +836,12 @@ BEGIN
         INNER JOIN venta v on c.uuidVenta = v.uuid
     SET p.stock = p.stock - NEW.cantidad
     WHERE p.uuid = NEW.uuidProducto
-      AND v.estado != 'pendiente' AND v.estado!= 'pagando' AND NEW.uuid = c.uuid;
+      AND v.estado != 'pendiente'
+      AND v.estado != 'pagando'
+      AND NEW.uuid = c.uuid;
 END;
 
 drop trigger insert_conceptoVenta_trigger;
-
 
 
 
@@ -902,9 +852,11 @@ CREATE TRIGGER delete_venta_trigger
     FOR EACH ROW
 BEGIN
     UPDATE producto AS p INNER JOIN conceptoventa c on p.uuid = c.uuidProducto
-    INNER JOIN venta v on c.uuidVenta = v.uuid
+        INNER JOIN venta v on c.uuidVenta = v.uuid
     SET p.stock = p.stock + c.cantidad
-    WHERE c.uuidVenta = OLD.uuid AND v.estado != 'pendiente' AND v.estado!= 'pagando';
+    WHERE c.uuidVenta = OLD.uuid
+      AND v.estado != 'pendiente'
+      AND v.estado != 'pagando';
 END;
 
 
@@ -915,10 +867,12 @@ CREATE TRIGGER delete_ventaConcepto_trigger
     FOR EACH ROW
 BEGIN
     UPDATE producto AS p
-    INNER JOIN conceptoventa c on p.uuid = c.uuidProducto
-    INNER JOIN venta v on c.uuidVenta = v.uuid
+        INNER JOIN conceptoventa c on p.uuid = c.uuidProducto
+        INNER JOIN venta v on c.uuidVenta = v.uuid
     SET p.stock = p.stock + OLD.cantidad
-    WHERE p.uuid = OLD.uuidProducto AND v.estado != 'pendiente' AND v.estado!= 'pagando';
+    WHERE p.uuid = OLD.uuidProducto
+      AND v.estado != 'pendiente'
+      AND v.estado != 'pagando';
 END;
 
 
@@ -929,10 +883,103 @@ CREATE TRIGGER update_venta_trigger
     FOR EACH ROW
 BEGIN
     UPDATE producto AS p
-    INNER JOIN conceptoventa c on p.uuid = c.uuidProducto
-    INNER JOIN venta v on c.uuidVenta = v.uuid
+        INNER JOIN conceptoventa c on p.uuid = c.uuidProducto
+        INNER JOIN venta v on c.uuidVenta = v.uuid
     SET p.stock = p.stock - c.cantidad
-    WHERE  v.estado != 'pendiente' AND v.estado!= 'pagando' AND v.uuid = NEW.uuid AND v.tipoVenta = 'online';
+    WHERE v.estado != 'pendiente'
+      AND v.estado != 'pagando'
+      AND v.uuid = NEW.uuid
+      AND v.tipoVenta = 'online';
 END;
 
 
+CREATE TRIGGER insert_capituloPlanificacion_trigger
+    AFTER
+        INSERT
+    ON capituloPlanificacionProyecto
+    FOR EACH ROW
+BEGIN
+    UPDATE proyecto as p
+        INNER JOIN planificacionProyecto pp on p.uuid = pp.uuidProyecto
+        INNER JOIN capituloPlanificacionProyecto cpp on pp.uuid = cpp.uuidPlanificacionProyecto
+    SET porcentaje = (SELECT (sum(cp.avance) / (100 * count(cp.avance))) * 100
+                      FROM capituloPlanificacionProyecto as cp
+                      where cp.uuidPlanificacionProyecto = NEW.uuidPlanificacionProyecto)
+    WHERE cpp.uuidPlanificacionProyecto =  NEW.uuidPlanificacionProyecto;
+END;
+
+CREATE TRIGGER update_capituloPlanificacion_trigger
+    AFTER
+        UPDATE
+    ON capituloPlanificacionProyecto
+    FOR EACH ROW
+BEGIN
+    UPDATE proyecto as p
+        INNER JOIN planificacionProyecto pp on p.uuid = pp.uuidProyecto
+        INNER JOIN capituloPlanificacionProyecto cpp on pp.uuid = cpp.uuidPlanificacionProyecto
+    SET porcentaje = (SELECT (sum(cp.avance) / (100 * count(cp.avance))) * 100
+                      FROM capituloPlanificacionProyecto as cp
+                      where cp.uuidPlanificacionProyecto = NEW.uuidPlanificacionProyecto)
+    WHERE cpp.uuidPlanificacionProyecto =  NEW.uuidPlanificacionProyecto;
+END;
+
+CREATE TRIGGER delete_capituloPlanificacion_trigger
+    AFTER
+        DELETE
+    ON capituloPlanificacionProyecto
+    FOR EACH ROW
+BEGIN
+    UPDATE proyecto as p
+        INNER JOIN planificacionProyecto pp on p.uuid = pp.uuidProyecto
+        INNER JOIN capituloPlanificacionProyecto cpp on pp.uuid = cpp.uuidPlanificacionProyecto
+    SET porcentaje = (SELECT (sum(cp.avance) / (100 * count(cp.avance))) * 100
+                      FROM capituloPlanificacionProyecto as cp
+                      where cp.uuidPlanificacionProyecto = OLD.uuidPlanificacionProyecto)
+    WHERE cpp.uuidPlanificacionProyecto =  OLD.uuidPlanificacionProyecto;
+END;
+
+
+
+CREATE TRIGGER insert_tareaPlanificacion_trigger
+    AFTER
+        INSERT
+    ON tareaplanificacionproyecto
+    FOR EACH ROW
+BEGIN
+    UPDATE capituloplanificacionproyecto as cp
+    INNER JOIN tareaplanificacionproyecto t on cp.uuid = t.uuidCapitulo
+    SET cp.avance = (SELECT (sum(t.avance) / (100 * count(t.avance))) * 100
+                      FROM tareaplanificacionproyecto as t
+                      where t.uuidCapitulo = NEW.uuidCapitulo)
+    WHERE cp.uuid =  NEW.uuidCapitulo;
+END;
+
+
+CREATE TRIGGER update_tareaPlanificacion_trigger
+    AFTER
+        UPDATE
+    ON tareaplanificacionproyecto
+    FOR EACH ROW
+BEGIN
+    UPDATE capituloplanificacionproyecto as cp
+    INNER JOIN tareaplanificacionproyecto t on cp.uuid = t.uuidCapitulo
+    SET cp.avance = (SELECT (sum(t.avance) / (100 * count(t.avance))) * 100
+                      FROM tareaplanificacionproyecto as t
+                      where t.uuidCapitulo = NEW.uuidCapitulo)
+    WHERE cp.uuid =  NEW.uuidCapitulo;
+END;
+
+
+CREATE TRIGGER delete_tareaPlanificacion_trigger
+    AFTER
+        DELETE
+    ON tareaplanificacionproyecto
+    FOR EACH ROW
+BEGIN
+    UPDATE capituloplanificacionproyecto as cp
+    INNER JOIN tareaplanificacionproyecto t on cp.uuid = t.uuidCapitulo
+    SET cp.avance = (SELECT (sum(t.avance) / (100 * count(t.avance))) * 100
+                      FROM tareaplanificacionproyecto as t
+                      where t.uuidCapitulo = OLD.uuidCapitulo)
+    WHERE cp.uuid =  OLD.uuidCapitulo;
+END;
