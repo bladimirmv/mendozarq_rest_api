@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 01-04-2022 a las 21:48:31
+-- Tiempo de generación: 07-04-2022 a las 20:58:12
 -- Versión del servidor: 10.4.22-MariaDB
 -- Versión de PHP: 8.0.13
 
@@ -125,8 +125,50 @@ CREATE TABLE `capituloplanificacionproyecto` (
 --
 
 INSERT INTO `capituloplanificacionproyecto` (`uuid`, `creadoEn`, `nombre`, `fechaInicio`, `fechaFinal`, `avance`, `dependencia`, `color`, `uuidPlanificacionProyecto`) VALUES
-('3e5eb62b-388f-4ca2-b40f-afce49edd08a', '2022-02-11 17:27:41', 'Lorem ipsum dolor sit amet consectetura', '2022-02-01', '2022-05-31', 0, '', '#ed1212', '3d8c04fa-552d-43c0-b2fc-c49e0c9f6bf2'),
-('c2ced438-d97e-4f1c-8a7c-f3a56de9b4d5', '2022-02-17 18:57:16', 'dsadasdas', '2022-02-15', '2022-02-28', 58, '962f6dcd-4565-4c0b-93a2-8dc309b337a2', '#00ff1e', '3d8c04fa-552d-43c0-b2fc-c49e0c9f6bf2');
+('384a37d2-9d46-489e-9127-c80d5f1e9037', '2022-04-06 23:06:18', 'Limpieza de obra', '2022-04-06', '2022-04-30', 46, '962f6dcd-4565-4c0b-93a2-8dc309b337a2', '', '3d8c04fa-552d-43c0-b2fc-c49e0c9f6bf2'),
+('3e5eb62b-388f-4ca2-b40f-afce49edd08a', '2022-02-12 13:27:41', 'Lorem ipsum dolor sit amet consectetura', '2022-02-01', '2022-05-31', 31, '', '#ed1212', '3d8c04fa-552d-43c0-b2fc-c49e0c9f6bf2'),
+('7bc3ab75-27bc-4955-bbfc-59f5ba5a36eb', '2022-04-06 22:34:53', 'Cielorraso', '2022-04-05', '2022-04-27', 81, 'b75d2f11-abbf-41d4-bf4d-96bb6db2ac19', '#17a215', '9086f313-c5a7-4ce4-8444-73d50b31d0ba'),
+('c6bdce00-1b21-4e82-afe6-d0fd62eb33e1', '2022-04-03 04:24:51', 'Carpintería', '2022-04-07', '2022-04-29', 5, '', '', '9086f313-c5a7-4ce4-8444-73d50b31d0ba');
+
+--
+-- Disparadores `capituloplanificacionproyecto`
+--
+DELIMITER $$
+CREATE TRIGGER `delete_capituloPlanificacion_trigger` AFTER DELETE ON `capituloplanificacionproyecto` FOR EACH ROW BEGIN
+    UPDATE proyecto as p
+        INNER JOIN planificacionProyecto pp on p.uuid = pp.uuidProyecto
+        INNER JOIN capituloPlanificacionProyecto cpp on pp.uuid = cpp.uuidPlanificacionProyecto
+    SET porcentaje = (SELECT (sum(cp.avance) / (100 * count(cp.avance))) * 100
+                      FROM capituloPlanificacionProyecto as cp
+                      where cp.uuidPlanificacionProyecto = OLD.uuidPlanificacionProyecto)
+    WHERE cpp.uuidPlanificacionProyecto =  OLD.uuidPlanificacionProyecto;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `insert_capituloPlanificacion_trigger` AFTER INSERT ON `capituloplanificacionproyecto` FOR EACH ROW BEGIN
+    UPDATE proyecto as p
+        INNER JOIN planificacionProyecto pp on p.uuid = pp.uuidProyecto
+        INNER JOIN capituloPlanificacionProyecto cpp on pp.uuid = cpp.uuidPlanificacionProyecto
+    SET porcentaje = (SELECT (sum(cp.avance) / (100 * count(cp.avance))) * 100
+                      FROM capituloPlanificacionProyecto as cp
+                      where cp.uuidPlanificacionProyecto = NEW.uuidPlanificacionProyecto)
+    WHERE cpp.uuidPlanificacionProyecto =  NEW.uuidPlanificacionProyecto;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `update_capituloPlanificacion_trigger` AFTER UPDATE ON `capituloplanificacionproyecto` FOR EACH ROW BEGIN
+    UPDATE proyecto as p
+        INNER JOIN planificacionProyecto pp on p.uuid = pp.uuidProyecto
+        INNER JOIN capituloPlanificacionProyecto cpp on pp.uuid = cpp.uuidPlanificacionProyecto
+    SET porcentaje = (SELECT (sum(cp.avance) / (100 * count(cp.avance))) * 100
+                      FROM capituloPlanificacionProyecto as cp
+                      where cp.uuidPlanificacionProyecto = NEW.uuidPlanificacionProyecto)
+    WHERE cpp.uuidPlanificacionProyecto =  NEW.uuidPlanificacionProyecto;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -148,6 +190,7 @@ CREATE TABLE `capitulopresupuesto` (
 
 INSERT INTO `capitulopresupuesto` (`uuid`, `creadoEn`, `nombre`, `descuento`, `uuidPresupuestoObra`) VALUES
 ('0867e0f0-2cef-4cf6-9c97-43bb9b2bf300', '2022-04-01 01:48:23', 'Instalación de agua', 0, '5185e058-4571-47fd-abd8-84ba0fa9c633'),
+('0b8054d9-6acd-498e-ad8b-fe60c6fb836c', '2022-04-03 00:18:21', 'Cielorraso', 0, 'b4961720-0113-47b7-8bb7-06203e3b5c1b'),
 ('0d88ad6c-9969-459e-b783-9f8090139d1c', '2022-04-01 01:48:23', 'Estructura de Hormigón - Piso de Hormigón', 3, '5185e058-4571-47fd-abd8-84ba0fa9c633'),
 ('1b6fada0-d017-4a2e-9caf-df8039cf7415', '2022-04-01 01:48:23', 'Cielorraso', 0, '5185e058-4571-47fd-abd8-84ba0fa9c633'),
 ('1d3debb0-896b-47d2-93fe-a91a8652bfe2', '2022-03-30 21:49:38', 'Carpintería', 0, 'e0251f45-2ddf-4096-872a-99c319a09b40'),
@@ -170,6 +213,7 @@ INSERT INTO `capitulopresupuesto` (`uuid`, `creadoEn`, `nombre`, `descuento`, `u
 ('c884b424-64e7-4e29-b6a0-77f3e611129b', '2022-04-01 01:48:23', 'Mampostería piso de hormigón', 30, '5185e058-4571-47fd-abd8-84ba0fa9c633'),
 ('c96ec13a-e65a-4718-838b-4f40abc07a5d', '2022-04-01 01:48:23', 'Tareas Previas', 0, '5185e058-4571-47fd-abd8-84ba0fa9c633'),
 ('cf926cbf-3410-462a-a63a-0f24f4c7ecf1', '2022-04-01 01:48:23', 'Revoques', 0, '5185e058-4571-47fd-abd8-84ba0fa9c633'),
+('d519aadf-d75f-4def-bdf6-4d3856efa381', '2022-04-03 00:16:36', 'Carpintería', 0, 'b4961720-0113-47b7-8bb7-06203e3b5c1b'),
 ('d69f0aa3-a583-488e-af05-a25c9169409b', '2022-03-30 21:50:07', 'Limpieza de obra', 0, 'e0251f45-2ddf-4096-872a-99c319a09b40'),
 ('da0094f1-e3eb-412a-b2ea-f8483eadfe28', '2022-03-30 21:49:21', 'Revestimientos', 2, 'e0251f45-2ddf-4096-872a-99c319a09b40'),
 ('dd5df8f4-a389-4fdc-a013-7ef6ae727a72', '2022-04-01 01:48:23', 'Carpintería', 0, '5185e058-4571-47fd-abd8-84ba0fa9c633'),
@@ -197,33 +241,6 @@ CREATE TABLE `carpetaproyecto` (
 INSERT INTO `carpetaproyecto` (`uuid`, `creadoEn`, `nombre`, `fechaCreacion`, `uuidProyecto`) VALUES
 ('0408c8b7-568e-4b41-8d32-1494526794e6', '2022-02-17 19:02:57', 'fsdfsd', '2022-02-17', '13f3af68-d552-4c54-bde6-816f474dd4ec'),
 ('4ac34ea3-a85a-49ba-a5e9-9c959e29dbd8', '2021-12-20 16:47:52', 'gghh', '2021-12-20', '13f3af68-d552-4c54-bde6-816f474dd4ec');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `carritopedido`
---
-
-CREATE TABLE `carritopedido` (
-  `uuid` varchar(100) NOT NULL,
-  `creadoEn` timestamp NOT NULL DEFAULT current_timestamp(),
-  `cantidad` int(11) NOT NULL DEFAULT 1,
-  `uuidProducto` varchar(100) NOT NULL,
-  `uuidPedido` varchar(100) NOT NULL,
-  `precio` decimal(15,2) NOT NULL,
-  `descuento` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `nombre` varchar(300) NOT NULL,
-  `descripcion` varchar(1000) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Volcado de datos para la tabla `carritopedido`
---
-
-INSERT INTO `carritopedido` (`uuid`, `creadoEn`, `cantidad`, `uuidProducto`, `uuidPedido`, `precio`, `descuento`, `nombre`, `descripcion`) VALUES
-('33084c0e-8246-4cbd-962e-84423dd44d16', '2022-03-25 01:14:50', 1, 'fa97335b-3efd-499d-9ec2-78c49597a301', '26e59816-f126-47e6-ac2d-4a5abe607538', '300.00', '0.00', 'Escaleras para exterior con disenho minimalista de madera de pino', 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo beatae quisquam, optio eligendi atque dicta minima labore dolor odio? Ex quos vel aliquid possimus officia obcaecati harum repellat autem quo!'),
-('b42fc84e-48fd-4bfc-a482-5afb4fbdbc2b', '2022-03-25 01:14:50', 1, '890d6295-ad7a-481f-acf0-c608c5e7a9df', '26e59816-f126-47e6-ac2d-4a5abe607538', '5000.00', '0.00', 'Escaleras de madera de abeto para interior', 'Abada Gen Increpar Incorporal Abadejo Bastonada Engastador Abajadero Abacorar. Geminar Generador Abajo Abacorar Batán Ficticio Cendal Ficha. Cendrazo Cenata Gemoterapia Incrédulo. Engarrafador Batallador Abajeño Incrédulo Abajo Engarrar Cenata Generador. Engarberar Descepar Incorporal Incordio Gemoso Incredibilidad Fichar Fice Ceneque Gemiquear.'),
-('df3f9949-6fa9-4e10-8700-4690cab32048', '2022-03-25 01:14:50', 1, 'b84f59d3-650e-4cb6-815d-cec6bfc49ac0', '26e59816-f126-47e6-ac2d-4a5abe607538', '1000.00', '0.00', 'Escaleras minimalistas para interior de Abeto', '');
 
 -- --------------------------------------------------------
 
@@ -310,11 +327,13 @@ INSERT INTO `conceptoventa` (`uuid`, `creadoEn`, `cantidad`, `precioUnitario`, `
 ('16681a33-1c63-4cc8-ad76-929d338b627f', '2022-03-29 18:31:42', 1, '100.00', '100.00', '0.00', '7307299d-ec02-4f52-98d0-baf027033698', '43121aeb-3c5c-495f-aaef-901abaf0a187'),
 ('23149635-0bd6-4943-9991-123332d00437', '2022-03-28 20:32:10', 1, '200.00', '200.00', '0.00', 'ad8325f8-1f19-4364-8a1f-0d85732d7d71', '3cc11389-8cf3-47f1-a410-11e1d5f28786'),
 ('39c349a3-582b-471f-a388-f11559052b7d', '2022-03-30 02:55:01', 3, '700.00', '2037.00', '3.00', '2fe5ff3e-f808-4e6d-916a-d4959bb87227', '79de7552-0d78-4769-a4a6-f9aeb387cdb9'),
-('49fe99f6-9207-4f5c-a598-800f5301d982', '2022-03-30 16:50:53', 1, '150.00', '90.00', '40.00', '7e92e09b-7a2a-44ba-b2c9-21a0bc9b7d63', 'cc4f12ad-e21c-4dda-a569-0317a59f8bc7'),
+('49fe99f6-9207-4f5c-a598-800f5301d982', '2022-04-05 22:33:59', 1, '150.00', '90.00', '40.00', '7e92e09b-7a2a-44ba-b2c9-21a0bc9b7d63', 'cc4f12ad-e21c-4dda-a569-0317a59f8bc7'),
 ('62aafcfa-6647-446e-bc0f-52d58c651ff2', '2022-03-28 20:32:22', 2, '500.00', '950.00', '5.00', 'ec428dc7-a821-4b21-b16b-c9f98f88687c', '9b4fc1b7-5384-4cdf-9666-d8a468bbe447'),
 ('8bc11ef8-136c-4acb-915d-7e100305b038', '2022-03-28 19:55:23', 1, '300.00', '300.00', '0.00', 'fa97335b-3efd-499d-9ec2-78c49597a301', '68ffeb5b-40f9-4b98-bea7-701c793707d1'),
+('8cfa3cce-25e1-4f05-9f56-8674425f3c0b', '2022-04-05 22:33:59', 1, '1000.00', '1000.00', '0.00', 'b84f59d3-650e-4cb6-815d-cec6bfc49ac0', 'cc4f12ad-e21c-4dda-a569-0317a59f8bc7'),
 ('9405f14e-1a8d-419c-b932-54c2b4b37e94', '2022-03-28 20:30:48', 1, '100.00', '100.00', '0.00', '7307299d-ec02-4f52-98d0-baf027033698', 'f5146dff-9e4c-41e3-8088-0d9e51d11216'),
 ('94e3d057-a76a-4582-803e-ed59bd397200', '2022-03-30 16:50:20', 1, '700.00', '700.00', '0.00', '5e916855-3d48-46b5-b2ab-47cffea85be7', '29c54bef-6ab0-436d-becf-6ce650767285'),
+('b9def12a-b4f1-41fa-8fe1-f150639170bf', '2022-04-05 22:33:59', 2, '300.00', '600.00', '0.00', 'fa97335b-3efd-499d-9ec2-78c49597a301', 'cc4f12ad-e21c-4dda-a569-0317a59f8bc7'),
 ('c3b7759d-97dd-4aa7-86f5-122ecdd0a303', '2022-03-28 20:32:10', 5, '700.00', '3395.00', '3.00', '2fe5ff3e-f808-4e6d-916a-d4959bb87227', '3cc11389-8cf3-47f1-a410-11e1d5f28786'),
 ('d3ceda5f-2e7d-48c1-b98e-bd452df8ccf0', '2022-03-28 19:55:23', 1, '500.00', '475.00', '5.00', 'ec428dc7-a821-4b21-b16b-c9f98f88687c', '68ffeb5b-40f9-4b98-bea7-701c793707d1'),
 ('dd3d3b4d-4d30-401c-a94d-e60969bc715c', '2022-03-28 20:30:48', 1, '1000.00', '1000.00', '0.00', 'b84f59d3-650e-4cb6-815d-cec6bfc49ac0', 'f5146dff-9e4c-41e3-8088-0d9e51d11216');
@@ -378,6 +397,7 @@ INSERT INTO `detallecapitulo` (`uuid`, `creadoEn`, `descripcion`, `unidad`, `can
 ('1e6aa7f4-d2e3-4959-a69e-4bd246e28c67', '2022-04-01 01:48:23', 'Aserrado y demolición piso de hº. Desag. Sala CIP', 'N/A', 1, '3.00', '43baf6dc-5410-46da-898f-72e273d89030'),
 ('214b4c07-4f13-430e-990c-1106011fe3fd', '2022-04-01 01:48:23', 'Llave esférica de corte 3/4', 'N/A', 3, '543.00', '0867e0f0-2cef-4cf6-9c97-43bb9b2bf300'),
 ('21978deb-e9a1-4f4b-aa8f-5ee015d2f847', '2022-04-01 01:48:23', 'Demolición de mampostería de bloques', 'N/A', 4, '756.00', '43baf6dc-5410-46da-898f-72e273d89030'),
+('242f4d1d-85d9-4458-aa47-8e3184b15769', '2022-04-03 00:18:18', 'Aserrado y demolic. Piso sobrepuesto sector Presala esp. 0,20', 'N/A', 0, '0.00', 'd519aadf-d75f-4def-bdf6-4d3856efa381'),
 ('2e15e2ce-a0c0-43a2-986b-07dd67d2c99d', '2022-04-01 01:48:23', 'Cañería termofusión 3/4\"', 'ml', 7, '534.00', '0867e0f0-2cef-4cf6-9c97-43bb9b2bf300'),
 ('3537b7e5-95be-4e2c-b8d0-3ef75c3647d8', '2022-04-01 01:48:23', 'Conexión y empalme a cámara existente.', 'N/A', 6, '654.00', '4c7b80ce-2db0-48c7-b96b-499d34e25d8f'),
 ('371bcedc-6694-45b8-9652-a0a80b3ee43b', '2022-03-30 21:54:41', 'Demolición de mampostería de bloques', 'N/A', 4, '756.00', '34ef8c42-85b1-4026-8de8-d78f5ac31550'),
@@ -402,6 +422,7 @@ INSERT INTO `detallecapitulo` (`uuid`, `creadoEn`, `descripcion`, `unidad`, `can
 ('60ea34e0-b717-4100-852f-cb313bd8444f', '2022-03-30 21:54:16', 'Aserrado y demolic. Piso sobrepuesto sector Presala esp. 0,20', 'N/A', 7, '786.00', '34ef8c42-85b1-4026-8de8-d78f5ac31550'),
 ('62f6e480-a39d-463b-9cdd-916527bb2810', '2022-03-30 22:06:43', 'Cielorraso desmontable de Placa Durlock 0,60x1,21 ', 'm²', 7, '312.00', 'eda9d0b4-f7fa-4c6b-8888-f3f941e6bfbf'),
 ('656325a4-8352-4e1f-ae46-18deb7c32bc3', '2022-03-30 22:02:23', 'Mampostería bloques de hormigón 12x19x39 lisos estándar (19x19x39)', 'm²', 9, '46545.00', 'b3be546e-62c4-478a-a556-51197e25a3f2'),
+('6a022c3a-b40f-4a81-a573-df0fb159c7c1', '2022-04-03 00:18:24', 'Azotado de concreto c/hidrófugo', 'N/A', 0, '0.00', '0b8054d9-6acd-498e-ad8b-fe60c6fb836c'),
 ('6b9225af-92fc-4d40-8c3e-973afa15f43f', '2022-03-30 21:53:32', 'Cerramiento de aislación del sector (estructura tubular + film pe. 200mc.)30,00X4,50', 'N/A', 1, '321.00', '63c6be32-c9df-473b-9fa9-c068765ded0c'),
 ('6eb0c9f8-9b16-4cee-b0ff-e0ed506d667e', '2022-03-30 22:10:58', 'Pintura al latex uso exterior antihongo repintado gral.', 'm²', 6, '312.00', 'ac4f8ef6-aea4-4ccf-8b53-6e80a687cfb0'),
 ('6f8f94b9-1dfe-405f-90a4-eab5d06478e0', '2022-03-30 22:07:42', 'Frente vidriado de paños fijos 3,95x3,70 TIPO  M1', 'N/A', 3, '312.00', '1d3debb0-896b-47d2-93fe-a91a8652bfe2'),
@@ -531,7 +552,6 @@ CREATE TABLE `documentoproyecto` (
 --
 
 INSERT INTO `documentoproyecto` (`uuid`, `creadoEn`, `nombre`, `keyName`, `location`, `fechaCreacion`, `uuidProyecto`, `size`, `path`) VALUES
-('079424f6-ec39-4dea-b8c4-54cde87636ad', '2021-12-20 16:14:45', 'ec099a798919901f12cba319de00f4ec.jpg', 'mendozarq/documents/48c21595-0e3c-4343-8c4e-1e409d30983c.jpg', 'https://mendozarq-liraki-s3.s3.amazonaws.com/mendozarq/documents/48c21595-0e3c-4343-8c4e-1e409d30983c.jpg', '2021-12-20', '13f3af68-d552-4c54-bde6-816f474dd4ec', 73342, 'root'),
 ('083fe6e4-aea9-4b65-883c-66384a0a0d43', '2022-02-17 18:44:44', 'moon-river-mountains-gradient-background-blue-night-cold-3440x1440-2527.jpg', 'mendozarq/documents/6f4715f4-a2d1-47fa-8895-96a06ddb2267.jpg', 'https://mendozarq-liraki-s3.s3.amazonaws.com/mendozarq/documents/6f4715f4-a2d1-47fa-8895-96a06ddb2267.jpg', '2022-02-17', '13f3af68-d552-4c54-bde6-816f474dd4ec', 521587, 'root'),
 ('0e62490b-8444-48d1-80f0-0994595574bf', '2022-02-14 14:49:30', 'how-to-extract-img-files-in-windows-10-thumb-bzxI4IDgg.jpg', 'mendozarq/documents/98559927-c666-4cbf-b9df-be7033e77428.jpg', 'https://mendozarq-liraki-s3.s3.amazonaws.com/mendozarq/documents/98559927-c666-4cbf-b9df-be7033e77428.jpg', '2022-02-14', '13f3af68-d552-4c54-bde6-816f474dd4ec', 13952, 'root'),
 ('32db189a-2d87-45ff-9eb4-7a8cf78b2d17', '2022-02-17 18:44:43', 'how-to-extract-img-files-in-windows-10-thumb-bzxI4IDgg.jpg', 'mendozarq/documents/aa558844-94d0-43f4-b3b9-7e480c1588a3.jpg', 'https://mendozarq-liraki-s3.s3.amazonaws.com/mendozarq/documents/aa558844-94d0-43f4-b3b9-7e480c1588a3.jpg', '2022-02-17', '13f3af68-d552-4c54-bde6-816f474dd4ec', 13952, 'root'),
@@ -592,6 +612,29 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `fotoobservacionobra`
+--
+
+CREATE TABLE `fotoobservacionobra` (
+  `uuid` varchar(100) NOT NULL,
+  `creadoEn` timestamp NOT NULL DEFAULT current_timestamp(),
+  `keyName` text NOT NULL,
+  `fileName` text NOT NULL,
+  `location` text NOT NULL,
+  `size` int(11) NOT NULL,
+  `uuidObservacionObra` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `fotoobservacionobra`
+--
+
+INSERT INTO `fotoobservacionobra` (`uuid`, `creadoEn`, `keyName`, `fileName`, `location`, `size`, `uuidObservacionObra`) VALUES
+('8930d19e-2202-4f71-becc-d4f28d272bd6', '2022-04-05 04:07:43', 'mendozarq/observaciones/images/ce25a568-9de7-4598-934d-933abae48ecf.png', 'capas-1024x763.png', 'https://mendozarq-liraki-s3.s3.amazonaws.com/mendozarq/observaciones/images/ce25a568-9de7-4598-934d-933abae48ecf.png', 581660, 'c357d0fc-197a-4726-9148-c02b4b917e42');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `fotoproducto`
 --
 
@@ -613,6 +656,7 @@ CREATE TABLE `fotoproducto` (
 INSERT INTO `fotoproducto` (`uuid`, `creadoEn`, `nombre`, `indice`, `keyName`, `location`, `size`, `uuidProducto`) VALUES
 ('01f19dad-b017-4393-bf7a-d168325acca3', '2022-03-11 22:56:42', '8ae794bfb3766f49104c419d96b4bf4a.jpg', 1, 'liraki/images/9e93e5c7-ebf0-4374-902d-01ec08c59082.jpg', 'https://mendozarq-liraki-s3.s3.amazonaws.com/liraki/images/9e93e5c7-ebf0-4374-902d-01ec08c59082.jpg', 19745, '7380f463-deb1-40ce-9f4f-7f5a959b6e32'),
 ('1e3c49dc-146b-493e-8bc2-a13b16845a23', '2021-11-25 01:19:46', 'HTB1sfyihVcJL1JjSZFOq6AWlXXas.jpg', 1, 'liraki/images/bf6ff2ef-0f81-46fa-b6b5-c5b7b2da22a5.jpg', 'https://mendozarq-liraki-s3.s3.amazonaws.com/liraki/images/bf6ff2ef-0f81-46fa-b6b5-c5b7b2da22a5.jpg', 255762, 'ec428dc7-a821-4b21-b16b-c9f98f88687c'),
+('3532c65a-15a1-463b-b8eb-19049f2a07e8', '2022-04-05 02:53:09', 'how-to-extract-img-files-in-windows-10-thumb-bzxI4IDgg.jpg', 1, 'liraki/images/c037bdb1-97ba-4686-9f2d-969f217c86d4.jpg', 'https://mendozarq-liraki-s3.s3.amazonaws.com/liraki/images/c037bdb1-97ba-4686-9f2d-969f217c86d4.jpg', 13952, '7307299d-ec02-4f52-98d0-baf027033698'),
 ('3cc219c3-6179-490f-949d-a68a373348ca', '2022-03-11 19:02:30', 'stairs-3958661__340.webp', 0, 'liraki/images/b48dc83c-890a-49cf-925c-9d8e81a8ff83.webp', 'https://mendozarq-liraki-s3.s3.amazonaws.com/liraki/images/b48dc83c-890a-49cf-925c-9d8e81a8ff83.webp', 51988, 'b84f59d3-650e-4cb6-815d-cec6bfc49ac0'),
 ('3f0fd344-e9c5-4516-bfe9-9b58f47af025', '2021-11-25 01:17:15', '147dd59123e82286621c0e5f50aaa665.jpg', 1, 'liraki/images/d2cfbf3f-f105-400d-bf26-24003057caba.jpg', 'https://mendozarq-liraki-s3.s3.amazonaws.com/liraki/images/d2cfbf3f-f105-400d-bf26-24003057caba.jpg', 12396, '890d6295-ad7a-481f-acf0-c608c5e7a9df'),
 ('3fed5f86-1bfb-4fec-b58c-75b77bd1af9a', '2021-11-25 01:26:25', 'descarga (1).jfif', 0, 'liraki/images/6c6b323b-24a5-4231-96eb-3bd9a8696771.jfif', 'https://mendozarq-liraki-s3.s3.amazonaws.com/liraki/images/6c6b323b-24a5-4231-96eb-3bd9a8696771.jfif', 6000, 'ad8325f8-1f19-4364-8a1f-0d85732d7d71'),
@@ -633,7 +677,7 @@ INSERT INTO `fotoproducto` (`uuid`, `creadoEn`, `nombre`, `indice`, `keyName`, `
 ('d3112c6d-ad08-48e9-8c33-858eb9b1293e', '2021-11-25 01:23:24', 'descarga.jfif', 1, 'liraki/images/549b7d8a-7f42-4558-8db2-0bd5028b659e.jfif', 'https://mendozarq-liraki-s3.s3.amazonaws.com/liraki/images/549b7d8a-7f42-4558-8db2-0bd5028b659e.jfif', 14183, '2fe5ff3e-f808-4e6d-916a-d4959bb87227'),
 ('d662a26f-6920-4be6-9d0b-f7820f361b58', '2021-11-25 01:20:49', 'descarga.jfif', 2, 'liraki/images/9efb1e60-c3f1-4a81-9854-49ed4f0104de.jfif', 'https://mendozarq-liraki-s3.s3.amazonaws.com/liraki/images/9efb1e60-c3f1-4a81-9854-49ed4f0104de.jfif', 5946, '5e916855-3d48-46b5-b2ab-47cffea85be7'),
 ('d70bd614-cf03-4aec-8d53-27fa52827a17', '2022-03-11 19:04:59', 'download.jpg', 0, 'liraki/images/7a2a9c7a-547d-493a-9851-7df52f65613a.jpg', 'https://mendozarq-liraki-s3.s3.amazonaws.com/liraki/images/7a2a9c7a-547d-493a-9851-7df52f65613a.jpg', 3804, '7e92e09b-7a2a-44ba-b2c9-21a0bc9b7d63'),
-('deb96b07-56f0-4b14-a1b0-d064f80d54a2', '2022-03-12 00:09:45', 'images.jpg', 0, 'liraki/images/3eb2c702-28e1-45bf-83ff-b37c117f8d0d.jpg', 'https://mendozarq-liraki-s3.s3.amazonaws.com/liraki/images/3eb2c702-28e1-45bf-83ff-b37c117f8d0d.jpg', 4648, '7307299d-ec02-4f52-98d0-baf027033698'),
+('deb96b07-56f0-4b14-a1b0-d064f80d54a2', '2022-03-12 04:09:45', 'images.jpg', 0, 'liraki/images/3eb2c702-28e1-45bf-83ff-b37c117f8d0d.jpg', 'https://mendozarq-liraki-s3.s3.amazonaws.com/liraki/images/3eb2c702-28e1-45bf-83ff-b37c117f8d0d.jpg', 4648, '7307299d-ec02-4f52-98d0-baf027033698'),
 ('df058e40-7f00-4084-bf75-7b0e8131af3b', '2021-11-25 01:23:24', 'mueble-en-crudo.jpg', 2, 'liraki/images/17c48fda-8e3b-4019-bc45-1c57f72ff4e1.jpg', 'https://mendozarq-liraki-s3.s3.amazonaws.com/liraki/images/17c48fda-8e3b-4019-bc45-1c57f72ff4e1.jpg', 14556, '2fe5ff3e-f808-4e6d-916a-d4959bb87227'),
 ('ea97b806-af53-48c5-a459-4cf8b205f208', '2021-11-25 01:19:46', 'window-5974000_960_720.png', 0, 'liraki/images/5ffd2399-c07a-4c06-92c3-aaee3757640e.png', 'https://mendozarq-liraki-s3.s3.amazonaws.com/liraki/images/5ffd2399-c07a-4c06-92c3-aaee3757640e.png', 464592, 'ec428dc7-a821-4b21-b16b-c9f98f88687c'),
 ('f77cc954-cd68-4cb3-b0d5-894445ae2060', '2022-03-11 22:57:43', '56ecd9f9d6d56ea9ef98acbcbdde4083.jpg', 1, 'liraki/images/ee75ba30-50b1-4919-ba30-3add7fe6a578.jpg', 'https://mendozarq-liraki-s3.s3.amazonaws.com/liraki/images/ee75ba30-50b1-4919-ba30-3add7fe6a578.jpg', 13005, 'b84f59d3-650e-4cb6-815d-cec6bfc49ac0'),
@@ -697,7 +741,10 @@ INSERT INTO `log_documentos` (`operacion`, `creadoEn`, `creadoPor`, `uuidCreadoP
 ('D', '2022-02-12 04:10:13', '', '', 'DESKTOP-0D2F255', 'documentos', 'mendozarq', '31e1a469-31a7-4a33-b2e6-ea4565318446'),
 ('I', '2022-02-14 14:49:30', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'documentos', 'mendozarq', '0e62490b-8444-48d1-80f0-0994595574bf'),
 ('I', '2022-02-17 18:44:43', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'documentos', 'mendozarq', '32db189a-2d87-45ff-9eb4-7a8cf78b2d17'),
-('I', '2022-02-17 18:44:44', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'documentos', 'mendozarq', '083fe6e4-aea9-4b65-883c-66384a0a0d43');
+('I', '2022-02-17 18:44:44', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'documentos', 'mendozarq', '083fe6e4-aea9-4b65-883c-66384a0a0d43'),
+('I', '2022-04-05 03:02:14', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'documentos', 'mendozarq', 'a7b80b1b-f166-4639-abe3-c40f41553d4c'),
+('D', '2022-04-05 03:18:26', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'documentos', 'mendozarq', '079424f6-ec39-4dea-b8c4-54cde87636ad'),
+('D', '2022-04-05 21:05:21', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'documentos', 'mendozarq', 'a7b80b1b-f166-4639-abe3-c40f41553d4c');
 
 -- --------------------------------------------------------
 
@@ -901,7 +948,14 @@ INSERT INTO `log_producto` (`operacion`, `creadoEn`, `creadoPor`, `uuidCreadoPor
 ('U', '2022-03-30 20:44:48', '', '', 'DESKTOP-0D2F255', 'producto', 'liraki', '2fe5ff3e-f808-4e6d-916a-d4959bb87227'),
 ('U', '2022-03-30 20:44:48', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'producto', 'liraki', '890d6295-ad7a-481f-acf0-c608c5e7a9df'),
 ('U', '2022-03-30 20:44:48', '', '', 'DESKTOP-0D2F255', 'producto', 'liraki', '2fe5ff3e-f808-4e6d-916a-d4959bb87227'),
-('U', '2022-03-30 20:44:48', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'producto', 'liraki', '7307299d-ec02-4f52-98d0-baf027033698');
+('U', '2022-03-30 20:44:48', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'producto', 'liraki', '7307299d-ec02-4f52-98d0-baf027033698'),
+('I', '2022-04-04 00:38:25', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'producto', 'liraki', '89a1c81c-4c4e-4435-a23d-356f3941b757'),
+('D', '2022-04-04 00:38:33', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'producto', 'liraki', '89a1c81c-4c4e-4435-a23d-356f3941b757'),
+('U', '2022-04-04 14:24:01', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'producto', 'liraki', '5e916855-3d48-46b5-b2ab-47cffea85be7'),
+('U', '2022-04-04 14:24:04', '', '', 'DESKTOP-0D2F255', 'producto', 'liraki', '5e916855-3d48-46b5-b2ab-47cffea85be7'),
+('U', '2022-04-05 22:33:59', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'producto', 'liraki', 'b84f59d3-650e-4cb6-815d-cec6bfc49ac0'),
+('U', '2022-04-05 22:33:59', '', '', 'DESKTOP-0D2F255', 'producto', 'liraki', 'fa97335b-3efd-499d-9ec2-78c49597a301'),
+('U', '2022-04-05 22:33:59', '', '', 'DESKTOP-0D2F255', 'producto', 'liraki', '7e92e09b-7a2a-44ba-b2c9-21a0bc9b7d63');
 
 -- --------------------------------------------------------
 
@@ -939,7 +993,42 @@ INSERT INTO `log_proyecto` (`operacion`, `creadoEn`, `creadoPor`, `uuidCreadoPor
 ('I', '2022-02-15 22:35:38', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '5f1c430d-cda9-4ee8-aa58-b011c3544567'),
 ('D', '2022-03-30 21:01:27', '', '', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '5f1c430d-cda9-4ee8-aa58-b011c3544567'),
 ('I', '2022-03-31 01:51:37', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '8ee6d457-1315-4c9b-bfae-7d7e04ac75a8'),
-('U', '2022-04-01 01:38:59', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '8ee6d457-1315-4c9b-bfae-7d7e04ac75a8');
+('U', '2022-04-01 01:38:59', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '8ee6d457-1315-4c9b-bfae-7d7e04ac75a8'),
+('U', '2022-04-06 13:45:05', NULL, NULL, 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '13f3af68-d552-4c54-bde6-816f474dd4ec'),
+('U', '2022-04-06 13:46:38', '', '', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '13f3af68-d552-4c54-bde6-816f474dd4ec'),
+('U', '2022-04-06 13:47:19', '', '', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '13f3af68-d552-4c54-bde6-816f474dd4ec'),
+('U', '2022-04-06 13:48:06', '', '', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '13f3af68-d552-4c54-bde6-816f474dd4ec'),
+('U', '2022-04-06 13:48:48', '', '', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '13f3af68-d552-4c54-bde6-816f474dd4ec'),
+('U', '2022-04-06 14:34:53', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '8ee6d457-1315-4c9b-bfae-7d7e04ac75a8'),
+('U', '2022-04-06 14:35:05', '', '', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '8ee6d457-1315-4c9b-bfae-7d7e04ac75a8'),
+('U', '2022-04-06 14:35:33', '', '', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '8ee6d457-1315-4c9b-bfae-7d7e04ac75a8'),
+('U', '2022-04-06 14:35:43', '', '', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '8ee6d457-1315-4c9b-bfae-7d7e04ac75a8'),
+('U', '2022-04-06 17:35:38', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '13f3af68-d552-4c54-bde6-816f474dd4ec'),
+('U', '2022-04-06 17:38:59', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '13f3af68-d552-4c54-bde6-816f474dd4ec'),
+('U', '2022-04-06 17:39:03', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '13f3af68-d552-4c54-bde6-816f474dd4ec'),
+('U', '2022-04-06 17:39:08', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '13f3af68-d552-4c54-bde6-816f474dd4ec'),
+('U', '2022-04-06 17:39:19', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '13f3af68-d552-4c54-bde6-816f474dd4ec'),
+('U', '2022-04-06 17:40:24', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '13f3af68-d552-4c54-bde6-816f474dd4ec'),
+('U', '2022-04-06 17:40:29', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '13f3af68-d552-4c54-bde6-816f474dd4ec'),
+('U', '2022-04-06 19:05:53', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '13f3af68-d552-4c54-bde6-816f474dd4ec'),
+('U', '2022-04-06 19:05:59', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '13f3af68-d552-4c54-bde6-816f474dd4ec'),
+('U', '2022-04-06 19:06:07', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '13f3af68-d552-4c54-bde6-816f474dd4ec'),
+('U', '2022-04-06 19:06:18', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '13f3af68-d552-4c54-bde6-816f474dd4ec'),
+('U', '2022-04-06 19:08:03', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '13f3af68-d552-4c54-bde6-816f474dd4ec'),
+('U', '2022-04-06 19:08:09', '', '', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '13f3af68-d552-4c54-bde6-816f474dd4ec'),
+('U', '2022-04-06 19:12:57', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '8ee6d457-1315-4c9b-bfae-7d7e04ac75a8'),
+('U', '2022-04-06 19:13:01', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '8ee6d457-1315-4c9b-bfae-7d7e04ac75a8'),
+('U', '2022-04-06 19:15:03', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '8ee6d457-1315-4c9b-bfae-7d7e04ac75a8'),
+('U', '2022-04-06 19:15:15', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '8ee6d457-1315-4c9b-bfae-7d7e04ac75a8'),
+('U', '2022-04-06 19:16:18', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '8ee6d457-1315-4c9b-bfae-7d7e04ac75a8'),
+('U', '2022-04-06 19:16:26', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '8ee6d457-1315-4c9b-bfae-7d7e04ac75a8'),
+('U', '2022-04-06 19:16:32', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '8ee6d457-1315-4c9b-bfae-7d7e04ac75a8'),
+('U', '2022-04-06 19:16:50', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '8ee6d457-1315-4c9b-bfae-7d7e04ac75a8'),
+('U', '2022-04-06 19:17:51', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '8ee6d457-1315-4c9b-bfae-7d7e04ac75a8'),
+('U', '2022-04-06 19:17:55', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '8ee6d457-1315-4c9b-bfae-7d7e04ac75a8'),
+('U', '2022-04-06 19:18:05', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '8ee6d457-1315-4c9b-bfae-7d7e04ac75a8'),
+('U', '2022-04-06 19:18:47', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '8ee6d457-1315-4c9b-bfae-7d7e04ac75a8'),
+('U', '2022-04-06 19:19:28', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'proyecto', 'mendozarq', '8ee6d457-1315-4c9b-bfae-7d7e04ac75a8');
 
 -- --------------------------------------------------------
 
@@ -1007,7 +1096,32 @@ INSERT INTO `log_usuario` (`operacion`, `creadoEn`, `creadoPor`, `uuidCreadoPor`
 ('U', '2022-03-28 17:24:45', 'carmelita cabrero castillo', 'bf493a64-4573-433f-92b0-edbcae73a98b', 'DESKTOP-0D2F255', 'usuario', 'mendozarq-liraki', 'bf493a64-4573-433f-92b0-edbcae73a98b'),
 ('U', '2022-03-30 16:26:08', 'carmelita cabrero castillo', 'bf493a64-4573-433f-92b0-edbcae73a98b', 'DESKTOP-0D2F255', 'usuario', 'mendozarq-liraki', 'bf493a64-4573-433f-92b0-edbcae73a98b'),
 ('U', '2022-04-01 02:26:25', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'usuario', 'mendozarq-liraki', '36f1f6d4-163d-4856-a964-aae308769f27'),
-('U', '2022-04-01 02:27:23', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'usuario', 'mendozarq-liraki', '2319b069-bde2-452c-af94-ec08f68c722c');
+('U', '2022-04-01 02:27:23', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'usuario', 'mendozarq-liraki', '2319b069-bde2-452c-af94-ec08f68c722c'),
+('U', '2022-04-06 19:37:37', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'usuario', 'mendozarq-liraki', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72'),
+('U', '2022-04-06 19:37:41', 'bladimir medranoo vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'usuario', 'mendozarq-liraki', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `observacionobra`
+--
+
+CREATE TABLE `observacionobra` (
+  `uuid` varchar(100) NOT NULL,
+  `creadoEn` timestamp NOT NULL DEFAULT current_timestamp(),
+  `puntoDeInspeccion` text DEFAULT NULL,
+  `observacion` varchar(100) DEFAULT NULL,
+  `levantamientoObservacion` text DEFAULT NULL,
+  `uuidVisita` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `observacionobra`
+--
+
+INSERT INTO `observacionobra` (`uuid`, `creadoEn`, `puntoDeInspeccion`, `observacion`, `levantamientoObservacion`, `uuidVisita`) VALUES
+('3e631e76-8ad4-427b-9aa2-db0487caa369', '2022-04-04 19:10:27', 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur veniam\nnisi vero, consequatur inventore harum. Dolorum, rem pariatur suscipit\nexercitationem esse adipisci aliquam.', 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur veniam\nnisi vero, consequatur ', 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur veniam\nnisi vero, consequatur inventore harum. Dolorum, rem pariatur suscipit\nexercitationem esse adipisci aliquam.', '38fc4888-69d9-4b9a-bbc5-7858f640334c'),
+('c357d0fc-197a-4726-9148-c02b4b917e42', '2022-04-04 19:10:01', 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur veniam\nnisi vero, consequatur inventore harum. Dolorum, rem pariatur suscipit\nexercitationem esse adipisci aliquam.', 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur veniam\nnisi vero, consequatur ', 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur veniam\nnisi vero, consequatur inventore harum. Dolorum, rem pariatur suscipit\nexercitationem esse adipisci aliquam.', '38fc4888-69d9-4b9a-bbc5-7858f640334c');
 
 -- --------------------------------------------------------
 
@@ -1096,39 +1210,6 @@ CREATE TABLE `participantevisita` (
 INSERT INTO `participantevisita` (`uuid`, `creadoEn`, `uuidVisitaProyecto`, `uuidUsuario`) VALUES
 ('8718a759-22c2-4375-88d7-ee52dc396672', '2022-02-17 19:00:58', '38fc4888-69d9-4b9a-bbc5-7858f640334c', '35f44215-b58f-491e-a439-4b39ea044442'),
 ('9bd2aed8-d47d-4b78-ad57-5c23685406be', '2022-02-17 19:00:58', '38fc4888-69d9-4b9a-bbc5-7858f640334c', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `pedidoproducto`
---
-
-CREATE TABLE `pedidoproducto` (
-  `uuid` varchar(100) NOT NULL,
-  `creadoEn` timestamp NOT NULL DEFAULT current_timestamp(),
-  `numeroPedido` int(11) NOT NULL,
-  `nombre` varchar(50) NOT NULL,
-  `apellidoPaterno` varchar(50) NOT NULL,
-  `apellidoMaterno` varchar(50) DEFAULT NULL,
-  `celular` int(11) NOT NULL,
-  `direccion` text NOT NULL,
-  `correo` varchar(100) NOT NULL,
-  `nombreFactura` varchar(50) NOT NULL,
-  `nitCI` text NOT NULL,
-  `tipoEnvio` enum('delivery','carpinteria') DEFAULT NULL,
-  `descripcion` varchar(500) NOT NULL,
-  `metodoDePago` enum('efectivo','deposito_transferencia_qr','paypal') NOT NULL,
-  `total` decimal(15,2) NOT NULL,
-  `uuidCliente` varchar(100) NOT NULL,
-  `estado` enum('pagando','pendiente','confirmado','envio','completado') NOT NULL DEFAULT 'pendiente'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Volcado de datos para la tabla `pedidoproducto`
---
-
-INSERT INTO `pedidoproducto` (`uuid`, `creadoEn`, `numeroPedido`, `nombre`, `apellidoPaterno`, `apellidoMaterno`, `celular`, `direccion`, `correo`, `nombreFactura`, `nitCI`, `tipoEnvio`, `descripcion`, `metodoDePago`, `total`, `uuidCliente`, `estado`) VALUES
-('26e59816-f126-47e6-ac2d-4a5abe607538', '2022-03-25 01:14:50', 1000024, 'bladimir', 'medrano', 'vargas', 69509449, 'Av segunda entre marina nunez del prado y calle greco.', 'bladimilmedranoblod@gmail.com', 'medrano', '123312312', 'carpinteria', '', 'paypal', '6300.00', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'pendiente');
 
 -- --------------------------------------------------------
 
@@ -1274,6 +1355,7 @@ CREATE TABLE `presupuestoobra` (
 
 INSERT INTO `presupuestoobra` (`uuid`, `creadoEn`, `nombre`, `descripcion`, `fecha`, `iva`, `total`, `uuidCliente`, `uuidUsuario`, `uuidProyecto`) VALUES
 ('5185e058-4571-47fd-abd8-84ba0fa9c633', '2022-04-01 01:48:23', 'trump tower', 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. ', '2022-01-13', '5.00', '0.00', NULL, NULL, '13f3af68-d552-4c54-bde6-816f474dd4ec'),
+('b4961720-0113-47b7-8bb7-06203e3b5c1b', '2022-04-03 00:16:30', 'proyecto de prueba', 'proyecto de prueba de la constructora mendozarq', '0000-00-00', '0.00', '0.00', NULL, NULL, '8ee6d457-1315-4c9b-bfae-7d7e04ac75a8'),
 ('e0251f45-2ddf-4096-872a-99c319a09b40', '2022-01-13 20:06:40', 'trump tower', 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. ', '2022-01-13', '5.00', '0.00', 'bf493a64-4573-433f-92b0-edbcae73a98b', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', NULL);
 
 -- --------------------------------------------------------
@@ -1313,16 +1395,16 @@ CREATE TABLE `producto` (
 
 INSERT INTO `producto` (`uuid`, `creadoEn`, `nombre`, `descripcion`, `precio`, `moneda`, `stock`, `descuento`, `estado`) VALUES
 ('2fe5ff3e-f808-4e6d-916a-d4959bb87227', '2021-11-25 01:23:23', 'Mesa para exterior o jardin de madera cedro', 'Abada Gen Increpar Incorporal Abadejo Bastonada Engastador Abajadero Abacorar. Geminar Generador Abajo Abacorar Batán Ficticio Cendal Ficha. Cendrazo Cenata Gemoterapia Incrédulo. Engarrafador Batallador Abajeño Incrédulo Abajo Engarrar Cenata Generador. Engarberar Descepar Incorporal Incordio Gemoso Incredibilidad Fichar Fice Ceneque Gemiquear.\n', '700.00', 'Bs.', 11, '3.00', 1),
-('5e916855-3d48-46b5-b2ab-47cffea85be7', '2021-11-25 01:20:49', 'Marco de madera de abeto para interior y exteriror', 'Abada Gen Increpar Incorporal Abadejo Bastonada Engastador Abajadero Abacorar. Geminar Generador Abajo Abacorar Batán Ficticio Cendal Ficha. Cendrazo Cenata Gemoterapia Incrédulo. Engarrafador Batallador Abajeño Incrédulo Abajo Engarrar Cenata Generador. Engarberar Descepar Incorporal Incordio Gemoso Incredibilidad Fichar Fice Ceneque Gemiquear.\n', '700.00', 'Bs.', 9, '0.00', 1),
+('5e916855-3d48-46b5-b2ab-47cffea85be7', '2021-11-25 01:20:49', 'Marco de madera de abeto para interior y exteriror', 'Abada Gen Increpar Incorporal Abadejo Bastonada Engastador Abajadero Abacorar. Geminar Generador Abajo Abacorar Batán Ficticio Cendal Ficha. Cendrazo Cenata Gemoterapia Incrédulo. Engarrafador Batallador Abajeño Incrédulo Abajo Engarrar Cenata Generador. Engarberar Descepar Incorporal Incordio Gemoso Incredibilidad Fichar Fice Ceneque Gemiquear.\n', '700.00', 'Bs.', 7, '0.00', 1),
 ('7307299d-ec02-4f52-98d0-baf027033698', '2022-03-12 00:09:44', 'Puerta de cedro para interiores', 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo beatae quisquam, optio eligendi atque dicta minima labore dolor odio? Ex quos vel aliquid possimus officia obcaecati harum repellat autem quo!', '100.00', 'Bs.', 4, '0.00', 1),
 ('7380f463-deb1-40ce-9f4f-7f5a959b6e32', '2022-03-11 18:56:40', 'Escaleras de madera Tradicionales', 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo beatae quisquam, optio eligendi atque dicta minima labore dolor odio? Ex quos vel aliquid possimus officia obcaecati harum repellat autem quo!', '400.00', 'Bs.', 13, '0.00', 1),
 ('7d9ca4bb-b259-4ce2-b069-4893f074b597', '2021-11-28 02:14:26', 'Vitrina de madera de abeto matrimonial con cajuelas amplias', 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Doloremque debitis quibusdam laborum adipisci dolorem sunt provident, in eaque deleniti sequi? Quasi iure accusantium voluptas odio, maxime fugit perferendis ipsum reiciendis?', '1000.00', 'Bs.', 0, '3.00', 1),
-('7e92e09b-7a2a-44ba-b2c9-21a0bc9b7d63', '2022-03-11 19:04:58', 'Mesa de madera de pino 4m x 4m', 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo beatae quisquam, optio eligendi atque dicta minima labore dolor odio? Ex quos vel aliquid possimus officia obcaecati harum repellat autem quo!', '150.00', 'Bs.', 4, '40.00', 1),
+('7e92e09b-7a2a-44ba-b2c9-21a0bc9b7d63', '2022-03-11 19:04:58', 'Mesa de madera de pino 4m x 4m', 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo beatae quisquam, optio eligendi atque dicta minima labore dolor odio? Ex quos vel aliquid possimus officia obcaecati harum repellat autem quo!', '150.00', 'Bs.', 3, '40.00', 1),
 ('890d6295-ad7a-481f-acf0-c608c5e7a9df', '2021-11-25 01:17:14', 'Escaleras de madera de abeto para interior', 'Abada Gen Increpar Incorporal Abadejo Bastonada Engastador Abajadero Abacorar. Geminar Generador Abajo Abacorar Batán Ficticio Cendal Ficha. Cendrazo Cenata Gemoterapia Incrédulo. Engarrafador Batallador Abajeño Incrédulo Abajo Engarrar Cenata Generador. Engarberar Descepar Incorporal Incordio Gemoso Incredibilidad Fichar Fice Ceneque Gemiquear.', '5000.00', 'Bs.', 6, '0.00', 1),
 ('ad8325f8-1f19-4364-8a1f-0d85732d7d71', '2021-11-25 01:26:25', 'Sillas de madera de nogal para interior con un diseño clasico', 'Abada Gen Increpar Incorporal Abadejo Bastonada Engastador Abajadero Abacorar. Geminar Generador Abajo Abacorar Batán Ficticio Cendal Ficha. Cendrazo Cenata Gemoterapia Incrédulo. Engarrafador Batallador Abajeño Incrédulo Abajo Engarrar Cenata Generador. Engarberar Descepar Incorporal Incordio Gemoso Incredibilidad Fichar Fice Ceneque Gemiquear.\n', '200.00', 'Bs.', 103, '0.00', 1),
-('b84f59d3-650e-4cb6-815d-cec6bfc49ac0', '2022-03-11 18:57:42', 'Escaleras minimalistas para interior', '', '1000.00', 'Bs.', 8, '0.00', 1),
+('b84f59d3-650e-4cb6-815d-cec6bfc49ac0', '2022-03-11 18:57:42', 'Escaleras minimalistas para interior', '', '1000.00', 'Bs.', 7, '0.00', 1),
 ('ec428dc7-a821-4b21-b16b-c9f98f88687c', '2021-11-25 01:19:44', 'Marco de ventana de madera de pino reforzado para exterior', 'Abada Gen Increpar Incorporal Abadejo Bastonada Engastador Abajadero Abacorar. Geminar Generador Abajo Abacorar Batán Ficticio Cendal Ficha. Cendrazo Cenata Gemoterapia Incrédulo. Engarrafador Batallador Abajeño Incrédulo Abajo Engarrar Cenata Generador. Engarberar Descepar Incorporal Incordio Gemoso Incredibilidad Fichar Fice Ceneque Gemiquear.\n', '500.00', 'Bs.', 43, '5.00', 1),
-('fa97335b-3efd-499d-9ec2-78c49597a301', '2022-03-11 18:59:06', 'Escaleras para exterior con disenho minimalista de madera de pino', 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo beatae quisquam, optio eligendi atque dicta minima labore dolor odio? Ex quos vel aliquid possimus officia obcaecati harum repellat autem quo!', '300.00', 'Bs.', 10, '0.00', 1);
+('fa97335b-3efd-499d-9ec2-78c49597a301', '2022-03-11 18:59:06', 'Escaleras para exterior con disenho minimalista de madera de pino', 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo beatae quisquam, optio eligendi atque dicta minima labore dolor odio? Ex quos vel aliquid possimus officia obcaecati harum repellat autem quo!', '300.00', 'Bs.', 8, '0.00', 1);
 
 --
 -- Disparadores `producto`
@@ -1388,6 +1470,15 @@ CREATE TABLE `proveedor` (
   `uuidRecurso` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Volcado de datos para la tabla `proveedor`
+--
+
+INSERT INTO `proveedor` (`uuid`, `creadoEn`, `nombre`, `celular`, `direccion`, `descripcion`, `uuidRecurso`) VALUES
+('1c02ee0e-268f-4a4c-8234-1cd9165412d5', '2022-04-02 01:50:06', 'rewrwer', 32432423, '', 'rwerwe', 'ede21838-08d6-437a-b361-461b19613e20'),
+('a6d7db3a-425f-42d4-8856-71a83eff9ed2', '2022-04-05 04:25:47', 'dsadsad', 34324324, 'dfasd', 'asdsadas', NULL),
+('f036600f-dd07-4fdd-88e2-bc4e6fa4c019', '2022-04-02 02:01:20', 'dasdsa', 4355344, 'fsdfsd', '', 'ede21838-08d6-437a-b361-461b19613e20');
+
 -- --------------------------------------------------------
 
 --
@@ -1413,8 +1504,8 @@ CREATE TABLE `proyecto` (
 --
 
 INSERT INTO `proyecto` (`uuid`, `creadoEn`, `nombre`, `descripcion`, `categoria`, `estado`, `fechaInicio`, `fechaFinal`, `lugarProyecto`, `porcentaje`, `uuidCliente`) VALUES
-('13f3af68-d552-4c54-bde6-816f474dd4ec', '2021-11-27 16:27:32', 'Cencerrillas Engarmarse Abajeño', ' Lorem ipsum dolor sit amet consectetur,\nadipisicing elit. Deleniti fugiat ipsum, sequi, quis eaque in nobis ullam voluptate id quia magni tempore pariatur voluptatem? Eos officia ut modi rem\naspernat', 'construccion', 1, '2021-11-27', '2022-12-31', ' Lorem ipsum dolor sit amet consectetur,\nadipisicing elit. Deleniti fugiat ipsum, sequi, quis eaque in nobis ullam voluptate id quia magni tempore pariatur voluptatem? Eos officia ut modi rem\naspernat', 0, 'bf493a64-4573-433f-92b0-edbcae73a98b'),
-('8ee6d457-1315-4c9b-bfae-7d7e04ac75a8', '2022-03-31 01:51:37', 'proyecto de prueba', 'proyecto de prueba de la constructora mendozarq', 'construccion', 1, '2022-03-18', '2022-03-31', 'dsaas', 0, 'bf493a64-4573-433f-92b0-edbcae73a98b');
+('13f3af68-d552-4c54-bde6-816f474dd4ec', '2021-11-27 16:27:32', 'Cencerrillas Engarmarse Abajeño', ' Lorem ipsum dolor sit amet consectetur,\nadipisicing elit. Deleniti fugiat ipsum, sequi, quis eaque in nobis ullam voluptate id quia magni tempore pariatur voluptatem? Eos officia ut modi rem\naspernat', 'construccion', 1, '2021-11-27', '2022-12-31', ' Lorem ipsum dolor sit amet consectetur,\nadipisicing elit. Deleniti fugiat ipsum, sequi, quis eaque in nobis ullam voluptate id quia magni tempore pariatur voluptatem? Eos officia ut modi rem\naspernat', 39, 'bf493a64-4573-433f-92b0-edbcae73a98b'),
+('8ee6d457-1315-4c9b-bfae-7d7e04ac75a8', '2022-03-31 01:51:37', 'proyecto de prueba', 'proyecto de prueba de la constructora mendozarq', 'construccion', 1, '2022-03-18', '2022-03-31', 'dsaas', 43, 'bf493a64-4573-433f-92b0-edbcae73a98b');
 
 --
 -- Disparadores `proyecto`
@@ -1551,6 +1642,7 @@ CREATE TABLE `tareaplanificacionproyecto` (
   `dependencia` varchar(100) DEFAULT NULL,
   `hito` tinyint(1) DEFAULT 0,
   `color` text DEFAULT NULL,
+  `actividades` text DEFAULT NULL,
   `uuidCapitulo` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -1558,9 +1650,49 @@ CREATE TABLE `tareaplanificacionproyecto` (
 -- Volcado de datos para la tabla `tareaplanificacionproyecto`
 --
 
-INSERT INTO `tareaplanificacionproyecto` (`uuid`, `creadoEn`, `nombre`, `fechaInicio`, `fechaFinal`, `avance`, `dependencia`, `hito`, `color`, `uuidCapitulo`) VALUES
-('962f6dcd-4565-4c0b-93a2-8dc309b337a2', '2022-02-11 17:28:37', ' Aperiam debitis cum', '2022-04-21', '2022-04-30', 0, '46b085fd-dc1a-41ac-84f0-e1f6391be86d', 1, '', '3e5eb62b-388f-4ca2-b40f-afce49edd08a'),
-('f6eedf06-6da0-4a96-8616-25867d9332f9', '2022-02-17 18:57:32', 'dsadas', '2022-02-09', '2022-02-28', 41, '962f6dcd-4565-4c0b-93a2-8dc309b337a2', 0, '#05ff09', '3e5eb62b-388f-4ca2-b40f-afce49edd08a');
+INSERT INTO `tareaplanificacionproyecto` (`uuid`, `creadoEn`, `nombre`, `fechaInicio`, `fechaFinal`, `avance`, `dependencia`, `hito`, `color`, `actividades`, `uuidCapitulo`) VALUES
+('707f1644-260c-4560-bd1a-58feedf97866', '2022-04-06 19:18:47', 'Azotado de concreto c/hidrófugo', '2022-04-11', '2022-04-30', 10, '', 0, '', '<li _ngcontent-urn-c316=\"\">Ninguno</li>', 'c6bdce00-1b21-4e82-afe6-d0fd62eb33e1'),
+('962f6dcd-4565-4c0b-93a2-8dc309b337a2', '2022-02-11 17:28:37', ' Aperiam debitis cum', '2022-04-21', '2022-04-30', 0, '46b085fd-dc1a-41ac-84f0-e1f6391be86d', 1, '', NULL, '3e5eb62b-388f-4ca2-b40f-afce49edd08a'),
+('d5cad56e-992f-4fb1-a97b-177b3709a801', '2022-04-06 19:19:28', 'Aserrado y demolic. Piso sobrepuesto sector Presala esp. 0,20', '2022-04-27', '2022-04-30', 0, '707f1644-260c-4560-bd1a-58feedf97866', 0, '#01f979', '<li _ngcontent-urn-c316=\"\">Ninguno</li>', 'c6bdce00-1b21-4e82-afe6-d0fd62eb33e1'),
+('e1ad1b68-545d-4cde-8544-b67ceceba201', '2022-04-05 19:55:42', 'Llave de paso 1/2\"', '2022-04-27', '2022-06-30', 90, '', 0, '#199a68', '<li _ngcontent-sjn-c315=\"\"><font color=\"#425066\">Lista 1</font></li><li _ngcontent-sjn-c315=\"\"><font color=\"#425066\">lorem <b><i><u>ipsum</u></i></b></font></li><li _ngcontent-sjn-c315=\"\"><font color=\"#425066\">no olvidar las llaves</font></li><li _ngcontent-sjn-c315=\"\"><font color=\"#425066\">kk</font></li><li>Nuevo<ol><li><font color=\"#425066\">Sub</font></li></ol></li><li><font color=\"#ff0000\"><b>Nuevo</b></font></li><li>Nuevo</li><ol><li>nuevo</li><li>agrando&nbsp;</li><li>desudada</li><li>desdás</li></ol><li>dadas</li><li>asd</li>', '3e5eb62b-388f-4ca2-b40f-afce49edd08a'),
+('f6eedf06-6da0-4a96-8616-25867d9332f9', '2022-02-18 22:57:32', 'dsadas', '2022-02-09', '2022-02-28', 100, '962f6dcd-4565-4c0b-93a2-8dc309b337a2', 0, '#05ff09', '<li>Nuevo<ol><li>Sub</li></ol></li>', '3e5eb62b-388f-4ca2-b40f-afce49edd08a');
+
+--
+-- Disparadores `tareaplanificacionproyecto`
+--
+DELIMITER $$
+CREATE TRIGGER `delete_tareaPlanificacion_trigger` AFTER DELETE ON `tareaplanificacionproyecto` FOR EACH ROW BEGIN
+    UPDATE capituloplanificacionproyecto as cp
+    INNER JOIN tareaplanificacionproyecto t on cp.uuid = t.uuidCapitulo
+    SET cp.avance = (SELECT (sum(t.avance) / (100 * count(t.avance))) * 100
+                      FROM tareaplanificacionproyecto as t
+                      where t.uuidCapitulo = OLD.uuidCapitulo)
+    WHERE cp.uuid =  OLD.uuidCapitulo;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `insert_tareaPlanificacion_trigger` AFTER INSERT ON `tareaplanificacionproyecto` FOR EACH ROW BEGIN
+    UPDATE capituloplanificacionproyecto as cp
+    INNER JOIN tareaplanificacionproyecto t on cp.uuid = t.uuidCapitulo
+    SET cp.avance = (SELECT (sum(t.avance) / (100 * count(t.avance))) * 100
+                      FROM tareaplanificacionproyecto as t
+                      where t.uuidCapitulo = NEW.uuidCapitulo)
+    WHERE cp.uuid =  NEW.uuidCapitulo;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `update_tareaPlanificacion_trigger` AFTER UPDATE ON `tareaplanificacionproyecto` FOR EACH ROW BEGIN
+    UPDATE capituloplanificacionproyecto as cp
+    INNER JOIN tareaplanificacionproyecto t on cp.uuid = t.uuidCapitulo
+    SET cp.avance = (SELECT (sum(t.avance) / (100 * count(t.avance))) * 100
+                      FROM tareaplanificacionproyecto as t
+                      where t.uuidCapitulo = NEW.uuidCapitulo)
+    WHERE cp.uuid =  NEW.uuidCapitulo;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -1712,7 +1844,7 @@ INSERT INTO `venta` (`uuid`, `creadoEn`, `numeroVenta`, `nombreFactura`, `nitCiC
 ('72d9fe3f-30bf-4824-88c7-aeabf501955a', '2022-03-28 21:28:45', 1000023, 'cabrero castillo', '12334245234', 'cbba', '81863 Pelayo Parque\n sdsadasdas', '', 'fisica', 'personal', 'efectivo', 'completado', '1000.00', 'bf493a64-4573-433f-92b0-edbcae73a98b', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72'),
 ('79de7552-0d78-4769-a4a6-f9aeb387cdb9', '2022-03-30 02:49:28', 1000025, 'cabrero castillo', 'dsadsadasdsa', 'cbba', '81863 Pelayo Parque\n sdsadasdas', '', 'online', 'personal', 'efectivo', 'completado', '2037.00', 'bf493a64-4573-433f-92b0-edbcae73a98b', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72'),
 ('9b4fc1b7-5384-4cdf-9666-d8a468bbe447', '2022-03-28 20:31:11', 1000012, 'acedo morillo', '23453325353', 'cbba', '2311 Rosado Pasaje\n', '', 'fisica', 'delivery', 'efectivo', 'completado', '950.00', '7a617f2c-0ca0-49be-a3f0-e77555174af0', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72'),
-('cc4f12ad-e21c-4dda-a569-0317a59f8bc7', '2022-03-30 02:49:11', 1000024, 'falcón larrañaga', 'dassadad', 'cbba', '1757 Juárez Senda\n', '', 'fisica', 'personal', 'tarjeta', 'confirmado', '90.00', '7ec2091c-abf2-4025-a207-3bbf04a5a8b9', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72'),
+('cc4f12ad-e21c-4dda-a569-0317a59f8bc7', '2022-03-30 02:49:11', 1000024, 'falcón larrañaga', 'dassadad', 'cbba', '1757 Juárez Senda\n', '', 'fisica', 'personal', 'tarjeta', 'confirmado', '1690.00', '7ec2091c-abf2-4025-a207-3bbf04a5a8b9', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72'),
 ('f5146dff-9e4c-41e3-8088-0d9e51d11216', '2022-03-28 20:30:48', 1000011, 'falcón larrañaga', '23542366', 'cbba', '1757 Juárez Senda\n', '', 'fisica', 'personal', 'efectivo', 'completado', '1100.00', '7ec2091c-abf2-4025-a207-3bbf04a5a8b9', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72');
 
 --
@@ -1747,8 +1879,9 @@ DELIMITER ;
 CREATE TABLE `visitaproyecto` (
   `uuid` varchar(100) NOT NULL,
   `creadoEn` timestamp NOT NULL DEFAULT current_timestamp(),
+  `estado` tinyint(1) DEFAULT 0,
   `nombre` varchar(50) NOT NULL,
-  `faseDelProyecto` varchar(100) NOT NULL,
+  `faseDelProyecto` text NOT NULL,
   `descripcion` varchar(200) DEFAULT NULL,
   `fecha` timestamp NOT NULL DEFAULT current_timestamp(),
   `uuidProyecto` varchar(100) NOT NULL
@@ -1758,9 +1891,11 @@ CREATE TABLE `visitaproyecto` (
 -- Volcado de datos para la tabla `visitaproyecto`
 --
 
-INSERT INTO `visitaproyecto` (`uuid`, `creadoEn`, `nombre`, `faseDelProyecto`, `descripcion`, `fecha`, `uuidProyecto`) VALUES
-('38fc4888-69d9-4b9a-bbc5-7858f640334c', '2021-12-21 01:45:38', 'dasdsadas', 'dsadsadsad', 'dasdsad', '2021-12-20 18:50:00', '13f3af68-d552-4c54-bde6-816f474dd4ec'),
-('fe83cb0a-1df6-4081-a8da-0311cb91541f', '2022-04-01 02:42:16', 'dsad', 'dsaddsa', 'dsada', '2022-03-31 17:45:00', '8ee6d457-1315-4c9b-bfae-7d7e04ac75a8');
+INSERT INTO `visitaproyecto` (`uuid`, `creadoEn`, `estado`, `nombre`, `faseDelProyecto`, `descripcion`, `fecha`, `uuidProyecto`) VALUES
+('2cf386a1-5f32-4996-952a-75f758757c44', '2022-04-03 02:10:42', 1, 'ddddddd', 'Azotado de concreto c/hidrófugo <=> Aserrado y demolic. Piso sobrepuesto sector Presala esp. 0,20', '', '2022-04-08 02:10:00', '8ee6d457-1315-4c9b-bfae-7d7e04ac75a8'),
+('38fc4888-69d9-4b9a-bbc5-7858f640334c', '2021-12-21 01:45:38', 1, 'dasdsadas', 'dsadsadsad <=> Aperiam debitis cum <=> dsadas', 'dasdsad', '2021-12-20 06:50:00', '13f3af68-d552-4c54-bde6-816f474dd4ec'),
+('4dae56e6-9536-4750-850d-95d2e56263e3', '2022-04-03 02:26:08', 0, 'dsadsa', 'dassd', 'dasdas', '2022-03-31 02:26:00', '8ee6d457-1315-4c9b-bfae-7d7e04ac75a8'),
+('e5c685d4-a547-4adf-91d1-41d012a5e3ed', '2022-04-03 05:22:39', 0, 'nuevo', 'Aserrado y demolic. Piso sobrepuesto sector Presala esp. 0,20 <=> Azotado de concreto c/hidrófugo <=> avances', '', '2022-04-08 05:22:00', '8ee6d457-1315-4c9b-bfae-7d7e04ac75a8');
 
 -- --------------------------------------------------------
 
@@ -1804,14 +1939,6 @@ ALTER TABLE `capitulopresupuesto`
 ALTER TABLE `carpetaproyecto`
   ADD PRIMARY KEY (`uuid`),
   ADD KEY `uuidProyecto` (`uuidProyecto`);
-
---
--- Indices de la tabla `carritopedido`
---
-ALTER TABLE `carritopedido`
-  ADD PRIMARY KEY (`uuid`),
-  ADD KEY `uuidProducto` (`uuidProducto`),
-  ADD KEY `uuidPedido` (`uuidPedido`);
 
 --
 -- Indices de la tabla `carritoproducto`
@@ -1867,11 +1994,25 @@ ALTER TABLE `documentoproyecto`
   ADD KEY `uuidProyecto` (`uuidProyecto`);
 
 --
+-- Indices de la tabla `fotoobservacionobra`
+--
+ALTER TABLE `fotoobservacionobra`
+  ADD PRIMARY KEY (`uuid`),
+  ADD KEY `uuidObservacionObra` (`uuidObservacionObra`);
+
+--
 -- Indices de la tabla `fotoproducto`
 --
 ALTER TABLE `fotoproducto`
   ADD PRIMARY KEY (`uuid`),
   ADD KEY `uuidProducto` (`uuidProducto`);
+
+--
+-- Indices de la tabla `observacionobra`
+--
+ALTER TABLE `observacionobra`
+  ADD PRIMARY KEY (`uuid`),
+  ADD KEY `uuidVisita` (`uuidVisita`);
 
 --
 -- Indices de la tabla `observacionpersonal`
@@ -1904,14 +2045,6 @@ ALTER TABLE `participantevisita`
   ADD PRIMARY KEY (`uuid`),
   ADD KEY `uuidVisitaProyecto` (`uuidVisitaProyecto`),
   ADD KEY `uuidUsuario` (`uuidUsuario`);
-
---
--- Indices de la tabla `pedidoproducto`
---
-ALTER TABLE `pedidoproducto`
-  ADD PRIMARY KEY (`uuid`),
-  ADD UNIQUE KEY `numeroPedido` (`numeroPedido`),
-  ADD KEY `uuidCliente` (`uuidCliente`);
 
 --
 -- Indices de la tabla `personal`
@@ -2027,12 +2160,6 @@ ALTER TABLE `visitaproyecto`
 --
 
 --
--- AUTO_INCREMENT de la tabla `pedidoproducto`
---
-ALTER TABLE `pedidoproducto`
-  MODIFY `numeroPedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1000025;
-
---
 -- AUTO_INCREMENT de la tabla `venta`
 --
 ALTER TABLE `venta`
@@ -2059,13 +2186,6 @@ ALTER TABLE `capitulopresupuesto`
 --
 ALTER TABLE `carpetaproyecto`
   ADD CONSTRAINT `carpetaproyecto_ibfk_1` FOREIGN KEY (`uuidProyecto`) REFERENCES `proyecto` (`uuid`);
-
---
--- Filtros para la tabla `carritopedido`
---
-ALTER TABLE `carritopedido`
-  ADD CONSTRAINT `carritopedido_ibfk_1` FOREIGN KEY (`uuidProducto`) REFERENCES `producto` (`uuid`),
-  ADD CONSTRAINT `carritopedido_ibfk_2` FOREIGN KEY (`uuidPedido`) REFERENCES `pedidoproducto` (`uuid`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `carritoproducto`
@@ -2108,10 +2228,22 @@ ALTER TABLE `documentoproyecto`
   ADD CONSTRAINT `documentoproyecto_ibfk_1` FOREIGN KEY (`uuidProyecto`) REFERENCES `proyecto` (`uuid`);
 
 --
+-- Filtros para la tabla `fotoobservacionobra`
+--
+ALTER TABLE `fotoobservacionobra`
+  ADD CONSTRAINT `fotoobservacionobra_ibfk_1` FOREIGN KEY (`uuidObservacionObra`) REFERENCES `observacionobra` (`uuid`) ON DELETE CASCADE;
+
+--
 -- Filtros para la tabla `fotoproducto`
 --
 ALTER TABLE `fotoproducto`
   ADD CONSTRAINT `fotoproducto_ibfk_1` FOREIGN KEY (`uuidProducto`) REFERENCES `producto` (`uuid`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `observacionobra`
+--
+ALTER TABLE `observacionobra`
+  ADD CONSTRAINT `observacionobra_ibfk_1` FOREIGN KEY (`uuidVisita`) REFERENCES `visitaproyecto` (`uuid`);
 
 --
 -- Filtros para la tabla `observacionpersonal`
@@ -2140,12 +2272,6 @@ ALTER TABLE `opinionproducto`
 ALTER TABLE `participantevisita`
   ADD CONSTRAINT `participantevisita_ibfk_1` FOREIGN KEY (`uuidVisitaProyecto`) REFERENCES `visitaproyecto` (`uuid`),
   ADD CONSTRAINT `participantevisita_ibfk_2` FOREIGN KEY (`uuidUsuario`) REFERENCES `usuario` (`uuid`);
-
---
--- Filtros para la tabla `pedidoproducto`
---
-ALTER TABLE `pedidoproducto`
-  ADD CONSTRAINT `pedidoproducto_ibfk_1` FOREIGN KEY (`uuidCliente`) REFERENCES `usuario` (`uuid`);
 
 --
 -- Filtros para la tabla `personalproyecto`

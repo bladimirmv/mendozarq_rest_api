@@ -15,6 +15,7 @@ create index uuidPresupuestoObra
     on capitulopresupuesto (uuidPresupuestoObra);
 
 INSERT INTO mendozarq.capitulopresupuesto (uuid, creadoEn, nombre, descuento, uuidPresupuestoObra) VALUES ('0867e0f0-2cef-4cf6-9c97-43bb9b2bf300', '2022-03-31 21:48:23', 'Instalación de agua', 0, '5185e058-4571-47fd-abd8-84ba0fa9c633');
+INSERT INTO mendozarq.capitulopresupuesto (uuid, creadoEn, nombre, descuento, uuidPresupuestoObra) VALUES ('0b8054d9-6acd-498e-ad8b-fe60c6fb836c', '2022-04-02 20:18:21', 'Cielorraso', 0, 'b4961720-0113-47b7-8bb7-06203e3b5c1b');
 INSERT INTO mendozarq.capitulopresupuesto (uuid, creadoEn, nombre, descuento, uuidPresupuestoObra) VALUES ('0d88ad6c-9969-459e-b783-9f8090139d1c', '2022-03-31 21:48:23', 'Estructura de Hormigón - Piso de Hormigón', 3, '5185e058-4571-47fd-abd8-84ba0fa9c633');
 INSERT INTO mendozarq.capitulopresupuesto (uuid, creadoEn, nombre, descuento, uuidPresupuestoObra) VALUES ('1b6fada0-d017-4a2e-9caf-df8039cf7415', '2022-03-31 21:48:23', 'Cielorraso', 0, '5185e058-4571-47fd-abd8-84ba0fa9c633');
 INSERT INTO mendozarq.capitulopresupuesto (uuid, creadoEn, nombre, descuento, uuidPresupuestoObra) VALUES ('1d3debb0-896b-47d2-93fe-a91a8652bfe2', '2022-03-30 17:49:38', 'Carpintería', 0, 'e0251f45-2ddf-4096-872a-99c319a09b40');
@@ -37,6 +38,7 @@ INSERT INTO mendozarq.capitulopresupuesto (uuid, creadoEn, nombre, descuento, uu
 INSERT INTO mendozarq.capitulopresupuesto (uuid, creadoEn, nombre, descuento, uuidPresupuestoObra) VALUES ('c884b424-64e7-4e29-b6a0-77f3e611129b', '2022-03-31 21:48:23', 'Mampostería piso de hormigón', 30, '5185e058-4571-47fd-abd8-84ba0fa9c633');
 INSERT INTO mendozarq.capitulopresupuesto (uuid, creadoEn, nombre, descuento, uuidPresupuestoObra) VALUES ('c96ec13a-e65a-4718-838b-4f40abc07a5d', '2022-03-31 21:48:23', 'Tareas Previas', 0, '5185e058-4571-47fd-abd8-84ba0fa9c633');
 INSERT INTO mendozarq.capitulopresupuesto (uuid, creadoEn, nombre, descuento, uuidPresupuestoObra) VALUES ('cf926cbf-3410-462a-a63a-0f24f4c7ecf1', '2022-03-31 21:48:23', 'Revoques', 0, '5185e058-4571-47fd-abd8-84ba0fa9c633');
+INSERT INTO mendozarq.capitulopresupuesto (uuid, creadoEn, nombre, descuento, uuidPresupuestoObra) VALUES ('d519aadf-d75f-4def-bdf6-4d3856efa381', '2022-04-02 20:16:36', 'Carpintería', 0, 'b4961720-0113-47b7-8bb7-06203e3b5c1b');
 INSERT INTO mendozarq.capitulopresupuesto (uuid, creadoEn, nombre, descuento, uuidPresupuestoObra) VALUES ('d69f0aa3-a583-488e-af05-a25c9169409b', '2022-03-30 17:50:07', 'Limpieza de obra', 0, 'e0251f45-2ddf-4096-872a-99c319a09b40');
 INSERT INTO mendozarq.capitulopresupuesto (uuid, creadoEn, nombre, descuento, uuidPresupuestoObra) VALUES ('da0094f1-e3eb-412a-b2ea-f8483eadfe28', '2022-03-30 17:49:21', 'Revestimientos', 2, 'e0251f45-2ddf-4096-872a-99c319a09b40');
 INSERT INTO mendozarq.capitulopresupuesto (uuid, creadoEn, nombre, descuento, uuidPresupuestoObra) VALUES ('dd5df8f4-a389-4fdc-a013-7ef6ae727a72', '2022-03-31 21:48:23', 'Carpintería', 0, '5185e058-4571-47fd-abd8-84ba0fa9c633');
