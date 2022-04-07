@@ -422,6 +422,69 @@ CREATE TABLE fotoObservacionObra
 
 /* //////////////////////////////////////////////////////////////////////////////////////////////////// */
 
+CREATE TABLE log_usuario
+(
+    operacion     CHAR(1)                         NOT NULL,
+    creadoEn      TIMESTAMP                       NOT NULL,
+    creadoPor     TEXT,
+    uuidCreadoPor TEXT,
+    hostname      TEXT,
+    tabla         TEXT default 'usuario'          NOT NULL,
+    path          text default 'mendozarq-liraki' NOT NULL,
+    uuidRow       varchar(100)                    NOT NULL
+);
+
+CREATE TABLE log_personal
+(
+    operacion     CHAR(1)                  NOT NULL,
+    creadoEn      TIMESTAMP                NOT NULL,
+    creadoPor     TEXT,
+    uuidCreadoPor TEXT,
+    hostname      TEXT,
+    tabla         TEXT default 'personal'  NOT NULL,
+    path          text default 'mendozarq' not null,
+    uuidRow       varchar(100)             NOT NULL
+);
+
+CREATE TABLE log_proyecto
+(
+    operacion     CHAR(1)                  NOT NULL,
+    creadoEn      TIMESTAMP                NOT NULL,
+    creadoPor     TEXT,
+    uuidCreadoPor TEXT,
+    hostname      TEXT,
+    tabla         TEXT default 'proyecto'  NOT NULL,
+    path          text default 'mendozarq' not null,
+    uuidRow       varchar(100)             NOT NULL
+);
+
+CREATE TABLE log_documentos
+(
+    operacion     CHAR(1)                   NOT NULL,
+    creadoEn      TIMESTAMP                 NOT NULL,
+    creadoPor     TEXT,
+    uuidCreadoPor TEXT,
+    hostname      TEXT,
+    tabla         TEXT default 'documentos' NOT NULL,
+    path          text default 'mendozarq'  not null,
+    uuidRow       varchar(100)              NOT NULL
+);
+
+CREATE TABLE log_producto
+(
+    operacion     CHAR(1)                 NOT NULL,
+    creadoEn      TIMESTAMP               NOT NULL,
+    creadoPor     TEXT,
+    uuidCreadoPor TEXT,
+    hostname      TEXT,
+    tabla         TEXT default 'producto' NOT NULL,
+    path          text default 'liraki'   not null,
+    uuidRow       varchar(100)            NOT NULL
+);
+
+
+/* ///////////////////////////////////////////////////// */
+
 
 
 CREATE PROCEDURE usuario_procedure(
