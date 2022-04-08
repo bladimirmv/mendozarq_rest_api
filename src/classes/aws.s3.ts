@@ -1,4 +1,4 @@
-import aws from 'aws-sdk';
+import aws, { ConfigurationOptions } from 'aws-sdk';
 import { Response, Request, Router } from 'express';
 import { v4 as uuid } from 'uuid';
 import { ManagedUpload } from 'aws-sdk/clients/s3';
@@ -89,6 +89,8 @@ export const getImage = async (req: Request, res: Response) => {
     Bucket: AWS_S3.Bucket,
     Key: req.params.key,
   };
+
+
 
   s3.getObject(params, (err: aws.AWSError, data: aws.S3.GetObjectOutput) => {
     if (err) {
