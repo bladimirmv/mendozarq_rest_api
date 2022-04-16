@@ -10,11 +10,13 @@ router.route('/').post([checkJwt, checkRole(['administrador'])], vp.addVisitaPro
 
 router
   .route('/:uuid')
-  .get([checkJwt, checkRole(['administrador'])], vp.getOneVisitaProyecto)
-  .put([checkJwt, checkRole(['administrador'])], vp.updateVisitaProyecto)
+  .get([checkJwt, checkRole(['administrador', 'arquitecto'])], vp.getOneVisitaProyecto)
+  .put([checkJwt, checkRole(['administrador', 'arquitecto'])], vp.updateVisitaProyecto)
   .delete([checkJwt, checkRole(['administrador'])], vp.deleteVisitaProyecto);
 
-router.route('/proyecto/:uuid').get([checkJwt, checkRole(['administrador'])], vp.getAllVisitaProyecto);
+router.route('/proyecto/:uuid').get([checkJwt, checkRole(['administrador', 'arquitecto'])], vp.getAllVisitaProyecto);
 
-router.route('/tarea/proyecto/:uuid').get([checkJwt, checkRole(['administrador'])], vp.getAllTareasByProyecto);
+router
+  .route('/tarea/proyecto/:uuid')
+  .get([checkJwt, checkRole(['administrador', 'arquitecto'])], vp.getAllTareasByProyecto);
 export default router;
