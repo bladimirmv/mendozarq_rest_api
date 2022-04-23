@@ -68,7 +68,7 @@ export async function addUsuario(req: Request, res: Response) {
     if (findUsername) {
       // conn.end();
       return res.status(400).json({
-        message: `El username \'${usuario.username}\' ya esta en uso, porfavor ingrese otro valido o active la opcion de generar automaticamente. 🙁`,
+        message: `El username \'${usuario.username}\' ya esta en uso, por favor ingrese otro valido o active la opcion de generar automaticamente. 🙁`,
       });
     } else {
       delete usuario.autoUsuario;
