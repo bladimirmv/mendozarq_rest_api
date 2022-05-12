@@ -176,8 +176,15 @@ export default class App {
 
       getAllVentasOnline(client, this.io);
 
+
+
       // *Disconnect
       socket.disconnect(client);
     });
+
+    this.io.on('error', (error) => {
+      console.log('socket errores xd:', error);
+
+    })
   }
 }

@@ -581,3 +581,5 @@ INSERT INTO mendozarq.log_documentos (operacion, creadoEn, creadoPor, uuidCreado
 INSERT INTO mendozarq.log_documentos (operacion, creadoEn, creadoPor, uuidCreadoPor, hostname, tabla, path, uuidRow) VALUES ('I', '2022-04-04 23:02:14', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'documentos', 'mendozarq', 'a7b80b1b-f166-4639-abe3-c40f41553d4c');
 INSERT INTO mendozarq.log_documentos (operacion, creadoEn, creadoPor, uuidCreadoPor, hostname, tabla, path, uuidRow) VALUES ('D', '2022-04-04 23:18:26', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'documentos', 'mendozarq', '079424f6-ec39-4dea-b8c4-54cde87636ad');
 INSERT INTO mendozarq.log_documentos (operacion, creadoEn, creadoPor, uuidCreadoPor, hostname, tabla, path, uuidRow) VALUES ('D', '2022-04-05 17:05:21', 'bladimir medrano vargas', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72', 'DESKTOP-0D2F255', 'documentos', 'mendozarq', 'a7b80b1b-f166-4639-abe3-c40f41553d4c');
+
+
