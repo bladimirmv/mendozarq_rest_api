@@ -187,14 +187,18 @@ export const deletecategoriaProducto = async (req: Request, res: Response) => {
   try {
     const conn: Pool = await connect();
     const uuid: string = req.params.uuid;
+    let categoria: CategoriaProducto;
 
     const [[row]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM categoriaProducto WHERE uuid = ?', [uuid]);
+    categoria = row;
 
     if (!row) {
       return res.status(404).json({
         message: 'No se pudo eliminar la categoria, por que no existe. 🙁',
       });
     }
+
+    await deleteFile(categoria.keyName);
 
     await conn.query('DELETE FROM categoriaProducto WHERE uuid = ?', [uuid]);
 
