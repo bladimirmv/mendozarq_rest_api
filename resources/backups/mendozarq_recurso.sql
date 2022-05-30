@@ -11,4 +11,3 @@ create table recurso
     precioPorMayor decimal(15, 2)                                                 default 0.00                null
 );
 
-INSERT INTO mendozarq.recurso (uuid, creadoEn, nombre, descripcion, tipoRecurso, area, precioUnitario, precioPorMayor) VALUES ('ede21838-08d6-437a-b361-461b19613e20', '2022-04-01 13:23:48', 'nuevo recurso ', 'ggggddddddddddddddddddddddddddddddddddd', 'materia_prima', 'liraki', 12.00, 15.00);

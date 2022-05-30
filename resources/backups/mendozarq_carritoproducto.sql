@@ -18,4 +18,4 @@ create index uuidCliente
 create index uuidProducto
     on carritoproducto (uuidProducto);
 
-INSERT INTO mendozarq.carritoproducto (uuid, creadoEn, cantidad, uuidProducto, uuidCliente) VALUES ('b66e6474-8788-4bcc-8132-f15079f2487f', '2022-03-30 14:44:38', 5, 'fa97335b-3efd-499d-9ec2-78c49597a301', 'fa27b5b3-837b-4486-b2cd-c6a306e8bd72');
+INSERT INTO mendozarq.carritoproducto (uuid, creadoEn, cantidad, uuidProducto, uuidCliente) VALUES ('2823487e-3e34-469f-aa7d-5f9156e484cf', '2022-05-24 23:45:03', 1, '7bd5774f-6174-48a9-b456-ed132353885a', 'bf493a64-4573-433f-92b0-edbcae73a98b');
