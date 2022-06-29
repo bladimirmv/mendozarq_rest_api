@@ -33,18 +33,18 @@ export const getHomePage = async (req?: Request, res?: Response) => {
     const [menoresDeMil]: [any[], FieldPacket[]] = await conn.query(`SELECT p.*, fp.keyName
 		FROM producto as p
 		INNER JOIN fotoProducto fp on p.uuid = fp.uuidProducto
-		WHERE fp.indice = 0
-		ORDER BY p.precio <= 1000 DESC LIMIT 10;`);
+		WHERE fp.indice = 0 and p.precio >= 1000 and p.precio <=2000
+		ORDER BY p.stock>0  LIMIT 10;`);
 
     homePage = {
       recienAgregados,
       enDescuento,
       card_producto: [
         {
-          id: 'menores-a-mil',
-          nombre: 'Menores a 1000BS.',
+          id: 'menores-a-2mil',
+          nombre: 'Menores a 2000BS.',
           producto: menoresDeMil,
-          queryParams: '500bs_1000bs',
+          queryParams: '1000bs_2000bs',
         },
       ],
       card_categorias: [{ categoria: firstGroupCategoria }, { categoria: secondGroupCategoria }],

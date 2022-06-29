@@ -16,11 +16,11 @@ create table usuario
 );
 
 INSERT INTO mendozarq.usuario (uuid, creadoEn, nombre, apellidoPaterno, apellidoMaterno, celular, direccion, correo, username, contrasenha, rol, activo) VALUES ('0976bfba-6a2a-4405-8bfe-2474a21f1e25', '2021-11-24 20:30:52', 'evaristo', 'del', 'gelabert', 67891432, '3896 Gil Ferrocarril
-    ', 'Lilia_Anaya@corpfolder.com', 'evari8pni9', '$2b$10$56JrCWb4S9Zx1.GT9WdwCuNdH5jnFQcwQgKUXqbtLGQvZ2JrsUVSa', 'cliente', 1);
+    ', 'Lilia_Anaya@corpfolder.com', 'evari8pni9', '$2b$10$FeSC4PFsq3lmOHThfgutaOqwMNdWPtwDL5wzr69klCsu9MYEsMWkW', 'cliente', 1);
 INSERT INTO mendozarq.usuario (uuid, creadoEn, nombre, apellidoPaterno, apellidoMaterno, celular, direccion, correo, username, contrasenha, rol, activo) VALUES ('178e1faa-b3f0-4900-a7b5-a19085c0cf9c', '2021-11-24 20:29:26', 'salomón', 'ruano', '', 72686187, '4265 Korta hernandez Vía Pública
     ', 'Francisco_Santana@yahoo.com', 'salomo1ydq', '$2b$10$MKlyLpWKHpnwOglfWDOMfeCnT0zwwFKXPEnWbyb7WZvyGTxo0HCiu', 'cliente', 1);
 INSERT INTO mendozarq.usuario (uuid, creadoEn, nombre, apellidoPaterno, apellidoMaterno, celular, direccion, correo, username, contrasenha, rol, activo) VALUES ('2319b069-bde2-452c-af94-ec08f68c722c', '2021-11-24 20:39:52', 'leandra', 'villa', 'jordán', 74568926, '817 Tamayo Grupo
-    ', 'XimenaGuadalupe18@yahoo.com', 'leandhbal2', '$2b$10$g5h4utbZBrmhjrKTMV64.O3x6d43Zper9cu5CA7q9zpz5sQSSdHm6', 'vendedor', 1);
+    ', 'XimenaGuadalupe18@yahoo.com', 'leandhbal2', '$2b$10$z/ujjtN5Oxbn1pDmOLW/BOjuXwZFSyD9h6exRmx644m19OmkktU9G', 'vendedor', 1);
 INSERT INTO mendozarq.usuario (uuid, creadoEn, nombre, apellidoPaterno, apellidoMaterno, celular, direccion, correo, username, contrasenha, rol, activo) VALUES ('35f44215-b58f-491e-a439-4b39ea044442', '2021-11-24 20:42:26', 'sergio', 'olivé', 'lerma', 70045451, '9431 Contreras Puente
     ', 'Aarn.Gaitn22@example.com', 'sergimbswp', '$2b$10$ix0pSZUTSrJPnXcMfRxsCeuwS8RgwaEXRojgpxf.dD.yP2Ulsi1N2', 'administrador', 1);
 INSERT INTO mendozarq.usuario (uuid, creadoEn, nombre, apellidoPaterno, apellidoMaterno, celular, direccion, correo, username, contrasenha, rol, activo) VALUES ('36f1f6d4-163d-4856-a964-aae308769f27', '2021-11-24 20:39:06', 'severiano', 'peña', 'campillo', 66365952, '3803 Miranda Vía Pública
