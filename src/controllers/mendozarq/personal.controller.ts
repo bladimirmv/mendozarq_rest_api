@@ -39,10 +39,7 @@ export const getOnePersonal = async (req: Request, res: Response) => {
     const conn: Pool = await connect();
     const uuid: string = req.params.uuid;
 
-    const [[personal]]: [any[], FieldPacket[]] = await conn.query(
-      'SELECT * FROM personal WHERE uuid = ?',
-      [uuid]
-    );
+    const [[personal]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM personal WHERE uuid = ?', [uuid]);
 
     return personal
       ? res.status(200).json(personal)
@@ -62,9 +59,7 @@ export const getAllPersonal = async (req: Request, res: Response) => {
   try {
     const conn: Pool = await connect();
 
-    const [personal]: [any[], FieldPacket[]] = await conn.query(
-      'SELECT * FROM personal ORDER BY creadoEn DESC'
-    );
+    const [personal]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM personal ORDER BY creadoEn DESC');
 
     return res.status(200).json(personal);
   } catch (error) {
@@ -82,10 +77,7 @@ export const updatePersonal = async (req: Request, res: Response) => {
     const uuid: string = req.params.uuid;
     const personal: Personal = req.body;
 
-    const [[personalFound]]: [any[], FieldPacket[]] = await conn.query(
-      'SELECT * FROM personal WHERE uuid = ?',
-      [uuid]
-    );
+    const [[personalFound]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM personal WHERE uuid = ?', [uuid]);
 
     if (!personalFound) {
       return res.status(404).json({
@@ -114,10 +106,7 @@ export const deletePersonal = async (req: Request, res: Response) => {
     const conn: Pool = await connect();
     const uuid: string = req.params.uuid;
 
-    const [[personal]]: [any[], FieldPacket[]] = await conn.query(
-      'SELECT * FROM personal WHERE uuid = ?',
-      [uuid]
-    );
+    const [[personal]]: [any[], FieldPacket[]] = await conn.query('SELECT * FROM personal WHERE uuid = ?', [uuid]);
 
     if (!personal) {
       return res.status(404).json({

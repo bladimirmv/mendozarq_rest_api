@@ -20,3 +20,4 @@ create index uuidPersonal
 create index uuidVisita
     on observacionpersonal (uuidVisita);
 
+INSERT INTO mendozarq.observacionpersonal (uuid, creadoEn, estado, descripcion, fecha, uuidPersonal, uuidVisita) VALUES ('7409ba7e-8f63-45bd-b1a6-eb522cbffa6a', '2022-06-29 10:17:59', 'Con retraso', 'Sin avances importantes en la estructuracion de la base de cimentaciones.', '2022-06-29', '471c2837-6d59-43c2-ac1e-81a56f7a3d03', '2449f5ef-95fa-4d88-9050-5174ebdc30dd');

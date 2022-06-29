@@ -20,3 +20,4 @@ create index uuidServicio
 create index uuidVisita
     on observacionservicio (uuidVisita);
 
+INSERT INTO mendozarq.observacionservicio (uuid, creadoEn, estado, descripcion, fecha, uuidServicio, uuidVisita) VALUES ('875774e7-d5ce-47a3-9744-d65b04d3f766', '2022-06-29 10:18:54', 'Finalizado', 'Se finalizo la entrega del dia sin ninguna novedad. Entregas restantes 23', '2022-06-29', 'ea5b4d61-7cb1-4f8b-b2b1-e9b08e74e4f3', '2449f5ef-95fa-4d88-9050-5174ebdc30dd');

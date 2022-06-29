@@ -14,3 +14,4 @@ create table planificacionproyecto
 create index uuidProyecto
     on planificacionproyecto (uuidProyecto);
 
+INSERT INTO mendozarq.planificacionproyecto (uuid, creadoEn, titulo, subtitulo, uuidProyecto) VALUES ('1dbb5b64-b1af-421a-893f-7f2dae14d433', '2022-06-28 22:28:33', 'Lomas del sur tower', 'Edificio central de la empresa importadora lomas del sur.', '92914a40-8a91-495b-9b6a-b46c491c317e');
