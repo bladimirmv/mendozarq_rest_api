@@ -63,12 +63,12 @@ export const getCarritoProducto = async (req: Request, res: Response) => {
     let carritoProducto: CarritoProductoInline[];
 
     const [rows]: [any[], FieldPacket[]] = await conn.query(
-      `SELECT fp.keyName, p.*, cp.uuid as uuidCP, cp.creadoEn as creadoEnCP, cp.uuidProducto, cp.uuidCliente, cp.cantidad
+      `SELECT  fp.keyName, p.*, cp.uuid as uuidCP, cp.creadoEn as creadoEnCP, cp.uuidProducto, cp.uuidCliente, cp.cantidad
       FROM carritoProducto AS cp
                INNER JOIN producto p on cp.uuidProducto = p.uuid
                INNER JOIN fotoProducto fp on p.uuid = fp.uuidProducto
       WHERE cp.uuidCliente = ?
-        and fp.indice = 0
+and fp.indice = ( SELECT MIN(ffpp.indice) FROM fotoProducto as ffpp where ffpp.uuidProducto = p.uuid )
       ORDER BY cp.creadoEn DESC;`,
       [uuid]
     );
