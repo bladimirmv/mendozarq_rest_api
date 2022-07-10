@@ -45,6 +45,7 @@ CREATE TABLE proyecto
     fechaInicio   date,
     fechaFinal    date,
     lugarProyecto text,
+    latLng text default '-17.401848609775207, -66.18253244641603',
     porcentaje    int,
     uuidCliente   varchar(100),
     FOREIGN KEY (uuidCliente) REFERENCES usuario (uuid)
